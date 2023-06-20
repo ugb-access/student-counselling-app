@@ -27,6 +27,7 @@ const tabs = [
 ]
 </script>
 
+
 <template>
   <div>
     <VTabs
