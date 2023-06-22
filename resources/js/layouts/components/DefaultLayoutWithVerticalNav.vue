@@ -24,39 +24,14 @@ const upgradeBanner = computed(() => {
     <template #navbar="{ toggleVerticalOverlayNavActive }">
       <div class="d-flex h-100 align-center">
         <!-- 👉 Vertical nav toggle in overlay mode -->
-        <IconBtn
-          class="ms-n3 d-lg-none"
-          @click="toggleVerticalOverlayNavActive(true)"
-        >
+        <IconBtn class="ms-n3 d-lg-none" @click="toggleVerticalOverlayNavActive(true)">
           <VIcon icon="mdi-menu" />
         </IconBtn>
 
-        <!-- 👉 Search -->
-        <div
-          class="d-flex align-center cursor-pointer"
-          style="user-select: none;"
-        >
-          <!-- 👉 Search Trigger button -->
-          <IconBtn>
-            <VIcon icon="mdi-magnify" />
-          </IconBtn>
 
-          <span class="d-none d-md-flex align-center text-disabled">
-            <span class="me-3">Search</span>
-            <span class="meta-key">&#8984;K</span>
-          </span>
-        </div>
 
         <VSpacer />
 
-        <IconBtn
-          class="me-2"
-          href="https://github.com/themeselection/materio-vuetify-laravel-admin-template-free"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <VIcon icon="mdi-github" />
-        </IconBtn>
 
         <IconBtn class="me-2">
           <VIcon icon="mdi-bell-outline" />
@@ -69,117 +44,77 @@ const upgradeBanner = computed(() => {
     </template>
 
     <template #vertical-nav-content>
-      <VerticalNavLink
-        :item="{
-          title: 'Dashboard',
-          icon: 'mdi-home-outline',
-          to: '/dashboard',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Account Settings',
-          icon: 'mdi-account-cog-outline',
-          to: '/account-settings',
-        }"
-      />
+      <VerticalNavLink :item="{
+        title: 'Dashboard',
+        icon: 'mdi-home-outline',
+        to: '/dashboard',
+      }" />
+      <VerticalNavLink :item="{
+        title: 'Account Settings',
+        icon: 'mdi-account-cog-outline',
+        to: '/account-settings',
+      }" />
 
       <!-- 👉 Pages -->
-      <VerticalNavSectionTitle
-        :item="{
-          heading: 'Pages',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Login',
-          icon: 'mdi-login',
-          to: '/login',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Register',
-          icon: 'mdi-account-plus-outline',
-          to: '/register',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Error',
-          icon: 'mdi-information-outline',
-          to: '/no-existence',
-        }"
-      />
+      <VerticalNavSectionTitle :item="{
+        heading: 'Pages',
+      }" />
+      <!-- <VerticalNavLink :item="{
+        title: 'Login',
+        icon: 'mdi-login',
+        to: '/login',
+      }" />
+      <VerticalNavLink :item="{
+        title: 'Register',
+        icon: 'mdi-account-plus-outline',
+        to: '/register',
+      }" />
+      <VerticalNavLink :item="{
+        title: 'Error',
+        icon: 'mdi-information-outline',
+        to: '/no-existence',
+      }" /> -->
 
       <!-- 👉 User Interface -->
-      <VerticalNavSectionTitle
-        :item="{
-          heading: 'User Interface',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Typography',
-          icon: 'mdi-alpha-t-box-outline',
-          to: '/typography',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Icons',
-          icon: 'mdi-eye-outline',
-          to: '/icons',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Cards',
-          icon: 'mdi-credit-card-outline',
-          to: '/cards',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Tables',
-          icon: 'mdi-table',
-          to: '/tables',
-        }"
-      />
-      <VerticalNavLink
-        :item="{
-          title: 'Form Layouts',
-          icon: 'mdi-form-select',
-          to: '/form-layouts',
-        }"
-      />
+      <!-- <VerticalNavSectionTitle :item="{
+        heading: 'User Interface',
+      }" />
+      <VerticalNavLink :item="{
+        title: 'Typography',
+        icon: 'mdi-alpha-t-box-outline',
+        to: '/typography',
+      }" />
+      <VerticalNavLink :item="{
+        title: 'Icons',
+        icon: 'mdi-eye-outline',
+        to: '/icons',
+      }" />
+      <VerticalNavLink :item="{
+        title: 'Cards',
+        icon: 'mdi-credit-card-outline',
+        to: '/cards',
+      }" />
+      <VerticalNavLink :item="{
+        title: 'Tables',
+        icon: 'mdi-table',
+        to: '/tables',
+      }" />
+      <VerticalNavLink :item="{
+        title: 'Form Layouts',
+        icon: 'mdi-form-select',
+        to: '/form-layouts',
+      }" /> -->
     </template>
 
-    <template #after-vertical-nav-items>
-      <!-- 👉 illustration -->
-      <a
-        href="https://themeselection.com/item/materio-vuetify-laravel-admin-template"
-        target="_blank"
-        rel="noopener noreferrer"
-        style="margin-left: 7px;"
-      >
-        <img
-          :src="upgradeBanner"
-          alt="upgrade-banner"
-          transition="scale-transition"
-          class="upgrade-banner mx-auto"
-          style="max-width: 230px;"
-        >
-      </a>
-    </template>
+    
 
     <!-- 👉 Pages -->
     <slot />
 
-    <!-- 👉 Footer -->
+    <!-- 👉 Footer
     <template #footer>
       <Footer />
-    </template>
+    </template> -->
   </VerticalNavLayout>
 </template>
 
