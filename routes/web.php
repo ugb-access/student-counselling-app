@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('{any?}', function() {
+Route::get('{any?}', function () {
     return view('application');
 })->where('any', '.*');
+
