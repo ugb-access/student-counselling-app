@@ -1,7 +1,7 @@
 <script setup>
 import { ref, defineProps, watch } from "vue";
 
-const props = defineProps(["data"]); // Declare the props that the child component expects
+const props = defineProps(["data", "tableType"]); // Declare the props that the child component expects
 
 const storedData = ref([]);
 
@@ -22,6 +22,12 @@ watch(
                 <th class="text-uppercase">Name</th>
                 <th class="text-uppercase text-center">Username</th>
                 <th class="text-uppercase text-center">Email</th>
+                <th
+                    v-if="tableType !== 'admin'"
+                    class="text-uppercase text-center"
+                >
+                    Phone Number
+                </th>
                 <th class="text-uppercase text-center">Date</th>
             </tr>
         </thead>
@@ -39,6 +45,9 @@ watch(
                 </td>
                 <td class="text-center">
                     {{ item.email }}
+                </td>
+                <td v-if="tableType !== 'admin'" class="text-center">
+                    {{ item.phone_number }}
                 </td>
                 <td class="text-center">
                     {{ item.created_at.slice(0, item.created_at.indexOf("T")) }}

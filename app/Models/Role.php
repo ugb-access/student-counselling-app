@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
+    use HasFactory;
+    protected $table = 'roles';
     public function users()
     {
-        return $this->belongsToMany(User::class, 'role_user');
+        return $this->hasMany(User::class, 'role_user');
     }
-    use HasFactory;
+    
 }
 
 

@@ -7,8 +7,6 @@ import authV1Tree2 from "@images/pages/auth-v1-tree-2.png";
 import authV1Tree from "@images/pages/auth-v1-tree.png";
 import { loginUser } from "@/services/auth-service";
 import { toast } from "vue3-toastify";
-import { setLocalAuth } from "@/utils/local";
-import router from "@/router";
 
 const form = ref({
     email: "",
@@ -51,14 +49,13 @@ const handleSubmit = (e) => {
     }
     loginUser({ identifier: email.trim(), password: password.trim() })
         .then((res) => {
-            setLocalAuth(res.data.token);
+            localStorage.setItem("auth_token", res.data.token);
             toast.success(res.data.message, {
                 autoClose: 6000,
             });
-            router.push("/dashboard");
         })
         .catch((err) => {
-            if (err?.response?.data?.error) {
+            if (err.response.data.error) {
                 toast.error(err.response.data.error, {
                     autoClose: 6000,
                 });

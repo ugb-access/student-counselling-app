@@ -1,82 +1,111 @@
 <script setup>
-import { useTheme } from 'vuetify'
-import upgradeBannerDark from '@images/pro/upgrade-banner-dark.png'
-import upgradeBannerLight from '@images/pro/upgrade-banner-light.png'
-import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
-import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
-import VerticalNavSectionTitle from '@/@layouts/components/VerticalNavSectionTitle.vue'
+import { useTheme } from "vuetify";
+import upgradeBannerDark from "@images/pro/upgrade-banner-dark.png";
+import upgradeBannerLight from "@images/pro/upgrade-banner-light.png";
+import VerticalNavLayout from "@layouts/components/VerticalNavLayout.vue";
+import VerticalNavLink from "@layouts/components/VerticalNavLink.vue";
+import VerticalNavSectionTitle from "@/@layouts/components/VerticalNavSectionTitle.vue";
 
 // Components
-import Footer from '@/layouts/components/Footer.vue'
-import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
-import UserProfile from '@/layouts/components/UserProfile.vue'
+import Footer from "@/layouts/components/Footer.vue";
+import NavbarThemeSwitcher from "@/layouts/components/NavbarThemeSwitcher.vue";
+import UserProfile from "@/layouts/components/UserProfile.vue";
 
-const vuetifyTheme = useTheme()
+const vuetifyTheme = useTheme();
 
 const upgradeBanner = computed(() => {
-  return vuetifyTheme.global.name.value === 'light' ? upgradeBannerLight : upgradeBannerDark
-})
+    return vuetifyTheme.global.name.value === "light"
+        ? upgradeBannerLight
+        : upgradeBannerDark;
+});
 </script>
 
 <template>
-  <VerticalNavLayout>
-    <!-- 👉 navbar -->
-    <template #navbar="{ toggleVerticalOverlayNavActive }">
-      <div class="d-flex h-100 align-center">
-        <!-- 👉 Vertical nav toggle in overlay mode -->
-        <IconBtn class="ms-n3 d-lg-none" @click="toggleVerticalOverlayNavActive(true)">
-          <VIcon icon="mdi-menu" />
-        </IconBtn>
+    <VerticalNavLayout>
+        <!-- 👉 navbar -->
+        <template #navbar="{ toggleVerticalOverlayNavActive }">
+            <div class="d-flex h-100 align-center">
+                <!-- 👉 Vertical nav toggle in overlay mode -->
+                <IconBtn
+                    class="ms-n3 d-lg-none"
+                    @click="toggleVerticalOverlayNavActive(true)"
+                >
+                    <VIcon icon="mdi-menu" />
+                </IconBtn>
 
+                <VSpacer />
 
+                <IconBtn class="me-2">
+                    <VIcon icon="mdi-bell-outline" />
+                </IconBtn>
 
-        <VSpacer />
+                <NavbarThemeSwitcher class="me-2" />
 
+                <UserProfile />
+            </div>
+        </template>
 
-        <IconBtn class="me-2">
-          <VIcon icon="mdi-bell-outline" />
-        </IconBtn>
+        <template #vertical-nav-content>
+            <VerticalNavLink
+                :item="{
+                    title: 'Dashboard',
+                    icon: 'mdi-home-outline',
+                    to: '/dashboard',
+                }"
+            />
+            <VerticalNavLink
+                :item="{
+                    title: 'Account Settings',
+                    icon: 'mdi-account-cog-outline',
+                    to: '/account-settings',
+                }"
+            />
 
-        <NavbarThemeSwitcher class="me-2" />
+            <!-- 👉 Pages -->
+            <VerticalNavSectionTitle
+                :item="{
+                    heading: 'Pages',
+                }"
+            />
+            <VerticalNavLink
+                :item="{
+                    title: 'Admins',
+                    icon: 'mdi-account-cog',
+                    to: '/admins',
+                }"
+            />
+            <VerticalNavLink
+                :item="{
+                    title: 'Counsellors',
+                    icon: 'mdi-account-tie-outline',
+                    to: '/counsellors',
+                }"
+            />
+            <VerticalNavLink
+                :item="{
+                    title: 'Students',
+                    icon: 'mdi-account-school',
+                    to: '/students',
+                }"
+            />
 
-        <UserProfile />
-      </div>
-    </template>
+            <!-- <VerticalNavLink
+                :item="{
+                    title: 'Register',
+                    icon: 'mdi-account-plus-outline',
+                    to: '/register',
+                }"
+            />
+            <VerticalNavLink
+                :item="{
+                    title: 'Error',
+                    icon: 'mdi-information-outline',
+                    to: '/no-existence',
+                }"
+            /> -->
 
-    <template #vertical-nav-content>
-      <VerticalNavLink :item="{
-        title: 'Dashboard',
-        icon: 'mdi-home-outline',
-        to: '/dashboard',
-      }" />
-      <VerticalNavLink :item="{
-        title: 'Account Settings',
-        icon: 'mdi-account-cog-outline',
-        to: '/account-settings',
-      }" />
-
-      <!-- 👉 Pages -->
-      <VerticalNavSectionTitle :item="{
-        heading: 'Pages',
-      }" />
-      <!-- <VerticalNavLink :item="{
-        title: 'Login',
-        icon: 'mdi-login',
-        to: '/login',
-      }" />
-      <VerticalNavLink :item="{
-        title: 'Register',
-        icon: 'mdi-account-plus-outline',
-        to: '/register',
-      }" />
-      <VerticalNavLink :item="{
-        title: 'Error',
-        icon: 'mdi-information-outline',
-        to: '/no-existence',
-      }" /> -->
-
-      <!-- 👉 User Interface -->
-      <!-- <VerticalNavSectionTitle :item="{
+            <!-- 👉 User Interface -->
+            <!-- <VerticalNavSectionTitle :item="{
         heading: 'User Interface',
       }" />
       <VerticalNavLink :item="{
@@ -104,27 +133,25 @@ const upgradeBanner = computed(() => {
         icon: 'mdi-form-select',
         to: '/form-layouts',
       }" /> -->
-    </template>
+        </template>
 
-    
+        <!-- 👉 Pages -->
+        <slot />
 
-    <!-- 👉 Pages -->
-    <slot />
-
-    <!-- 👉 Footer
+        <!-- 👉 Footer
     <template #footer>
       <Footer />
     </template> -->
-  </VerticalNavLayout>
+    </VerticalNavLayout>
 </template>
 
 <style lang="scss" scoped>
 .meta-key {
-  border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
-  border-radius: 6px;
-  block-size: 1.5625rem;
-  line-height: 1.3125rem;
-  padding-block: 0.125rem;
-  padding-inline: 0.25rem;
+    border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
+    border-radius: 6px;
+    block-size: 1.5625rem;
+    line-height: 1.3125rem;
+    padding-block: 0.125rem;
+    padding-inline: 0.25rem;
 }
 </style>
