@@ -55,6 +55,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Authentication successful',
                 'token' => $token,
+                'data' => $user
             ], 200);
         } else {
             // Authentication failed
@@ -99,7 +100,7 @@ class AuthController extends Controller
         ]);
        
         if($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
+            return response()->json(['error' => $validator->errors()->first()], 422);
         } 
 
         User::create([
@@ -127,7 +128,7 @@ class AuthController extends Controller
         ]);
        
         if($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
+            return response()->json(['error' => $validator->errors()->first()], 422);
         } 
 
         
@@ -145,6 +146,8 @@ class AuthController extends Controller
 
     public function add_student(Request $request) {
         
+        $user = Auth::user();
+        
         $data = $request->all();
         foreach ($data as $key => $value) {
             $data[$key] = trim($value);
@@ -158,7 +161,7 @@ class AuthController extends Controller
         ]);
        
         if($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
+            return response()->json(['error' => $validator->errors()->first()], 422);
         } 
 
         User::create([
@@ -167,11 +170,14 @@ class AuthController extends Controller
             'username' => $data['username'],
             'password' => bcrypt($data['password']),
             'phone_number' => $data['phone_number'],
+            'added_by_user_id' => $user->id,
             'role_id' => 3
         ]);
     
         return response()->json(['message' => 'Student created successfully'], 201);
     }
 
+
+   
    
 }

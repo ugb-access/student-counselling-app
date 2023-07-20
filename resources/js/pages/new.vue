@@ -49,7 +49,10 @@ const handleSubmit = (e) => {
     }
     loginUser({ identifier: email.trim(), password: password.trim() })
         .then((res) => {
-            localStorage.setItem("auth_token", res.data.token);
+            localStorage.setItem("auth_data", {
+                token: res.data.token,
+                data: res.data.data,
+            });
             toast.success(res.data.message, {
                 autoClose: 6000,
             });

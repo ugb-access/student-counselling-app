@@ -1,7 +1,7 @@
 <script setup>
 import { useRoute } from "vue-router";
-import AccountSettingsAccount from "@/views/pages/account-settings/AccountSettingsAccount.vue";
 
+import CounsellorEdit from "@/views/pages/account-settings/CounsellorEdit.vue";
 
 const route = useRoute();
 const activeTab = ref(route.params.tab);
@@ -13,6 +13,7 @@ const tabs = [
         icon: "mdi-account-outline",
         tab: "account",
     },
+    
 ];
 </script>
 
@@ -29,8 +30,11 @@ const tabs = [
         <VWindow v-model="activeTab" class="mt-5 disable-tab-transition">
             <!-- Account -->
             <VWindowItem value="account">
-                <AccountSettingsAccount />
+                <CounsellorEdit />
             </VWindowItem>
+
+
+            
         </VWindow>
     </div>
 </template>

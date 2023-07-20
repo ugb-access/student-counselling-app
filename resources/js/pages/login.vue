@@ -51,7 +51,8 @@ const handleSubmit = (e) => {
     }
     loginUser({ identifier: email.trim(), password: password.trim() })
         .then((res) => {
-            setLocalAuth(res.data.token);
+            console.log(res.data.message, "res.data.message");
+            setLocalAuth({ token: res.data.token, data: res.data.data });
             toast.success(res.data.message, {
                 autoClose: 6000,
             });
@@ -121,16 +122,8 @@ const handleSubmit = (e) => {
                                     isPasswordVisible = !isPasswordVisible
                                 "
                                 :rules="[isFieldRequired, passwordValidation]"
+                                class="mb-4"
                             />
-
-                            <!-- remember me checkbox -->
-                            <div
-                                class="d-flex align-center justify-end flex-wrap mt-1 mb-4"
-                            >
-                                <a class="ms-2 mb-1" href="javascript:void(0)">
-                                    Forgot Password?
-                                </a>
-                            </div>
 
                             <!-- login button -->
                             <VBtn block type="submit"> Login </VBtn>

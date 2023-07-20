@@ -10,14 +10,11 @@ import VerticalNavSectionTitle from "@/@layouts/components/VerticalNavSectionTit
 import Footer from "@/layouts/components/Footer.vue";
 import NavbarThemeSwitcher from "@/layouts/components/NavbarThemeSwitcher.vue";
 import UserProfile from "@/layouts/components/UserProfile.vue";
+import { getLocalAuth } from "@/utils/local";
 
 const vuetifyTheme = useTheme();
 
-const upgradeBanner = computed(() => {
-    return vuetifyTheme.global.name.value === "light"
-        ? upgradeBannerLight
-        : upgradeBannerDark;
-});
+const localUser = JSON.parse(getLocalAuth());
 </script>
 
 <template>
@@ -63,11 +60,13 @@ const upgradeBanner = computed(() => {
 
             <!-- 👉 Pages -->
             <VerticalNavSectionTitle
+                
                 :item="{
                     heading: 'Pages',
                 }"
             />
             <VerticalNavLink
+                v-if="localUser.data.role_id == 1"
                 :item="{
                     title: 'Admins',
                     icon: 'mdi-account-cog',
@@ -75,6 +74,7 @@ const upgradeBanner = computed(() => {
                 }"
             />
             <VerticalNavLink
+                v-if="localUser.data.role_id == 1"
                 :item="{
                     title: 'Counsellors',
                     icon: 'mdi-account-tie-outline',
@@ -82,10 +82,23 @@ const upgradeBanner = computed(() => {
                 }"
             />
             <VerticalNavLink
+                v-if="
+                    localUser.data.role_id == 1 || localUser.data.role_id == 2
+                "
                 :item="{
                     title: 'Students',
                     icon: 'mdi-account-school',
                     to: '/students',
+                }"
+            />
+
+
+            <VerticalNavLink
+                v-if="localUser.data.role_id == 3"
+                :item="{
+                    title: 'Apply Form',
+                    icon: 'mdi-file-document-plus-outline',
+                    to: '/add-details',
                 }"
             />
 

@@ -1,7 +1,6 @@
 <script setup>
 import { useRoute } from "vue-router";
-import AccountSettingsAccount from "@/views/pages/account-settings/AccountSettingsAccount.vue";
-
+import StudentDetail from "@/views/pages/account-settings/StudentDetail.vue";
 
 const route = useRoute();
 const activeTab = ref(route.params.tab);
@@ -29,7 +28,7 @@ const tabs = [
         <VWindow v-model="activeTab" class="mt-5 disable-tab-transition">
             <!-- Account -->
             <VWindowItem value="account">
-                <AccountSettingsAccount />
+                <StudentDetail />
             </VWindowItem>
         </VWindow>
     </div>

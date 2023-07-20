@@ -14,7 +14,7 @@ const handleActionClick = () => {
 
 const fetchData = async () => {
     try {
-        const response = await getAllAdmins();
+        const response = await getAllAdmins({limit: null});
         list.value = response.data.data;
         filterData();
     } catch (error) {

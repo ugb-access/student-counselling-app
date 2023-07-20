@@ -1,5 +1,5 @@
 <script setup>
-import CounsellorForm from "@/views/pages/form-layouts/CounsellorForm.vue";
+import AddStudentDetails from "@/views/pages/form-layouts/AddStudentDetails.vue";
 </script>
 
 <template>
@@ -7,9 +7,9 @@ import CounsellorForm from "@/views/pages/form-layouts/CounsellorForm.vue";
         <VRow>
             <VCol cols="12">
                 <!-- 👉 Multiple Column -->
-                <VCard title="Add Counsellor">
+                <VCard title="Add Student">
                     <VCardText>
-                        <CounsellorForm />
+                        <AddStudentDetails />
                     </VCardText>
                 </VCard>
             </VCol>

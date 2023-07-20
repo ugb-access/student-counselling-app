@@ -1,5 +1,5 @@
 <script setup>
-import DemoFormLayoutMultipleColumn from "@/views/pages/form-layouts/DemoFormLayoutMultipleColumn.vue";
+import StudentForm from "@/views/pages/form-layouts/StudentForm.vue";
 </script>
 
 <template>
@@ -7,9 +7,9 @@ import DemoFormLayoutMultipleColumn from "@/views/pages/form-layouts/DemoFormLay
         <VRow>
             <VCol cols="12">
                 <!-- 👉 Multiple Column -->
-                <VCard title="Multiple Column">
+                <VCard title="Add Student">
                     <VCardText>
-                        <DemoFormLayoutMultipleColumn />
+                        <StudentForm />
                     </VCardText>
                 </VCard>
             </VCol>

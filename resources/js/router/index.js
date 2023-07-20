@@ -74,12 +74,12 @@ const router = createRouter({
                     path: "form-layouts",
                     component: () => import("../pages/form-layouts.vue"),
                 },
-                
+
                 {
                     path: "admins",
                     component: () => import("../pages/admins.vue"),
                 },
-                
+
                 {
                     path: "students",
                     component: () => import("../pages/students.vue"),
@@ -105,6 +105,27 @@ const router = createRouter({
                 {
                     path: "add/student",
                     component: () => import("../pages/add-student.vue"),
+                },
+
+                {
+                    path: "counsellors/view/:id",
+                    component: () => import("../pages/counsellor-view.vue"),
+                },
+                {
+                    path: "counsellors/edit/:id",
+                    component: () => import("../pages/counsellor-edit.vue"),
+                },
+                {
+                    path: "student/view/:id",
+                    component: () => import("../pages/student-view.vue"),
+                },
+                {
+                    path: "student/edit/:id",
+                    component: () => import("../pages/student-edit.vue"),
+                },
+                {
+                    path: "add-details",
+                    component: () => import("../pages/add-details.vue"),
                 },
             ],
         },

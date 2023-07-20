@@ -29,6 +29,13 @@ watch(
                     Phone Number
                 </th>
                 <th class="text-uppercase text-center">Date</th>
+
+                <th
+                    v-if="tableType !== 'admin'"
+                    class="text-uppercase text-center"
+                >
+                    Action
+                </th>
             </tr>
         </thead>
 
@@ -51,6 +58,44 @@ watch(
                 </td>
                 <td class="text-center">
                     {{ item.created_at.slice(0, item.created_at.indexOf("T")) }}
+                </td>
+
+                <td v-if="tableType !== 'admin'" class="text-center">
+                    <Component
+                        is="a"
+                        :href="`${
+                            tableType === 'counsellor'
+                                ? '/counsellors'
+                                : '/student'
+                        }/view/${item.id}`"
+                    >
+                        <VBtn
+                            color="primary"
+                            text
+                            @click="handleActionClick"
+                            class="action-button mr-1 py-1"
+                            size="small"
+                            icon="mdi-eye"
+                        >
+                        </VBtn>
+                    </Component>
+                    <Component
+                        is="a"
+                        :href="`${
+                            tableType === 'counsellor'
+                                ? '/counsellors'
+                                : '/student'
+                        }/edit/${item.id}`"
+                    >
+                        <VBtn
+                            color="primary"
+                            text
+                            @click="handleActionClick"
+                            class="action-button py-1"
+                            size="small"
+                            icon="mdi-pencil"
+                        ></VBtn
+                    ></Component>
                 </td>
             </tr>
         </tbody>

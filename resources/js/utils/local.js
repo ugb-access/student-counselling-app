@@ -1,12 +1,12 @@
 export const getLocalAuth = () => {
-    const auth = localStorage.getItem("auth_token");
+    const auth = localStorage.getItem("auth_data");
     return auth ? auth : "";
 };
 
 export const setLocalAuth = (value) => {
-    localStorage.setItem("auth_token", JSON.stringify(value));
+    localStorage.setItem("auth_data", JSON.stringify(value));
 };
 
 export const removeLocalAuth = () => {
-    localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth_data");
 };

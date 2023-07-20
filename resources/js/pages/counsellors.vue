@@ -15,7 +15,7 @@ const handleActionClick = () => {
 
 const fetchData = async () => {
     try {
-        const response = await getAllCounsellor();
+        const response = await getAllCounsellor({ limit: null });
         list.value = response.data.data;
         filterData();
     } catch (error) {
@@ -70,7 +70,7 @@ watch(searchQuery, filterData);
                         >
                     </div>
                 </template>
-                <PrimaryTable :data="filteredData" />
+                <PrimaryTable tableType="counsellor" :data="filteredData" />
             </VCard>
         </VCol>
     </VRow>
