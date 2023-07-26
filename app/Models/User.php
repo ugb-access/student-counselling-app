@@ -26,6 +26,10 @@ class User extends Authenticatable
         return $this->role()->where('name', $role)->exists();
     }
 
+
+    public function student() {
+        return $this->hasOne(Student::class);
+    }
    
 }
 

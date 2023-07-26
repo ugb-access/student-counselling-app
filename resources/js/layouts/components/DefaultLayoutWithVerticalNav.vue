@@ -93,14 +93,14 @@ const localUser = JSON.parse(getLocalAuth());
             />
 
 
-            <VerticalNavLink
-                v-if="localUser.data.role_id == 3"
+            <!-- <VerticalNavLink
+                v-if="localUser.data.role_id == 2"
                 :item="{
                     title: 'Apply Form',
                     icon: 'mdi-file-document-plus-outline',
                     to: '/add-details',
                 }"
-            />
+            /> -->
 
             <!-- <VerticalNavLink
                 :item="{

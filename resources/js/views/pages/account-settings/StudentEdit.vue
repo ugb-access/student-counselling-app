@@ -55,18 +55,6 @@ onMounted(fetchProfileData);
     <VRow>
         <VCol cols="12">
             <VCard title="Student Account Details">
-                <VCardText class="d-flex">
-                    <!-- 👉 Avatar -->
-                    <VAvatar
-                        rounded="lg"
-                        size="100"
-                        class="me-6"
-                        :image="accountDataLocal.avatarImg"
-                    />
-
-                    <!-- 👉 Upload Photo -->
-                </VCardText>
-
                 <VDivider />
 
                 <VCardText>
@@ -103,14 +91,6 @@ onMounted(fetchProfileData);
                                 <VTextField
                                     v-model="accountDataLocal.phone_number"
                                     label="Phone Number"
-                                />
-                            </VCol>
-
-                            <!-- 👉 Address -->
-                            <VCol cols="12" md="6">
-                                <VTextField
-                                    v-model="accountDataLocal.address"
-                                    label="Address"
                                 />
                             </VCol>
 

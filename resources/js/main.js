@@ -11,6 +11,8 @@ import "@styles/styles.scss";
 import { createPinia } from "pinia";
 import { createApp } from "vue";
 import Toast from "vue3-toastify";
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 loadFonts();
 // Create vue app
@@ -24,6 +26,7 @@ app.use(Toast, {
     timeout: 5000,
     closeOnClick: true,
 });
+app.component('VueDatePicker', VueDatePicker);
 
 // Mount vue app
 app.mount("#app");

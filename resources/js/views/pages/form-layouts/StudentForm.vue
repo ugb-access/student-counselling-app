@@ -1,4 +1,5 @@
 <script setup>
+
 import router from "@/router";
 import { addCounsellor, addStudent } from "@/services/user-service";
 import { toast } from "vue3-toastify";
@@ -8,6 +9,8 @@ const username = ref("");
 const password = ref("");
 const email = ref("");
 const phone_number = ref("");
+
+
 const isPasswordVisible = ref(false);
 
 const handleSubmit = () => {
@@ -52,6 +55,7 @@ const handleSubmit = () => {
             }
         });
 };
+
 
 const required = (value) => {
     if (!value?.trim()) {

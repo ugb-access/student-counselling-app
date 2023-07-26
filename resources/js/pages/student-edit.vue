@@ -1,6 +1,7 @@
 <script setup>
 import { useRoute } from "vue-router";
 import StudentEdit from "@/views/pages/account-settings/StudentEdit.vue";
+import AddStudentDetails from "@/views/pages/form-layouts/AddStudentDetails.vue";
 
 const route = useRoute();
 const activeTab = ref(route.params.tab);
@@ -11,6 +12,12 @@ const tabs = [
         title: "Account",
         icon: "mdi-account-outline",
         tab: "account",
+    },
+
+    {
+        title: "Student Detail",
+        icon: "mdi-account-outline",
+        tab: "student-detail",
     },
 ];
 </script>
@@ -29,6 +36,10 @@ const tabs = [
             <!-- Account -->
             <VWindowItem value="account">
                 <StudentEdit />
+            </VWindowItem>
+
+            <VWindowItem value="student-detail">
+                <AddStudentDetails />
             </VWindowItem>
         </VWindow>
     </div>

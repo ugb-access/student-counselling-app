@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -49,6 +50,15 @@ Route::middleware('auth:sanctum')->get('/get-profile/{id}', [UserController::cla
 
 // Analytics
 Route::middleware('auth:sanctum', 'role:admin|counsellor')->get('/user-count', [UserController::class, 'get_user_count'])->name("get_user_count");
+
+// Student 
+
+Route::middleware('auth:sanctum', 'role:admin|counsellor')->get('/student-detail/{id}', [StudentController::class, 'get_student_detail'])->name("get_student_detail");
+
+
+Route::middleware('auth:sanctum', 'role:admin|counsellor')->post('/student-detail/{id}', [StudentController::class, 'store_student_detail'])->name("store_student_detail");
+
+
 
 
 
