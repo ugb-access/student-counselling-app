@@ -1,7 +1,26 @@
 <script setup>
 import avatar1 from "@images/avatars/avatar-1.png";
-import router from "@/router";
+
 import { toast } from "vue3-toastify";
+import {
+    storeStudentDetail,
+    getStudentDetail,
+    updateStudentData,
+} from "@/services/student-service";
+
+import { useRoute } from "vue-router";
+import { dashFormat } from "@/utils/date";
+import { onMounted } from "vue";
+
+import router from "@/router";
+
+const props = defineProps({
+    readonly: String,
+    data: Object,
+});
+
+const { readonly, data } = toRefs(props);
+const route = useRoute();
 
 const full_name = ref("");
 const email = ref("");
@@ -59,13 +78,16 @@ const visa = ref(null);
 const travel_plan = ref(null);
 const gt_document = ref(null);
 
+const updateObj = ref({});
+
 const photo_path = ref({
     preview: "",
     file: "",
 });
 
-const date = ref();
-const birthFlow = ref(["month", "year", "calendar"]);
+const loading = ref(false);
+
+const edit = ref(false);
 
 const required = (value) => {
     if (!value?.trim()) return "Field is required";
@@ -75,58 +97,163 @@ const refInputEl = ref();
 
 const changeAvatar = (event) => {
     const file = event.target.files[0];
-
     if (file) {
         photo_path.value.file = file;
         photo_path.value.preview = URL.createObjectURL(file);
     }
+
+    if (edit) {
+        updateObj.value["photo_path"] = event.target.files;
+    }
 };
 
 const handleSubmit = (e) => {
-    console.log(
-        photo_path.value,
-        full_name.value,
-        email.value,
-        nationality.value,
-        marital_status.value,
-        gender.value,
-        date_of_birth.value,
-        place_of_birth.value,
-        passport_no.value,
-        expiry_date.value,
-        place_of_issue.value,
-        address.value,
-        phone.value,
-        mobile.value,
-        mobile_2.value,
-        referee_name.value,
-        referee_mobile.value,
-        document_correction.value,
-        education_history.value,
-        semester_year.value,
-        country_detail.value,
-        "Data",
+    console.log(updateObj.value, "keys");
 
-        passport.value,
-        moi.value,
-        english_proficiency.value,
-        ielts.value,
-        other_english_test.value,
-        academic_document.value,
-        teacher_reference.value,
-        cnic.value,
-        experience_letter.value,
-        other_certificates.value,
-        conditional_offer.value,
-        unconditional_offer.value,
-        payment_proof.value,
-        cas_ecoe.value,
-        visa.value,
-        travel_plan.value,
-        gt_document.value
-    );
+    if (edit) {
+        if (Object.keys(updateObj.value).length) {
+            loading.value = true;
+            const data = updateObj.value;
+            updateStudentData({ studentId: route.params.id, data })
+                .then((res) => {
+                    const id = route.params.id;
+                    window.location.href = `/student/view/${id}`;
+                    toast.success("Student Details Updated Successfully!");
+                })
+                .catch((err) => {
+                    if (err.response.data.error) {
+                        toast.error(err.response.data.error);
+                    }
+                })
+                .finally((res) => {
+                    loading.value = false;
+                });
+        } else {
+            toast.error("No Changes has been made!");
+        }
+    } else {
+        if (!photo_path.value.file) {
+            toast.error("Student Photo is required!");
+            return false;
+        } else if (!full_name.value.trim()) {
+            toast.error("Full Name is required!");
+            return false;
+        } else if (!email.value.trim()) {
+            toast.error("Email is required!");
+            return false;
+        } else if (!nationality.value.trim()) {
+            toast.error("Nationality is required!");
+            return false;
+        } else if (!marital_status.value) {
+            toast.error("Marital Status is required!");
+            return false;
+        } else if (!gender.value) {
+            toast.error("Gender is required!");
+            return false;
+        } else if (!date_of_birth.value) {
+            toast.error("Date of Birth is required!");
+            return false;
+        } else if (!place_of_birth.value) {
+            toast.error("Place of Birth is required!");
+            return false;
+        } else if (!passport_no.value.trim()) {
+            toast.error("Passport is required!");
+            return false;
+        } else if (!expiry_date.value) {
+            toast.error("Expiry Date is required!");
+            return false;
+        } else if (!address.value.trim()) {
+            toast.error("Address is required!");
+            return false;
+        } else if (!phone.value.trim()) {
+            toast.error("Phone No. is required!");
+            return false;
+        } else if (!mobile.value.trim()) {
+            toast.error("Mobile No. is required!");
+            return false;
+        } else if (!mobile_2.value.trim()) {
+            toast.error("Mobile 2 is required!");
+            return false;
+        } else if (!referee_name.value.trim()) {
+            toast.error("Referee Name is required!");
+            return false;
+        } else if (
+            education_history.value.length == 0 ||
+            !Object.values(education_history.value[0]).every((value) => value)
+        ) {
+            toast.error("Education History is required!");
+            return false;
+        } else if (!semester_year.value) {
+            toast.error("Semester Year is required!");
+            return false;
+        } else if (
+            country_detail.value.length === 0 ||
+            !Object.values(country_detail.value[0]).every((value) => value)
+        ) {
+            toast.error("Country Detail is required!");
+            return false;
+        }
+        loading.value = true;
+        const data = {
+            user_id: route.params.id,
+            photo_path: photo_path.value.file,
+            full_name: full_name.value,
+            email: email.value,
+            nationality: nationality.value,
+            marital_status: marital_status.value,
+            gender: gender.value,
+            date_of_birth: dashFormat(date_of_birth.value),
+            place_of_birth: place_of_birth.value,
+            passport_no: passport_no.value,
+            expiry_date: dashFormat(expiry_date.value),
+            place_of_issue: place_of_issue.value,
+            address: address.value,
+            phone: phone.value,
+            mobile: mobile.value,
+            mobile_2: mobile_2.value,
+            referee_name: referee_name.value,
+            referee_mobile: referee_mobile.value,
+            document_correction: document_correction.value,
+            education_history: education_history.value,
+            semester_year: semester_year.value,
+            country_detail: country_detail.value,
+            cv_path: cv_path.value,
+            passport: passport.value,
 
-    console.log(education_history, "education");
+            moi: moi.value,
+            english_proficiency: english_proficiency.value,
+            ielts: ielts.value,
+            other_english_test: other_english_test.value,
+
+            academic_document: academic_document.value,
+            teacher_reference: teacher_reference.value,
+            cnic: cnic.value,
+            experience_letter: experience_letter.value,
+            other_certificates: other_certificates.value,
+            conditional_offer: conditional_offer.value,
+            unconditional_offer: unconditional_offer.value,
+            payment_proof: payment_proof.value,
+            cas_ecoe: cas_ecoe.value,
+            visa: visa.value,
+            travel_plan: travel_plan.value,
+            gt_document: gt_document.value,
+        };
+
+        storeStudentDetail(data)
+            .then((res) => {
+                const id = route.params.id;
+                router.push(`/student/view/${id}`);
+                toast.success("Student Details Added Successfully!");
+            })
+            .catch((err) => {
+                if (err.response.data.error) {
+                    toast.error(err.response.data.error);
+                }
+            })
+            .finally((res) => {
+                loading.value = false;
+            });
+    }
 };
 
 const addMoreCountryDetail = () => {
@@ -141,59 +268,328 @@ const addMoreEducation = () => {
     }
 };
 
-const handleFileChange = (e) => {
-    console.log(e.target.files[0], e.target.name, "event");
+const handleChange = (e) => {
+    console.log(updateObj.value, e.target.type, "updateObj");
+    if (edit) {
+        const { name, value } = e.target;
+        if (value) {
+            if (name === "education_history") {
+                updateObj.value[name] = education_history.value;
+            } else if (name === "country_detail") {
+                updateObj.value[name] = country_detail.value;
+            } else {
+                if (e.target.type === "file") {
+                    updateObj.value[name] = e.target.files;
+                } else {
+                    if (e.target.type === "radio") {
+                        updateObj.value[name] = Number(e.target.value);
+                    } else {
+                        updateObj.value[name] = e.target.value;
+                    }
+                }
+            }
+
+            // if (name === "cv_path") {
+            //     cv_path.value = e.target.files;
+            // } else if (name === "passport") {
+            //     passport.value = e.target.files;
+            // } else if (name === "academic_document") {
+            //     academic_document.value = e.target.files;
+            // } else if (name === "teacher_reference") {
+            //     teacher_reference.value = e.target.files;
+            // } else if (name === "cnic") {
+            //     cnic.value = e.target.files;
+            // } else if (name === "experience_letter") {
+            //     experience_letter.value = e.target.files;
+            // } else if (name === "other_certificates") {
+            //     other_certificates.value = e.target.files;
+            // } else if (name === "conditional_offer") {
+            //     conditional_offer.value = e.target.files;
+            // } else if (name === "unconditional_offer") {
+            //     unconditional_offer.value = e.target.files;
+            // } else if (name === "payment_proof") {
+            //     payment_proof.value = e.target.files;
+            // } else if (name === "cas_ecoe") {
+            //     cas_ecoe.value = e.target.files;
+            // } else if (name === "visa") {
+            //     visa.value = e.target.files;
+            // } else if (name === "travel_plan") {
+            //     travel_plan.value = e.target.files;
+            // } else if (name === "gt_document") {
+            //     gt_document.value = e.target.files;
+            // } else if (name === "moi") {
+            //     moi.value = e.target.files;
+            // } else if (name === "english_proficiency") {
+            //     english_proficiency.value = e.target.files;
+            // } else if (name === "ielts") {
+            //     ielts.value = e.target.files;
+            // } else if (name === "other_english_test") {
+            //     other_english_test.value = e.target.files;
+            // }
+        }
+    }
+};
+
+const fetchStudentDetail = () => {
+    console.log(data.value, "data.value");
+    if (data.value) {
+        photo_path.value.preview = data.value.student.photo_path;
+        full_name.value = data.value.student.full_name;
+        email.value = data.value.student.email;
+        nationality.value = data.value.student.nationality;
+        marital_status.value = data.value.student.marital_status.toString();
+        gender.value = data.value.student.gender.toString();
+        date_of_birth.value = data.value.student.date_of_birth;
+        place_of_birth.value = data.value.student.place_of_birth;
+        passport_no.value = data.value.student.passport_no;
+        expiry_date.value = data.value.student.expiry_date;
+        place_of_issue.value = data.value.student.place_of_issue;
+        address.value = data.value.student.address;
+        phone.value = data.value.student.phone;
+        mobile.value = data.value.student.mobile;
+        mobile_2.value = data.value.student.mobile_2;
+        referee_name.value = data.value.student.referee_name;
+        referee_mobile.value = data.value.student.referee_mobile;
+        document_correction.value = data.value.student.document_correction;
+
+        education_history.value = data.value.student.education_history;
+
+        semester_year.value = data.value.student.semester_year.toString();
+
+        country_detail.value = data.value.student.country_detail;
+
+        cv_path.value = data.value.student.cv_path;
+        passport.value = data.value.student.passport;
+        academic_document.value = data.value.student.academic_document;
+        teacher_reference.value = data.value.student.teacher_reference;
+        cnic.value = data.value.student.cnic;
+        experience_letter.value = data.value.student.experience_letter;
+        other_certificates.value = data.value.student.other_certificates;
+        conditional_offer.value = data.value.student.conditional_offer;
+        unconditional_offer.value = data.value.student.unconditional_offer;
+        payment_proof.value = data.value.student.payment_proof;
+        cas_ecoe.value = data.value.student.cas_ecoe;
+        visa.value = data.value.student.visa;
+        travel_plan.value = data.value.student.travel_plan;
+        gt_document.value = data.value.student.gt_document;
+
+        moi.value = data.value.student.english_test?.moi;
+        english_proficiency.value =
+            data.value.student.english_test?.english_proficiency;
+        ielts.value = data.value.student.english_test?.ielts;
+        other_english_test.value =
+            data.value.student.english_test?.other_english_test;
+    }
+};
+
+onMounted(fetchStudentDetail);
+
+const handleRemove = (name) => {
+    if (name === "cv_path") {
+        cv_path.value = "";
+    } else if (name === "passport") {
+        passport.value = "";
+    } else if (name === "academic_document") {
+        academic_document.value = "";
+    } else if (name === "teacher_reference") {
+        teacher_reference.value = "";
+    } else if (name === "cnic") {
+        cnic.value = "";
+    } else if (name === "experience_letter") {
+        experience_letter.value = "";
+    } else if (name === "other_certificates") {
+        other_certificates.value = "";
+    } else if (name === "conditional_offer") {
+        conditional_offer.value = "";
+    } else if (name === "unconditional_offer") {
+        unconditional_offer.value = "";
+    } else if (name === "payment_proof") {
+        payment_proof.value = "";
+    } else if (name === "cas_ecoe") {
+        cas_ecoe.value = "";
+    } else if (name === "visa") {
+        visa.value = "";
+    } else if (name === "travel_plan") {
+        travel_plan.value = "";
+    } else if (name === "gt_document") {
+        gt_document.value = "";
+    } else if (name === "moi") {
+        moi.value = "";
+    } else if (name === "english_proficiency") {
+        english_proficiency.value = "";
+    } else if (name === "ielts") {
+        ielts.value = "";
+    } else if (name === "other_english_test") {
+        other_english_test.value = "";
+    }
+};
+
+const dateOfBirthClosed = () => {
+    if (edit) {
+        updateObj.value["date_of_birth"] = dashFormat(date_of_birth.value);
+    }
+};
+
+const expiryDateClosed = () => {
+    if (edit) {
+        updateObj.value["expiry_date"] = dashFormat(expiry_date.value);
+    }
+};
+const educationHistoryClosed = () => {
+    if (edit) {
+        updateObj.value["education_history"] = education_history.value;
+    }
 };
 </script>
 
-<template>
-    <VCard>
+<template >
+    <VCard :loading="loading">
+        <template
+            v-slot:title
+            v-if="
+                (readonly === 'true' && (
+                    (!cv_path ||
+                        !passport ||
+                        !academic_document ||
+                        !teacher_reference ||
+                        !cnic ||
+                        !experience_letter ||
+                        !other_certificates ||
+                        !conditional_offer ||
+                        !unconditional_offer ||
+                        !payment_proof ||
+                        !cas_ecoe ||
+                        !visa ||
+                        !travel_plan ||
+                        !gt_document) ||
+                (!moi && !english_proficiency && !ielts && !other_english_test)))
+            "
+        >
+            <v-alert density="compact" type="warning">
+                <template v-slot:text>
+                    <v-expansion-panels style="color: aliceblue">
+                        <v-expansion-panel
+                            title="Some Files are Missing. See Detail"
+                            style="color: aliceblue; background-color: #ffb400"
+                        >
+                            <template v-slot:text>
+                                <ul
+                                    class="ml-5"
+                                    style="background-color: #ffb400"
+                                >
+                                    <li v-if="!cv_path">Cv File is Missing.</li>
+                                    <li v-if="!passport">
+                                        Passport File is Missing.
+                                    </li>
+                                    <li v-if="!academic_document">
+                                        Academic Documents File is Missing.
+                                    </li>
+                                    <li v-if="!teacher_reference">
+                                        Teacher Reference is Missing.
+                                    </li>
+                                    <li v-if="!cnic">CNIC File is Missing.</li>
+                                    <li v-if="!experience_letter">
+                                        Experience Letter File is Missing.
+                                    </li>
+                                    <li v-if="!conditional_offer">
+                                        Conditional Offer File is Missing.
+                                    </li>
+                                    <li v-if="!unconditional_offer">
+                                        Unconditional Offer File is Missing.
+                                    </li>
+                                    <li v-if="!visa">
+                                        Payment Proof File is Missing.
+                                    </li>
+                                    <li v-if="!cas_ecoe">
+                                        Cas/Ecoe File is Missing.
+                                    </li>
+                                    <li v-if="!visa">Visa File is Missing.</li>
+                                    <li v-if="!travel_plan">
+                                        Travel Plan File is Missing.
+                                    </li>
+                                    <li v-if="!gt_document">
+                                        GT Document File is Missing.
+                                    </li>
+
+                                    <li v-if="!gt_document">
+                                        GT Document File is Missing.
+                                    </li>
+                                    <li
+                                        v-if="
+                                            !moi &&
+                                            !english_proficiency &&
+                                            !ielts &&
+                                            !other_english_test
+                                        "
+                                    >
+                                        English Tests File is Missing.
+                                    </li>
+                                </ul>
+                            </template>
+                        </v-expansion-panel>
+                    </v-expansion-panels>
+                </template>
+            </v-alert>
+        </template>
         <VForm @submit.prevent="handleSubmit" class="pa-4">
-            <VCardText class="d-flex pl-0">
-                <!-- 👉 Avatar -->
-                <VCard
-                    class="me-6 d-flex align-center justify-center"
-                    width="100"
-                    height="100"
-                >
-                    <span v-if="!photo_path.preview">PHOTO</span>
-                    <VAvatar
-                        size="100"
-                        :image="photo_path.preview"
-                        v-if="photo_path.preview"
-                        rounded="0"
-                    />
-                </VCard>
-
-                <!-- 👉 Upload Photo -->
-                <form class="d-flex flex-column justify-center gap-5">
-                    <div class="d-flex flex-wrap gap-2">
-                        <VBtn color="primary" @click="refInputEl?.click()">
-                            <VIcon
-                                icon="mdi-cloud-upload-outline"
-                                class="d-sm-none"
-                            />
-                            <span class="d-none d-sm-block"
-                                >Upload new photo</span
-                            >
-                        </VBtn>
-
-                        <input
-                            ref="refInputEl"
-                            type="file"
-                            name="file"
-                            accept=".jpeg,.png,.jpg"
-                            hidden
-                            @input="changeAvatar"
-                            multiple="false"
+            <div class="d-flex justify-space-between align-center">
+                <VCardText class="d-flex pl-0">
+                    <!-- 👉 Avatar -->
+                    <VCard
+                        class="me-6 d-flex align-center justify-center"
+                        width="100"
+                        height="100"
+                    >
+                        <span v-if="!photo_path.preview">PHOTO</span>
+                        <VAvatar
+                            size="100"
+                            :image="photo_path.preview"
+                            v-if="photo_path.preview"
+                            rounded="0"
                         />
-                    </div>
+                    </VCard>
 
-                    <p class="text-body-1 mb-0">
-                        Allowed JPG, GIF or PNG. Max size of 800K
-                    </p>
-                </form>
-            </VCardText>
+                    <!-- 👉 Upload Photo -->
+                    <form
+                        class="d-flex flex-column justify-center gap-5"
+                        v-if="readonly !== 'true' || edit === true"
+                    >
+                        <div class="d-flex flex-wrap gap-2">
+                            <VBtn color="primary" @click="refInputEl?.click()">
+                                <VIcon
+                                    icon="mdi-cloud-upload-outline"
+                                    class="d-sm-none"
+                                />
+                                <span class="d-none d-sm-block"
+                                    >Upload new photo</span
+                                >
+                            </VBtn>
+
+                            <input
+                                ref="refInputEl"
+                                type="file"
+                                name="file"
+                                accept=".jpeg,.png,.jpg"
+                                hidden
+                                @input="changeAvatar"
+                                multiple="false"
+                            />
+                        </div>
+
+                        <p class="text-body-1 mb-0">
+                            Allowed JPG, GIF or PNG. Max size of 800K
+                        </p>
+                    </form>
+                </VCardText>
+                <VBtn
+                    color="primary"
+                    text
+                    @click="() => (edit = true)"
+                    class="action-button"
+                    v-if="readonly === true"
+                    >Edit</VBtn
+                >
+            </div>
 
             <VRow>
                 <!-- 👉 Name -->
@@ -205,6 +601,14 @@ const handleFileChange = (e) => {
                         v-model="full_name"
                         placeholder="Full Name (as written on your passport)"
                         :rules="[required]"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="full_name"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -224,6 +628,14 @@ const handleFileChange = (e) => {
                         placeholder="Email"
                         class="flex-1"
                         :rules="[required]"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="email"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -243,6 +655,14 @@ const handleFileChange = (e) => {
                         placeholder="Nationality"
                         :rules="[required]"
                         class="flex-1"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="nationality"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -262,6 +682,14 @@ const handleFileChange = (e) => {
                             v-model="marital_status"
                             inline=""
                             :rules="[required]"
+                            :variant="
+                                readonly === 'true' && edit === false
+                                    ? 'solo'
+                                    : 'outlined'
+                            "
+                            :readonly="readonly === 'true' && edit === false"
+                            name="marital_status"
+                            @change="handleChange"
                         >
                             <VRadio
                                 label="Single"
@@ -286,6 +714,14 @@ const handleFileChange = (e) => {
                             v-model="gender"
                             inline=""
                             :rules="[required]"
+                            :variant="
+                                readonly === 'true' && edit === false
+                                    ? 'solo'
+                                    : 'outlined'
+                            "
+                            :readonly="readonly === 'true' && edit === false"
+                            name="gender"
+                            @change="handleChange"
                         >
                             <VRadio
                                 label="Male"
@@ -306,6 +742,13 @@ const handleFileChange = (e) => {
                             v-model="date_of_birth"
                             :max-date="new Date()"
                             placeholder="Date of Birth *"
+                            :readonly="readonly === 'true' && edit === false"
+                            :class="{
+                                dateDisabled:
+                                    readonly === 'true' && edit === false,
+                            }"
+                            name="date_of_birth"
+                            @closed="dateOfBirthClosed"
                         />
                         <div
                             class="text-error text-caption"
@@ -317,20 +760,28 @@ const handleFileChange = (e) => {
                 </VCol>
 
                 <VCol>
-                    <div>
-                        <VueDatePicker
-                            :enable-time-picker="false"
-                            v-model="place_of_birth"
-                            :max-date="new Date()"
-                            placeholder="Place of Birth *"
-                        />
-                        <div
-                            class="text-error text-caption"
-                            v-if="!place_of_birth"
-                        >
-                            Field is required
-                        </div>
-                    </div>
+                    <VTextField
+                        v-model="place_of_birth"
+                        type="text"
+                        placeholder="Place Of Birth"
+                        :rules="[required]"
+                        class="flex-1"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="place_of_birth"
+                        @input="handleChange"
+                    >
+                        <template v-slot:label>
+                            <div>
+                                Place of Birth
+                                <span class="text-error">*</span>
+                            </div>
+                        </template>
+                    </VTextField>
                 </VCol>
             </VRow>
 
@@ -342,6 +793,14 @@ const handleFileChange = (e) => {
                         placeholder="Passport No"
                         :rules="[required]"
                         class="flex-1"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="passport_no"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -352,20 +811,25 @@ const handleFileChange = (e) => {
                     </VTextField>
                 </VCol>
                 <VCol>
-                    <VTextField
-                        v-model="expiry_date"
-                        type="text"
-                        placeholder="Date of Epiry"
-                        :rules="[required]"
-                        class="flex-1"
-                    >
-                        <template v-slot:label>
-                            <div>
-                                Date of Epiry
-                                <span class="text-error">*</span>
-                            </div>
-                        </template>
-                    </VTextField>
+                    <div>
+                        <VueDatePicker
+                            :enable-time-picker="false"
+                            v-model="expiry_date"
+                            placeholder="Date of Expiry"
+                            :readonly="readonly === 'true' && edit === false"
+                            :class="{
+                                dateDisabled:
+                                    readonly === 'true' && edit === false,
+                            }"
+                            @closed="expiryDateClosed"
+                        />
+                        <div
+                            class="text-error text-caption"
+                            v-if="!expiry_date"
+                        >
+                            Field is required
+                        </div>
+                    </div>
                 </VCol>
 
                 <VCol>
@@ -375,6 +839,14 @@ const handleFileChange = (e) => {
                         label="Place of Issue"
                         placeholder="Place of Issue"
                         class="flex-1"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="place_of_issue"
+                        @input="handleChange"
                     >
                     </VTextField>
                 </VCol>
@@ -388,6 +860,14 @@ const handleFileChange = (e) => {
                         placeholder="Address for Correspondence"
                         class="flex-1"
                         :rules="[required]"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="address"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -408,6 +888,14 @@ const handleFileChange = (e) => {
                         placeholder="Phone"
                         class="flex-1"
                         :rules="[required]"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="phone"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -426,6 +914,14 @@ const handleFileChange = (e) => {
                         placeholder="Mobile"
                         class="flex-1"
                         :rules="[required]"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="mobile"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -443,6 +939,14 @@ const handleFileChange = (e) => {
                         placeholder="Mobile 2"
                         class="flex-1"
                         :rules="[required]"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="mobile_2"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -462,6 +966,14 @@ const handleFileChange = (e) => {
                         placeholder="Raferee Name"
                         class="flex-1"
                         :rules="[required]"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="referee_name"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -478,15 +990,15 @@ const handleFileChange = (e) => {
                         type="text"
                         placeholder="Raferee Mobile"
                         class="flex-1"
-                        :rules="[required]"
-                    >
-                        <template v-slot:label>
-                            <div>
-                                Referee Mobile
-                                <span class="text-error">*</span>
-                            </div>
-                        </template>
-                    </VTextField>
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="referee_mobile"
+                        @input="handleChange"
+                    />
                 </VCol>
             </VRow>
 
@@ -498,6 +1010,14 @@ const handleFileChange = (e) => {
                         label="Any Correaction is required in your documents"
                         placeholder="Any Correction is required in your documents"
                         class="flex-1"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="document_correction"
+                        @input="handleChange"
                     >
                     </VTextField>
                 </VCol>
@@ -513,6 +1033,14 @@ const handleFileChange = (e) => {
                         placeholder="Name of Course"
                         class="flex-1"
                         :rules="[required]"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="education_history"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -537,6 +1065,16 @@ const handleFileChange = (e) => {
                                     :max-date="new Date()"
                                     placeholder="Start Date *"
                                     month-picker
+                                    :readonly="
+                                        readonly === 'true' && edit === false
+                                    "
+                                    :class="{
+                                        dateDisabled:
+                                            readonly === 'true' &&
+                                            edit === false,
+                                    }"
+                                    name="education_history"
+                                    @closed="educationHistoryClosed"
                                 />
                                 <div
                                     class="text-error text-caption"
@@ -564,6 +1102,16 @@ const handleFileChange = (e) => {
                                     :max-date="new Date()"
                                     placeholder="End Date *"
                                     month-picker
+                                    :readonly="
+                                        readonly === 'true' && edit === false
+                                    "
+                                    :class="{
+                                        dateDisabled:
+                                            readonly === 'true' &&
+                                            edit === false,
+                                    }"
+                                    name="education_history"
+                                    @closed="educationHistoryClosed"
                                 />
                                 <div
                                     class="text-error text-caption"
@@ -582,6 +1130,14 @@ const handleFileChange = (e) => {
                         placeholder="Name of Institution"
                         class="flex-1"
                         :rules="[required]"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="education_history"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -598,6 +1154,14 @@ const handleFileChange = (e) => {
                         placeholder="Grade/CGPA/Percentage"
                         class="flex-1"
                         :rules="[required]"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="education_history"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -615,6 +1179,7 @@ const handleFileChange = (e) => {
                         size="large"
                         variant="text"
                         @click="addMoreEducation"
+                        v-if="readonly !== 'true'"
                         >+Add More</VBtn
                     >
                 </VCol>
@@ -631,6 +1196,14 @@ const handleFileChange = (e) => {
                             v-model="semester_year"
                             inline=""
                             :rules="[required]"
+                            :variant="
+                                readonly === 'true' && edit === false
+                                    ? 'solo'
+                                    : 'outlined'
+                            "
+                            :readonly="readonly === 'true' && edit === false"
+                            name="semester_year"
+                            @change="handleChange"
                         >
                             <VRadio
                                 label="Jan/Feb"
@@ -669,6 +1242,14 @@ const handleFileChange = (e) => {
                         placeholder="Name of Course"
                         class="flex-1"
                         :rules="[required]"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="country_detail"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -685,6 +1266,14 @@ const handleFileChange = (e) => {
                         placeholder="Name of Country"
                         class="flex-1"
                         :rules="[required]"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="country_detail"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -697,11 +1286,6 @@ const handleFileChange = (e) => {
 
                 <VCol>
                     <VRow>
-                        <p
-                            class="d-flex align-center justify-center font-weight-medium mb-0 mr-2"
-                        >
-                            To:
-                        </p>
                         <VCol class="d-flex align-center">
                             <VTextField
                                 v-model="
@@ -711,6 +1295,16 @@ const handleFileChange = (e) => {
                                 placeholder="Name of Institution"
                                 class="flex-1"
                                 :rules="[required]"
+                                :variant="
+                                    readonly === 'true' && edit === false
+                                        ? 'solo'
+                                        : 'outlined'
+                                "
+                                :readonly="
+                                    readonly === 'true' && edit === false
+                                "
+                                name="country_detail"
+                                @input="handleChange"
                             >
                                 <template v-slot:label>
                                     <div>
@@ -729,6 +1323,14 @@ const handleFileChange = (e) => {
                         placeholder="Foundation / UG / PG"
                         class="flex-1"
                         :rules="[required]"
+                        :variant="
+                            readonly === 'true' && edit === false
+                                ? 'solo'
+                                : 'outlined'
+                        "
+                        :readonly="readonly === 'true' && edit === false"
+                        name="country_detail"
+                        @input="handleChange"
                     >
                         <template v-slot:label>
                             <div>
@@ -747,16 +1349,18 @@ const handleFileChange = (e) => {
                         size="large"
                         variant="text"
                         @click="addMoreCountryDetail"
+                        v-if="readonly !== 'true'"
                         >+Add More</VBtn
                     >
                 </VCol>
             </VRow>
-            <VRow>
+
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <h3>Upload Your Documents</h3>
                 </VCol>
             </VRow>
-            <VRow>
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -766,13 +1370,65 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                         name="cv_path"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
-            <VRow>
+
+            <VRow v-if="readonly === 'true' && cv_path">
+                <VCol>
+                    <h3 class="mb-2">Cv</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            CV -
+                            {{
+                                cv_path?.includes?.("cdn")
+                                    ? cv_path
+                                    : cv_path[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="cv_path"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="() => handleRemove('cv_path')"
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="cv_path"
+                                    class="action-button"
+                                    v-if="cv_path?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !cv_path && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="cv_path"
+                        label="Add your CV"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                        name="cv_path"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -783,17 +1439,67 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
-            <VRow>
+            <VRow v-if="readonly === 'true' && passport">
+                <VCol>
+                    <h3 class="mb-2">Passport</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            Passport -
+                            {{
+                                passport?.includes?.("cdn")
+                                    ? passport
+                                    : passport[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="passport"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="() => handleRemove('passport')"
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="passport"
+                                    class="action-button"
+                                    v-if="passport?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !passport && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="passport"
+                        name="passport"
+                        label="Add your Passport"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <h4 className=" font-weight-medium ">English Tests</h4>
                 </VCol>
             </VRow>
-            <VRow>
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -804,12 +1510,51 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
-            <VRow>
+            <VRow
+                v-if="
+                    readonly === 'true' &&
+                    (moi || english_proficiency || ielts || other_english_test)
+                "
+            >
+                <VCol>
+                    <h4 className=" font-weight-medium ">English Tests</h4>
+                </VCol>
+            </VRow>
+            <VRow v-if="readonly === 'true' && moi">
+                <VCol>
+                    <h3 class="mb-2">MOI</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            MOI -
+                            {{ moi?.includes?.("cdn") ? moi : moi[0].name }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="moi"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="() => handleRemove('moi')"
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="moi"
+                                    class="action-button"
+                                    v-if="moi?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -820,12 +1565,51 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
-            <VRow>
+
+            <VRow v-if="readonly === 'true' && english_proficiency">
+                <VCol>
+                    <h3 class="mb-2">English Proficiency</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            English Proficiency -
+                            {{
+                                english_proficiency?.includes?.("cdn")
+                                    ? english_proficiency
+                                    : english_proficiency[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="english_proficiency"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="
+                                        () =>
+                                            handleRemove('english_proficiency')
+                                    "
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="english_proficiency"
+                                    class="action-button"
+                                    v-if="
+                                        english_proficiency?.includes?.('cdn')
+                                    "
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -836,12 +1620,44 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
-            <VRow>
+
+            <VRow v-if="readonly === 'true' && ielts">
+                <VCol>
+                    <h3 class="mb-2">IELTS</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            IELTS -
+                            {{
+                                ielts?.includes?.("cdn") ? ielts : ielts[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="ielts"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="() => handleRemove('ielts')"
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="ielts"
+                                    class="action-button"
+                                    v-if="ielts?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -852,18 +1668,137 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
 
-            <VRow>
+            <VRow v-if="readonly === 'true' && other_english_test">
+                <VCol>
+                    <h3 class="mb-2">Other English Test</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            Other English Test -
+                            {{
+                                other_english_test?.includes?.("cdn")
+                                    ? other_english_test
+                                    : other_english_test[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="other_english_test"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="
+                                        () => handleRemove('other_english_test')
+                                    "
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="other_english_test"
+                                    class="action-button"
+                                    v-if="other_english_test?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow
+                v-if="
+                    readonly === 'true' &&
+                    edit &&
+                    !moi &&
+                    !english_proficiency &&
+                    !ielts &&
+                    !other_english_test
+                "
+            >
+                <VCol>
+                    <h4 className=" font-weight-medium ">English Tests</h4>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !moi && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="moi"
+                        name="moi"
+                        label="Add your MOI"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !english_proficiency && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="english_proficiency"
+                        name="english_proficiency"
+                        label="Add your English Proficiency"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !ielts && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="ielts"
+                        name="ielts"
+                        label="Add your IELTS"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !other_english_test && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="other_english_test"
+                        name="other_english_test"
+                        label="Add your Other English Test"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <h4 className=" font-weight-medium ">Academic Document</h4>
                 </VCol>
             </VRow>
-            <VRow>
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -874,18 +1809,76 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
 
-            <VRow>
+            <VRow v-if="readonly === 'true' && academic_document">
+                <VCol>
+                    <h3 class="mb-2">Academic Document</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            Academic Document -
+                            {{
+                                academic_document?.includes?.("cdn")
+                                    ? academic_document
+                                    : academic_document[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="academic_document"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="
+                                        () => handleRemove('academic_document')
+                                    "
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="academic_document"
+                                    class="action-button"
+                                    v-if="academic_document?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !academic_document && edit">
+                <VCol>
+                    <h4 className=" font-weight-medium ">Academic Document</h4>
+                </VCol>
+            </VRow>
+            <VRow v-if="readonly === 'true' && !academic_document && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="academic_document"
+                        name="academic_document"
+                        label="Add your Academic Document"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <h4 className=" font-weight-medium ">Teacher Reference</h4>
                 </VCol>
             </VRow>
-            <VRow>
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -896,17 +1889,76 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
-            <VRow>
+
+            <VRow v-if="readonly === 'true' && teacher_reference">
+                <VCol>
+                    <h3 class="mb-2">Teacher Reference</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            Teacher Reference -
+                            {{
+                                teacher_reference?.includes?.("cdn")
+                                    ? teacher_reference
+                                    : teacher_reference[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="teacher_reference"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="
+                                        () => handleRemove('teacher_reference')
+                                    "
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="teacher_reference"
+                                    class="action-button"
+                                    v-if="teacher_reference?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !teacher_reference && edit">
+                <VCol>
+                    <h4 className=" font-weight-medium ">Teacher Reference</h4>
+                </VCol>
+            </VRow>
+            <VRow v-if="readonly === 'true' && !teacher_reference && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="teacher_reference"
+                        name="teacher_reference"
+                        label="Add your Teacher References"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <h4 className=" font-weight-medium ">Other Documents</h4>
                 </VCol>
             </VRow>
-            <VRow>
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -917,12 +1969,99 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
-            <VRow>
+            <VRow
+                v-if="
+                    readonly === 'true' &&
+                    (cnic ||
+                        experience_letter ||
+                        experience_letter ||
+                        other_certificates ||
+                        conditional_offer ||
+                        unconditional_offer ||
+                        cas_ecoe ||
+                        payment_proof ||
+                        visa ||
+                        travel_plan)
+                "
+            >
+                <VCol>
+                    <h4 className=" font-weight-medium ">Other Documents</h4>
+                </VCol>
+            </VRow>
+            <VRow v-if="readonly === 'true' && cnic">
+                <VCol>
+                    <h3 class="mb-2">CNIC</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            CNIC -
+                            {{ cnic?.includes?.("cdn") ? cnic : cnic[0].name }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="cnic"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="() => handleRemove('cnic')"
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="cnic"
+                                    class="action-button"
+                                    v-if="cnic?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow
+                v-if="
+                    readonly === 'true' &&
+                    edit &&
+                    !cnic &&
+                    !experience_letter &&
+                    !experience_letter &&
+                    !other_certificates &&
+                    !conditional_offer &&
+                    !unconditional_offer &&
+                    !cas_ecoe &&
+                    !payment_proof &&
+                    !visa &&
+                    !travel_plan
+                "
+            >
+                <VCol>
+                    <h4 className=" font-weight-medium ">Other Documents</h4>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !cnic && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="cnic"
+                        name="cnic"
+                        label="Add your CNIC"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -933,12 +2072,66 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
-            <VRow>
+
+            <VRow v-if="readonly === 'true' && experience_letter">
+                <VCol>
+                    <h3 class="mb-2">Experience Letter</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            Experience Letter -
+                            {{
+                                experience_letter?.includes?.("cdn")
+                                    ? experience_letter
+                                    : experience_letter[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="experience_letter"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="
+                                        () => handleRemove('experience_letter')
+                                    "
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="experience_letter"
+                                    class="action-button"
+                                    v-if="experience_letter?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !experience_letter && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="experience_letter"
+                        name="experience_letter"
+                        label="Add your Experience Letter"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -949,12 +2142,65 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
-            <VRow>
+            <VRow v-if="readonly === 'true' && other_certificates">
+                <VCol>
+                    <h3 class="mb-2">Other Certificates</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            Other Certificates -
+                            {{
+                                other_certificates?.includes?.("cdn")
+                                    ? other_certificates
+                                    : other_certificates[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="other_certificates"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="
+                                        () => handleRemove('other_certificates')
+                                    "
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="other_certificates"
+                                    class="action-button"
+                                    v-if="other_certificates?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !other_certificates && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="other_certificates"
+                        name="other_certificates"
+                        label="Add your Other Certificates"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -965,12 +2211,66 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
-            <VRow>
+
+            <VRow v-if="readonly === 'true' && conditional_offer">
+                <VCol>
+                    <h3 class="mb-2">Conditional Offer</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            Conditional Offer -
+                            {{
+                                conditional_offer?.includes?.("cdn")
+                                    ? conditional_offer
+                                    : conditional_offer[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="conditional_offer"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="
+                                        () => handleRemove('conditional_offer')
+                                    "
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="conditional_offer"
+                                    class="action-button"
+                                    v-if="conditional_offer?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !conditional_offer && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="conditional_offer"
+                        name="conditional_offer"
+                        label="Add your Conditional Offer"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -981,12 +2281,69 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
-            <VRow>
+
+            <VRow v-if="readonly === 'true' && unconditional_offer">
+                <VCol>
+                    <h3 class="mb-2">Unconditional Offer</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            Unconditional Offer -
+                            {{
+                                unconditional_offer?.includes?.("cdn")
+                                    ? unconditional_offer
+                                    : unconditional_offer[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="unconditional_offer"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="
+                                        () =>
+                                            handleRemove('unconditional_offer')
+                                    "
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="unconditional_offer"
+                                    class="action-button"
+                                    v-if="
+                                        unconditional_offer?.includes?.('cdn')
+                                    "
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !unconditional_offer && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="unconditional_offer"
+                        name="unconditional_offer"
+                        label="Add your Unconditional Offer"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -997,12 +2354,64 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
-            <VRow>
+
+            <VRow v-if="readonly === 'true' && payment_proof">
+                <VCol>
+                    <h3 class="mb-2">Payment Proof</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            Payment Proof -
+                            {{
+                                payment_proof?.includes?.("cdn")
+                                    ? payment_proof
+                                    : payment_proof[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="payment_proof"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="() => handleRemove('payment_proof')"
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="payment_proof"
+                                    class="action-button"
+                                    v-if="payment_proof?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !payment_proof && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="payment_proof"
+                        name="payment_proof"
+                        label="Add your Payment Proof"
+                        placeholder="Select your files"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -1013,12 +2422,63 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
-            <VRow>
+
+            <VRow v-if="readonly === 'true' && cas_ecoe">
+                <VCol>
+                    <h3 class="mb-2">CAS/ECOE</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            CAS/ECOE -
+                            {{
+                                cas_ecoe?.includes?.("cdn")
+                                    ? cas_ecoe
+                                    : cas_ecoe[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="cas_ecoe"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="() => handleRemove('cas_ecoe')"
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="cas_ecoe"
+                                    class="action-button"
+                                    v-if="cas_ecoe?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !cas_ecoe && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="cas_ecoe"
+                        name="cas_ecoe"
+                        label="Add your CAS / eCoE"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -1029,13 +2489,60 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
 
-            <VRow>
+            <VRow v-if="readonly === 'true' && visa">
+                <VCol>
+                    <h3 class="mb-2">Visa</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            Visa -
+                            {{ visa?.includes?.("cdn") ? visa : visa[0].name }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="visa"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="() => handleRemove('visa')"
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="visa"
+                                    class="action-button"
+                                    v-if="visa?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !visa && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="visa"
+                        name="visa"
+                        label="Add your Visa file"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -1046,19 +2553,70 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
 
-            <VRow>
+            <VRow v-if="readonly === 'true' && travel_plan">
+                <VCol>
+                    <h3 class="mb-2">Travel Plan</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            Travel Plan -
+                            {{
+                                travel_plan?.includes?.("cdn")
+                                    ? travel_plan
+                                    : travel_plan[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="travel_plan"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="() => handleRemove('travel_plan')"
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="travel_plan"
+                                    class="action-button"
+                                    v-if="travel_plan?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !travel_plan && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="travel_plan"
+                        name="travel_plan"
+                        label="Add your Travel Plan"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <h4 className=" font-weight-medium ">GT Document</h4>
                 </VCol>
             </VRow>
 
-            <VRow>
+            <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
                         accept=".pdf"
@@ -1069,17 +2627,84 @@ const handleFileChange = (e) => {
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
                         :show-size="1000"
-                        @change="handleFileChange"
+                    >
+                    </VFileInput>
+                </VCol>
+            </VRow>
+            <VRow v-if="readonly === 'true' && gt_document">
+                <VCol>
+                    <h4 className=" font-weight-medium ">GT Document</h4>
+                </VCol>
+            </VRow>
+            <VRow v-if="readonly === 'true' && gt_document">
+                <VCol>
+                    <h3 class="mb-2">GT Document</h3>
+                    <VCard class="py-2 px-2">
+                        <div class="d-flex align-center justify-space-between">
+                            GT Document -
+                            {{
+                                gt_document?.includes?.("cdn")
+                                    ? gt_document
+                                    : gt_document[0].name
+                            }}
+                            <div>
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    name="gt_document"
+                                    class="action-button mr-2"
+                                    v-if="edit"
+                                    @click="() => handleRemove('gt_document')"
+                                    >Delete</VBtn
+                                >
+                                <VBtn
+                                    color="primary"
+                                    text
+                                    :href="gt_document"
+                                    class="action-button"
+                                    v-if="gt_document?.includes?.('cdn')"
+                                    >View</VBtn
+                                >
+                            </div>
+                        </div>
+                    </VCard>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !gt_document && edit">
+                <VCol>
+                    <h4 className=" font-weight-medium ">GT Document</h4>
+                </VCol>
+            </VRow>
+
+            <VRow v-if="readonly === 'true' && !gt_document && edit">
+                <VCol>
+                    <VFileInput
+                        accept=".pdf"
+                        v-model="gt_document"
+                        name="gt_document"
+                        label="Add your GT File"
+                        placeholder="Select your file"
+                        prepend-icon="mdi-paperclip"
+                        variant="outlined"
+                        :show-size="1000"
+                        @change="handleChange"
                     >
                     </VFileInput>
                 </VCol>
             </VRow>
 
             <!-- 👉 Email -->
-            <VRow>
+            <VRow v-if="readonly !== 'true' || edit === true">
                 <VCol cols="12" class="d-flex gap-4">
-                    <VBtn type="submit"> Submit </VBtn>
-                    <VBtn type="reset" color="secondary" variant="tonal">
+                    <VBtn type="submit" :disabled="loading"> Submit </VBtn>
+                    <VBtn
+                        type="reset"
+                        :disabled="loading"
+                        color="secondary"
+                        variant="tonal"
+                        v-if="readonly !== 'true'"
+                    >
                         Reset
                     </VBtn>
                 </VCol>
@@ -1092,5 +2717,20 @@ const handleFileChange = (e) => {
 .dp__input_icon_pad {
     padding-top: 14px;
     padding-bottom: 14px;
+}
+
+.dateDisabled {
+    box-shadow: 0 3px 1px -2px var(--v-shadow-key-umbra-opacity),
+        0 2px 2px 0 var(--v-shadow-key-penumbra-opacity),
+        0 1px 5px 0 var(--v-shadow-key-ambient-opacity);
+}
+
+.dateDisabled .dp__input {
+    border: 0px;
+}
+
+.v-expansion-panel-title {
+    padding: 6px !important;
+    min-height: 0 !important;
 }
 </style>

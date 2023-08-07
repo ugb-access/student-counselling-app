@@ -1,65 +1,92 @@
 <script setup>
 import avatar1 from "@images/avatars/avatar-1.png";
-import { getProfileData } from "@/services/user-service";
-import { getLocalAuth } from "@/utils/local";
-import { useRoute } from "vue-router";
-import { toast } from "vue3-toastify";
+import { watch } from "vue";
+import { updateUserProfile } from "@/services/user-service";
 
 const accountData = {
-    avatarImg: avatar1,
     name: "",
     username: "",
     email: "",
-    org: "",
     phone_number: "",
-    address: "",
-    state: "",
-    zip: "",
-    country: "",
-    language: "",
-    timezone: "",
-    currency: "",
 };
 
-const refInputEl = ref();
 const accountDataLocal = ref(structuredClone(accountData));
-const isAccountDeactivated = ref(false);
+const props = defineProps({
+    data: Object,
+});
+
+const { data } = toRefs(props);
 
 const loading = ref(true);
-const localUser = JSON.parse(getLocalAuth());
 
 const route = useRoute();
 
+const responseData = ref({
+    name: "",
+    phone_number: "",
+});
+
 const fetchProfileData = () => {
-    const id = route.params.id;
-    getProfileData(id)
-        .then((res) => {
-            loading.value = false;
-            accountDataLocal.value.name = res.data.data.name;
-            accountDataLocal.value.username = res.data.data.username;
-            accountDataLocal.value.email = res.data.data.email;
-            accountDataLocal.value.phone_number = res.data.data.phone_number;
-        })
-        .catch((err) => {
-            console.log(err, "Err");
-            toast.error(err?.response?.data?.message, {
-                autoClose: 6000,
-            });
-        });
+    console.log("hello");
+    loading.value = false;
+    accountDataLocal.value.name = data.value.name;
+    accountDataLocal.value.username = data.value.username;
+    accountDataLocal.value.email = data.value.email;
+    accountDataLocal.value.phone_number = data.value.phone_number;
+    responseData.value.name = data?.value?.name;
+    responseData.value.phone_number = data?.value?.phone_number;
 };
 
-onMounted(fetchProfileData);
+watch(data, fetchProfileData);
+
+const updateStudentProfile = () => {
+    const id = route.params.id;
+
+    const data = {};
+    console.log(responseData.value?.name?.trim(), accountDataLocal.value?.name?.trim(), "accountDataLocal");
+    if (
+        responseData.value?.name?.trim() !==
+        accountDataLocal.value?.name?.trim()
+    ) {
+        data["name"] = accountDataLocal.value.name.trim();
+    }
+    if (
+        responseData.value?.phone_number?.trim() !==
+        accountDataLocal.value?.phone_number?.trim()
+    ) {
+        data["phone_number"] = accountDataLocal.value.phone_number.trim();
+    }
+
+    if (Object.keys(data).length > 0 && Object.values(data).length > 0) {
+        loading.value = true;
+        updateUserProfile(id, data)
+            .then((res) => {
+                console.log(res, "res");
+                window.location.href = `/student/view/${id}`;
+            })
+            .catch((err) => {
+                console.log(err, "err");
+            })
+            .finally((res) => {
+                loading.value = false;
+            });
+    }
+};
 </script>
 
 <template>
     <VRow>
         <VCol cols="12">
-            <VCard title="Student Account Details">
+            <VCard
+                title="Student Account Details"
+                :loading="loading === true"
+                :disabled="loading === true"
+            >
                 <VDivider />
 
                 <VCardText>
                     <!-- 👉 Form -->
-                    <VForm class="mt-6">
+                    <VForm @submit.prevent="updateStudentProfile" class="mt-6">
                         <VRow>
                             <!-- 👉 First Name -->
                             <VCol md="6" cols="12">
@@ -74,6 +101,8 @@ onMounted(fetchProfileData);
                                 <VTextField
                                     v-model="accountDataLocal.username"
                                     label="Username"
+                                    readonly
+                                    variant="solo"
                                 />
                             </VCol>
 
@@ -83,6 +112,8 @@ onMounted(fetchProfileData);
                                     v-model="accountDataLocal.email"
                                     label="E-mail"
                                     type="email"
+                                    readonly
+                                    variant="solo"
                                 />
                             </VCol>
 
@@ -96,7 +127,9 @@ onMounted(fetchProfileData);
 
                             <!-- 👉 Form Actions -->
                             <VCol cols="12" class="d-flex flex-wrap gap-4">
-                                <VBtn>Save changes</VBtn>
+                                <VBtn type="submit" :disabled="loading"
+                                    >Save changes</VBtn
+                                >
                             </VCol>
                         </VRow>
                     </VForm>

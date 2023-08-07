@@ -1,9 +1,15 @@
 <script setup>
 import { useRoute } from "vue-router";
 import StudentDetail from "@/views/pages/account-settings/StudentDetail.vue";
+import AddStudentDetails from "@/views/pages/form-layouts/AddStudentDetails.vue";
+import { onMounted } from "vue";
+import { getStudentDetail } from "@/services/student-service";
+
 
 const route = useRoute();
 const activeTab = ref(route.params.tab);
+
+const data = ref(null);
 
 // tabs
 const tabs = [
@@ -13,6 +19,32 @@ const tabs = [
         tab: "account",
     },
 ];
+
+const fetchStudentDetail = () => {
+    const id = route.params.id;
+    getStudentDetail(id)
+        .then((res) => {
+            const studentData = res.data.data;
+            data.value = studentData;
+            if (studentData.student) {
+                tabs[1] = {
+                    title: "Student Detail",
+                    icon: "mdi-account-outline",
+                    tab: "student-detail",
+                };
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+};
+
+onMounted(fetchStudentDetail);
+
+
+
+
+
 </script>
 
 <template>
@@ -27,8 +59,11 @@ const tabs = [
 
         <VWindow v-model="activeTab" class="mt-5 disable-tab-transition">
             <!-- Account -->
-            <VWindowItem value="account">
-                <StudentDetail />
+            <VWindowItem value="account"  >
+                <StudentDetail :data="data" />
+            </VWindowItem>
+            <VWindowItem value="student-detail">
+                <AddStudentDetails readonly="true" :data="data" />
             </VWindowItem>
         </VWindow>
     </div>

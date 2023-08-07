@@ -2,9 +2,13 @@
 import { useRoute } from "vue-router";
 import StudentEdit from "@/views/pages/account-settings/StudentEdit.vue";
 import AddStudentDetails from "@/views/pages/form-layouts/AddStudentDetails.vue";
+import { onMounted } from "vue";
+import { getStudentDetail } from "@/services/student-service";
 
 const route = useRoute();
 const activeTab = ref(route.params.tab);
+
+const data = ref(null);
 
 // tabs
 const tabs = [
@@ -13,13 +17,31 @@ const tabs = [
         icon: "mdi-account-outline",
         tab: "account",
     },
-
-    {
-        title: "Student Detail",
-        icon: "mdi-account-outline",
-        tab: "student-detail",
-    },
 ];
+
+
+
+const fetchStudentDetail = () => {
+    const id = route.params.id;
+    getStudentDetail(id)
+        .then((res) => {
+            const studentData = res.data.data;
+            data.value = studentData;
+            if (!studentData.student) {
+                tabs[1] = {
+                    title: "Student Detail",
+                    icon: "mdi-account-outline",
+                    tab: "student-detail",
+                };
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+};
+
+onMounted(fetchStudentDetail);
+
 </script>
 
 <template>
@@ -34,12 +56,12 @@ const tabs = [
 
         <VWindow v-model="activeTab" class="mt-5 disable-tab-transition">
             <!-- Account -->
-            <VWindowItem value="account">
-                <StudentEdit />
+            <VWindowItem value="account" >
+                <StudentEdit :data="data" />
             </VWindowItem>
 
             <VWindowItem value="student-detail">
-                <AddStudentDetails />
+                <AddStudentDetails readonly="false" />
             </VWindowItem>
         </VWindow>
     </div>

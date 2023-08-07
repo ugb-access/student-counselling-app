@@ -1,6 +1,7 @@
 <script setup>
 import avatar1 from "@images/avatars/avatar-1.png";
 import router from "@/router";
+
 import { getLocalAuth, removeLocalAuth } from "@/utils/local";
 import { onMounted } from "vue";
 
@@ -11,6 +12,7 @@ const user = ref({
 
 const handleLogout = () => {
     removeLocalAuth();
+
     router.push("/login");
 };
 
@@ -65,7 +67,7 @@ onMounted(() => {
                 <VDivider class="my-2" />
 
                 <!-- 👉 Profile -->
-                <VListItem link>
+                <VListItem link to="/account-settings">
                     <template #prepend>
                         <VIcon
                             class="me-2"

@@ -6,6 +6,10 @@ import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { toast } from "vue3-toastify";
 
+import { deleteUserProfile } from "@/services/user-service";
+
+
+
 const accountData = {
     name: "",
     username: "",
@@ -41,6 +45,20 @@ const fetchProfileData = () => {
 };
 
 onMounted(fetchProfileData);
+
+
+const deleteUser = () => {
+    const id = route.params.id;
+    loading.value = true
+    deleteUserProfile(id).then(res => {
+        console.log(res, "res")
+        window.location.href = "/counsellors";
+    }).catch(err => {
+        console.log(err, "err")
+    }).finally(res => {
+        loading.value = false
+    })
+}
 </script>
 
 <template>
@@ -55,7 +73,7 @@ onMounted(fetchProfileData);
 
                 <VCardText>
                     <!-- 👉 Form -->
-                    <VForm class="mt-6">
+                    <VForm class="mt-6" >
                         <VRow>
                             <!-- 👉 First Name -->
                             <VCol md="6" cols="12">
@@ -103,7 +121,7 @@ onMounted(fetchProfileData);
             </VCard>
         </VCol>
 
-        <VCol cols="12">
+        <VCol cols="12" v-if="localUser.data.role_id === 1" >
             <!-- 👉 Deactivate Account -->
             <VCard title="Deactivate Account" :disabled="loading === true">
                 <VCardText>
@@ -115,9 +133,10 @@ onMounted(fetchProfileData);
                     </div>
 
                     <VBtn
-                        :disabled="!isAccountDeactivated"
+                        :disabled="!isAccountDeactivated || loading"
                         color="error"
                         class="mt-3"
+                        @click="deleteUser"
                     >
                         Deactivate Account
                     </VBtn>

@@ -1,7 +1,5 @@
 <script setup>
 import { useTheme } from "vuetify";
-import upgradeBannerDark from "@images/pro/upgrade-banner-dark.png";
-import upgradeBannerLight from "@images/pro/upgrade-banner-light.png";
 import VerticalNavLayout from "@layouts/components/VerticalNavLayout.vue";
 import VerticalNavLink from "@layouts/components/VerticalNavLink.vue";
 import VerticalNavSectionTitle from "@/@layouts/components/VerticalNavSectionTitle.vue";
@@ -32,9 +30,7 @@ const localUser = JSON.parse(getLocalAuth());
 
                 <VSpacer />
 
-                <IconBtn class="me-2">
-                    <VIcon icon="mdi-bell-outline" />
-                </IconBtn>
+               
 
                 <NavbarThemeSwitcher class="me-2" />
 
@@ -60,7 +56,9 @@ const localUser = JSON.parse(getLocalAuth());
 
             <!-- 👉 Pages -->
             <VerticalNavSectionTitle
-                
+                v-if="
+                    localUser.data.role_id == 1 || localUser.data.role_id == 2
+                "
                 :item="{
                     heading: 'Pages',
                 }"
@@ -91,7 +89,6 @@ const localUser = JSON.parse(getLocalAuth());
                     to: '/students',
                 }"
             />
-
 
             <!-- <VerticalNavLink
                 v-if="localUser.data.role_id == 2"

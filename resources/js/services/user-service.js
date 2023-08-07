@@ -129,8 +129,6 @@ export const getUserCount = () => {
     });
 };
 
-
-
 export const getProfileData = (id) => {
     const auth_data = getLocalAuth();
     return api({
@@ -140,4 +138,39 @@ export const getProfileData = (id) => {
             Authorization: `Bearer ${JSON.parse(auth_data).token}`,
         },
     });
-}
+};
+
+export const updateProfile = (data) => {
+    const auth_data = getLocalAuth();
+    return api({
+        method: "patch",
+        url: `/update-profile`,
+        data,
+        headers: {
+            Authorization: `Bearer ${JSON.parse(auth_data).token}`,
+        },
+    });
+};
+
+export const updateUserProfile = (id, data) => {
+    const auth_data = getLocalAuth();
+    return api({
+        method: "patch",
+        url: `/update-user-profile/${id}`,
+        data,
+        headers: {
+            Authorization: `Bearer ${JSON.parse(auth_data).token}`,
+        },
+    });
+};
+
+export const deleteUserProfile = (id) => {
+    const auth_data = getLocalAuth();
+    return api({
+        method: "delete",
+        url: `/delete-user-profile/${id}`,
+        headers: {
+            Authorization: `Bearer ${JSON.parse(auth_data).token}`
+        },
+    });
+};

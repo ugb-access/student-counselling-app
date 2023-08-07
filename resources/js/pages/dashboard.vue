@@ -6,8 +6,11 @@ import UserAnalytics from "@/views/dashboard/UserAnalytics.vue";
 
 import AnalyticsNotification from "@/views/dashboard/AnalyticsNotification.vue";
 import { getLocalAuth } from "@/utils/local";
+import { onMounted } from "vue";
+import StudentDashboard from "@/views/dashboard/StudentDashboard.vue";
 
 const localUser = JSON.parse(getLocalAuth());
+
 </script>
 
 <template>
@@ -19,10 +22,7 @@ const localUser = JSON.parse(getLocalAuth());
         >
             <UserAnalytics />
         </VCol>
-        <VCol cols="12" md="4">
-            <AnalyticsNotification />
-        </VCol>
-
+       
         <VCol cols="12" md="4" v-if="localUser.data.role_id === 1">
             <AnalyticsAdmin />
         </VCol>
@@ -33,6 +33,14 @@ const localUser = JSON.parse(getLocalAuth());
             v-if="localUser.data.role_id === 1 || localUser.data.role_id === 2"
         >
             <AnalyticsStudentCounsellor />
+        </VCol>
+
+        <VCol
+            cols="12"
+         
+            v-if="localUser.data.role_id === 3"
+        >
+            <StudentDashboard readonly="true" type="student"  />
         </VCol>
     </VRow>
 </template>

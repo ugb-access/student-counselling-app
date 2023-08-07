@@ -41,9 +41,14 @@ Route::middleware('auth:sanctum', 'role:admin|counsellor')->post('/add-student',
 
 
 
-Route::middleware('auth:sanctum')->put('/update-profile/{id}', [AuthController::class, 'update_profile'])->name("update_profile");
+Route::middleware('auth:sanctum')->patch('/update-profile', [UserController::class, 'update_profile'])->name("update_profile");
 
 Route::middleware('auth:sanctum')->get('/get-profile/{id}', [UserController::class, 'get_profile'])->name("get_profile");
+
+Route::middleware('auth:sanctum', 'role:admin|counsellor')->patch('/update-user-profile/{user}', [UserController::class, 'update_user_profile'])->name("update_user_profile");
+
+Route::middleware('auth:sanctum', 'role:admin')->delete('/delete-user-profile/{user}', [UserController::class, 'delete_user_profile'])->name("delete_user_profile");
+
 
 
 
@@ -53,12 +58,14 @@ Route::middleware('auth:sanctum', 'role:admin|counsellor')->get('/user-count', [
 
 // Student 
 
-Route::middleware('auth:sanctum', 'role:admin|counsellor')->get('/student-detail/{id}', [StudentController::class, 'get_student_detail'])->name("get_student_detail");
+Route::middleware('auth:sanctum')->get('/student-detail/{id}', [StudentController::class, 'get_student_detail'])->name("get_student_detail");
 
 
-Route::middleware('auth:sanctum', 'role:admin|counsellor')->post('/student-detail/{id}', [StudentController::class, 'store_student_detail'])->name("store_student_detail");
+Route::middleware('auth:sanctum', 'role:admin|counsellor')->post('/student-detail', [StudentController::class, 'store_student_detail'])->name("store_student_detail");
 
 
+
+Route::middleware('auth:sanctum', 'role:admin|counsellor')->patch('/student-detail/{student:user_id}', [StudentController::class, 'update_student_detail'])->name("update_student_detail");
 
 
 

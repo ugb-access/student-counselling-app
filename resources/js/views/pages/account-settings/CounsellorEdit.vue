@@ -5,6 +5,7 @@ import { onMounted } from "vue";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { toast } from "vue3-toastify";
+import { updateUserProfile } from "@/services/user-service";
 
 const accountData = {
     name: "",
@@ -15,13 +16,14 @@ const accountData = {
 
 const accountDataLocal = ref(structuredClone(accountData));
 
-const isAccountDeactivated = ref(false);
-
 const loading = ref(true);
-const localUser = JSON.parse(getLocalAuth());
 
 const route = useRoute();
 
+const responseData = ref({
+    name: "",
+    phone_number: "",
+});
 const fetchProfileData = () => {
     const id = route.params.id;
     getProfileData(id)
@@ -31,6 +33,8 @@ const fetchProfileData = () => {
             accountDataLocal.value.username = res.data.data.username;
             accountDataLocal.value.email = res.data.data.email;
             accountDataLocal.value.phone_number = res.data.data.phone_number;
+            responseData.value.name = res?.data?.data?.name;
+            responseData.value.phone_number = res?.data?.data?.phone_number;
         })
         .catch((err) => {
             console.log(err, "Err");
@@ -38,6 +42,38 @@ const fetchProfileData = () => {
                 autoClose: 6000,
             });
         });
+};
+
+const updateCounsellorProfile = () => {
+    const id = route.params.id;
+    const data = {};
+    if (
+        responseData.value?.name?.trim() !==
+        accountDataLocal.value?.name?.trim()
+    ) {
+        data["name"] = accountDataLocal.value.name.trim();
+    }
+    if (
+        responseData.value?.phone_number?.trim() !==
+        accountDataLocal.value?.phone_number?.trim()
+    ) {
+        data["phone_number"] = accountDataLocal.value.phone_number.trim();
+    }
+    console.log(data, "data");
+    if (Object.keys(data).length > 0 && Object.values(data).length > 0) {
+        loading.value = true;
+        updateUserProfile(id, data)
+            .then((res) => {
+                console.log(res, "res");
+                window.location.href = `/counsellors/view/${id}`;
+            })
+            .catch((err) => {
+                console.log(err, "err");
+            })
+            .finally((res) => {
+                loading.value = false;
+            });
+    }
 };
 
 onMounted(fetchProfileData);
@@ -55,14 +91,13 @@ onMounted(fetchProfileData);
 
                 <VCardText>
                     <!-- 👉 Form -->
-                    <VForm class="mt-6">
+                    <VForm class="mt-6" @submit.prevent="updateCounsellorProfile">
                         <VRow>
                             <!-- 👉 First Name -->
                             <VCol md="6" cols="12">
                                 <VTextField
                                     v-model="accountDataLocal.name"
                                     label="Name"
-                                    readonly="true"
                                 />
                             </VCol>
 
@@ -72,6 +107,7 @@ onMounted(fetchProfileData);
                                     v-model="accountDataLocal.username"
                                     label="Username"
                                     readonly="true"
+                                    variant="solo"
                                 />
                             </VCol>
 
@@ -82,6 +118,7 @@ onMounted(fetchProfileData);
                                     label="E-mail"
                                     type="email"
                                     readonly="true"
+                                    variant="solo"
                                 />
                             </VCol>
 
@@ -90,13 +127,12 @@ onMounted(fetchProfileData);
                                 <VTextField
                                     v-model="accountDataLocal.phone_number"
                                     label="Phone Number"
-                                    readonly="true"
                                 />
                             </VCol>
 
                             <!-- 👉 Form Actions -->
                             <VCol cols="12" class="d-flex flex-wrap gap-4">
-                                <VBtn>Save changes</VBtn>
+                                <VBtn :disabled="loading" type="submit" >Save changes</VBtn>
                             </VCol>
                         </VRow>
                     </VForm>

@@ -6,6 +6,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -131,6 +132,96 @@ class UserController extends Controller
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
         }
+    }
+
+    
+
+
+    public function update_profile(Request $request) {
+        
+        $user = auth()->user();
+        $data = $request->all();
+        if($user->role_id === 1 || $user->role_id === 2) {
+            $validator = Validator::make($data, [
+                'name' => 'string',
+                'phone_number' => '|string|max:20',
+            ]);
+            if($validator->fails()) {
+                return response()->json(['error' => $validator->errors()->first()], 422);
+            } 
+
+            if(isset($data["name"])){
+                $user->name = trim($data["name"]);
+            }
+            if(isset($data["phone_number"])){
+                $user->phone_number = trim($data["phone_number"]);
+            }
+
+
+            $user->save();
+
+            return response()->json(['message' => 'Profile Updated successfully'], 200);
+            
+        }
+    }
+
+
+    public function update_user_profile(Request $request, User $user) {
+        $logged_in_user = auth()->user();
+
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'name' => 'string',
+            'phone_number' => '|string|max:20',
+        ]);
+        if($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        } 
+
+        
+        if($logged_in_user->id !== $user->id) {
+            if($logged_in_user->role_id === 1) {
+                if(isset($data["name"])){
+                    $user->name = trim($data["name"]);
+                }
+                if(isset($data["phone_number"])){
+                    $user->phone_number = trim($data["phone_number"]);
+                }
+
+                
+    
+                $user->save();
+    
+                return response()->json(['message' => 'Profile Updated successfully'], 200);
+            } else if($logged_in_user->role_id === 2 && $user->added_by_user_id === $logged_in_user->id) {
+                if(isset($data["name"])){
+                    $user->name = trim($data["name"]);
+                }
+                if(isset($data["phone_number"])){
+                    $user->phone_number = trim($data["phone_number"]);
+                }
+    
+                $user->save();
+    
+                return response()->json(['message' => 'Profile Updated successfully'], 200);
+            } else {
+                return response()->json(['message' => 'Something went wrong.Please Try Again.'], 400);
+            }
+        }
+
+    }
+
+
+    public function delete_user_profile(Request $request, User $user) {
+        $logged_in_user = auth()->user();
+        if($logged_in_user->role_id === 1) {
+            $user->delete();
+            return response()->json(['message' => 'User deleted'], 200);
+            
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+       
     }
     
 }

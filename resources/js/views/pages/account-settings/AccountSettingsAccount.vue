@@ -1,7 +1,7 @@
 <script setup>
 import { getLocalAuth } from "@/utils/local";
 import avatar1 from "@images/avatars/avatar-1.png";
-import { getProfileData } from "@/services/user-service";
+import { getProfileData, updateProfile } from "@/services/user-service";
 import { onMounted } from "vue";
 import { toast } from "vue3-toastify";
 
@@ -21,28 +21,16 @@ const accountData = {
     currency: "USD",
 };
 
-const refInputEl = ref();
 const accountDataLocal = ref(structuredClone(accountData));
 const edit = ref(false);
 
 const localUser = JSON.parse(getLocalAuth());
 const loading = ref(true);
 
-const resetForm = () => {
-    accountDataLocal.value = structuredClone(accountData);
-};
-
-const changeAvatar = (file) => {
-    const fileReader = new FileReader();
-    const { files } = file.target;
-    if (files && files.length) {
-        fileReader.readAsDataURL(files[0]);
-        fileReader.onload = () => {
-            if (typeof fileReader.result === "string")
-                accountDataLocal.value.avatarImg = fileReader.result;
-        };
-    }
-};
+const responseData = ref({
+    name: "",
+    phone_number: "",
+});
 
 const fetchProfileData = () => {
     const id = localUser.data.id;
@@ -53,6 +41,8 @@ const fetchProfileData = () => {
             accountDataLocal.value.username = res.data.data.username;
             accountDataLocal.value.email = res.data.data.email;
             accountDataLocal.value.phone_number = res?.data?.data?.phone_number;
+            responseData.value.name = res?.data?.data?.name;
+            responseData.value.phone_number = res?.data?.data?.phone_number;
         })
         .catch((err) => {
             console.log(err, "err");
@@ -60,6 +50,31 @@ const fetchProfileData = () => {
                 autoClose: 6000,
             });
         });
+};
+
+const updateProfileData = () => {
+    const data = {};
+    if (responseData.value?.name?.trim() !== accountDataLocal.value?.name?.trim()) {
+        data["name"] = accountDataLocal.value.name.trim();
+    }
+    if (
+        responseData.value?.phone_number?.trim() !== accountDataLocal.value?.phone_number?.trim()
+    ) {
+        data["phone_number"] = accountDataLocal.value.phone_number.trim();
+    }
+    if (Object.keys(data).length > 0 && Object.values(data).length > 0) {
+        loading.value = true;
+        updateProfile(data)
+            .then((res) => {
+                console.log(res, "res");
+            })
+            .catch((err) => {
+                console.log(err, "err");
+            })
+            .finally((res) => {
+                loading.value = false;
+            });
+    }
 };
 
 onMounted(fetchProfileData);
@@ -79,7 +94,6 @@ onMounted(fetchProfileData);
                         text
                         @click="
                             () => {
-                                console.log(edit, 'edit');
                                 edit = true;
                             }
                         "
@@ -89,13 +103,11 @@ onMounted(fetchProfileData);
                     >
                 </template>
 
-               
-
                 <VDivider />
 
                 <VCardText>
                     <!-- 👉 Form -->
-                    <VForm class="mt-6">
+                    <VForm class="mt-6" @submit.prevent="updateProfileData">
                         <VRow>
                             <!-- 👉 First Name -->
                             <VCol md="6" cols="12">
@@ -114,10 +126,8 @@ onMounted(fetchProfileData);
                                 <VTextField
                                     v-model="accountDataLocal.username"
                                     label="Username"
-                                    :variant="
-                                        edit === false ? 'solo' : 'outlined'
-                                    "
-                                    :readonly="edit === false"
+                                    variant="solo"
+                                    readonly
                                 />
                             </VCol>
 
@@ -127,10 +137,8 @@ onMounted(fetchProfileData);
                                     v-model="accountDataLocal.email"
                                     label="E-mail"
                                     type="email"
-                                    :variant="
-                                        edit === false ? 'solo' : 'outlined'
-                                    "
-                                    :readonly="edit === false"
+                                    variant="solo"
+                                    readonly
                                 />
                             </VCol>
 
@@ -159,16 +167,7 @@ onMounted(fetchProfileData);
                                 class="d-flex flex-wrap gap-4"
                                 v-if="edit === true"
                             >
-                                <VBtn>Save changes</VBtn>
-
-                                <VBtn
-                                    color="secondary"
-                                    variant="tonal"
-                                    type="reset"
-                                    @click.prevent="resetForm"
-                                >
-                                    Reset
-                                </VBtn>
+                                <VBtn type="submit">Save changes</VBtn>
                             </VCol>
                         </VRow>
                     </VForm>
