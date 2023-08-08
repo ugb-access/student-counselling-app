@@ -1,5 +1,5 @@
 <script setup>
-import logo from '@images/logo.svg?raw'
+import logo from '@images/logo.png'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { useDisplay } from 'vuetify'
 
@@ -58,13 +58,14 @@ const handleNavScroll = evt => {
           to="/"
           class="app-logo d-flex align-center gap-x-3 app-title-wrapper"
         >
-          <div
+          <!-- <div
             class="d-flex"
             v-html="logo"
-          />
+          /> -->
+          <img :src="logo" style="height: 50px;"  />
 
           <h1 class="font-weight-medium leading-normal text-xl text-uppercase">
-            Materio
+            Royal Vision
           </h1>
         </RouterLink>
       </slot>

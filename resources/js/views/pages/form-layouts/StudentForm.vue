@@ -38,10 +38,11 @@ const handleSubmit = () => {
         phone_number: phone_numberV,
     })
         .then((res) => {
+            router.push("/students");
             toast.success(res.data.message, {
                 autoClose: 6000,
             });
-            router.push("/students");
+            
         })
         .catch((err) => {
             console.log(

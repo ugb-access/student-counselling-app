@@ -108,9 +108,9 @@ const changeAvatar = (event) => {
 };
 
 const handleSubmit = (e) => {
-    console.log(updateObj.value, "keys");
+    console.log(updateObj.value, edit.value,"keys");
 
-    if (edit) {
+    if (edit.value) {
         if (Object.keys(updateObj.value).length) {
             loading.value = true;
             const data = updateObj.value;
@@ -132,67 +132,67 @@ const handleSubmit = (e) => {
             toast.error("No Changes has been made!");
         }
     } else {
-        if (!photo_path.value.file) {
-            toast.error("Student Photo is required!");
-            return false;
-        } else if (!full_name.value.trim()) {
-            toast.error("Full Name is required!");
-            return false;
-        } else if (!email.value.trim()) {
-            toast.error("Email is required!");
-            return false;
-        } else if (!nationality.value.trim()) {
-            toast.error("Nationality is required!");
-            return false;
-        } else if (!marital_status.value) {
-            toast.error("Marital Status is required!");
-            return false;
-        } else if (!gender.value) {
-            toast.error("Gender is required!");
-            return false;
-        } else if (!date_of_birth.value) {
-            toast.error("Date of Birth is required!");
-            return false;
-        } else if (!place_of_birth.value) {
-            toast.error("Place of Birth is required!");
-            return false;
-        } else if (!passport_no.value.trim()) {
-            toast.error("Passport is required!");
-            return false;
-        } else if (!expiry_date.value) {
-            toast.error("Expiry Date is required!");
-            return false;
-        } else if (!address.value.trim()) {
-            toast.error("Address is required!");
-            return false;
-        } else if (!phone.value.trim()) {
-            toast.error("Phone No. is required!");
-            return false;
-        } else if (!mobile.value.trim()) {
-            toast.error("Mobile No. is required!");
-            return false;
-        } else if (!mobile_2.value.trim()) {
-            toast.error("Mobile 2 is required!");
-            return false;
-        } else if (!referee_name.value.trim()) {
-            toast.error("Referee Name is required!");
-            return false;
-        } else if (
-            education_history.value.length == 0 ||
-            !Object.values(education_history.value[0]).every((value) => value)
-        ) {
-            toast.error("Education History is required!");
-            return false;
-        } else if (!semester_year.value) {
-            toast.error("Semester Year is required!");
-            return false;
-        } else if (
-            country_detail.value.length === 0 ||
-            !Object.values(country_detail.value[0]).every((value) => value)
-        ) {
-            toast.error("Country Detail is required!");
-            return false;
-        }
+        // if (!photo_path.value.file) {
+        //     toast.error("Student Photo is required!");
+        //     return false;
+        // } else if (!full_name.value.trim()) {
+        //     toast.error("Full Name is required!");
+        //     return false;
+        // } else if (!email.value.trim()) {
+        //     toast.error("Email is required!");
+        //     return false;
+        // } else if (!nationality.value.trim()) {
+        //     toast.error("Nationality is required!");
+        //     return false;
+        // } else if (!marital_status.value) {
+        //     toast.error("Marital Status is required!");
+        //     return false;
+        // } else if (!gender.value) {
+        //     toast.error("Gender is required!");
+        //     return false;
+        // } else if (!date_of_birth.value) {
+        //     toast.error("Date of Birth is required!");
+        //     return false;
+        // } else if (!place_of_birth.value) {
+        //     toast.error("Place of Birth is required!");
+        //     return false;
+        // } else if (!passport_no.value.trim()) {
+        //     toast.error("Passport is required!");
+        //     return false;
+        // } else if (!expiry_date.value) {
+        //     toast.error("Expiry Date is required!");
+        //     return false;
+        // } else if (!address.value.trim()) {
+        //     toast.error("Address is required!");
+        //     return false;
+        // } else if (!phone.value.trim()) {
+        //     toast.error("Phone No. is required!");
+        //     return false;
+        // } else if (!mobile.value.trim()) {
+        //     toast.error("Mobile No. is required!");
+        //     return false;
+        // } else if (!mobile_2.value.trim()) {
+        //     toast.error("Mobile 2 is required!");
+        //     return false;
+        // } else if (!referee_name.value.trim()) {
+        //     toast.error("Referee Name is required!");
+        //     return false;
+        // } else if (
+        //     education_history.value.length == 0 ||
+        //     !Object.values(education_history.value[0]).every((value) => value)
+        // ) {
+        //     toast.error("Education History is required!");
+        //     return false;
+        // } else if (!semester_year.value) {
+        //     toast.error("Semester Year is required!");
+        //     return false;
+        // } else if (
+        //     country_detail.value.length === 0 ||
+        //     !Object.values(country_detail.value[0]).every((value) => value)
+        // ) {
+        //     toast.error("Country Detail is required!");
+        //     return false;
+        // }
         loading.value = true;
         const data = {
             user_id: route.params.id,

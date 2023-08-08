@@ -52,6 +52,9 @@ const deleteUser = () => {
     loading.value = true
     deleteUserProfile(id).then(res => {
         console.log(res, "res")
+        toast.error("Counsellor Deleted Successfully!", {
+                autoClose: 6000,
+            });
         window.location.href = "/counsellors";
     }).catch(err => {
         console.log(err, "err")

@@ -328,7 +328,14 @@ class StudentController extends Controller
 
 
     public function store_student_detail(Request $request) {
+        $photo_file = $request->file('photo_path');
+        
+            $photo_filename = time() . '_' . uniqid('photo_path' . '_') . '_' . $photo_file->getClientOriginalName();
+            
+            $photo_file = $photo_file->storeAs('photo_files', $photo_filename, 's3');
 
+           
+        dd($photo_file, $request->file('photo_path'));
 
         $data = $request->all();
         
@@ -578,7 +585,7 @@ class StudentController extends Controller
 
     public function update_student_detail(Request $request, Student $student) {
         $data = $request->all();
-   
+        
         $validator = Validator::make($data, [
 
             'photo_path' => 'mimes:jpeg,png,jpg|max:2048',

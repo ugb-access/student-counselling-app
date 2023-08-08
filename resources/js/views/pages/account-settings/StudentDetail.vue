@@ -42,28 +42,35 @@ const fetchProfileData = () => {
 
 watch(data, fetchProfileData);
 
-
 const localUser = JSON.parse(getLocalAuth());
-
 
 const deleteUser = () => {
     const id = route.params.id;
-    loading.value = true
-    deleteUserProfile(id).then(res => {
-        console.log(res, "res")
-        window.location.href = "/students";
-    }).catch(err => {
-        console.log(err, "err")
-    }).finally(res => {
-        loading.value = false
-    })
-}
+    loading.value = true;
+    deleteUserProfile(id)
+        .then((res) => {
+            toast.error("Student Deleted Successfully!", {
+                autoClose: 6000,
+            });
+            window.location.href = "/students";
+        })
+        .catch((err) => {
+            console.log(err, "err");
+        })
+        .finally((res) => {
+            loading.value = false;
+        });
+};
 </script>
 
 <template>
     <VRow>
         <VCol cols="12">
-            <VCard :loading="loading" :disabled="loading" title="Student Account Details">
+            <VCard
+                :loading="loading"
+                :disabled="loading"
+                title="Student Account Details"
+            >
                 <VDivider />
 
                 <VCardText>
