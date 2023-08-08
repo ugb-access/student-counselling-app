@@ -149,30 +149,57 @@ class AuthController extends Controller
         $user = Auth::user();
         
         $data = $request->all();
+        // dd($data["counsellor_id"], $user->id);
         foreach ($data as $key => $value) {
             $data[$key] = trim($value);
         }
-        $validator = Validator::make($data, [
-            'username' => 'required|unique:users',
-            'email' => 'required|email|unique:users',
-            'name' => 'required|string',
-            'password' => 'required|min:6|max:8',
-            'phone_number' => 'required|string|max:20',
-        ]);
+        
+        if($user->role_id === 1) {
+            $validator = Validator::make($data, [
+                'username' => 'required|unique:users',
+                'email' => 'required|email|unique:users',
+                'name' => 'required|string',
+                'password' => 'required|min:6|max:8',
+                'phone_number' => 'required|string|max:20',
+                'counsellor_id' => 'required|integer'
+            ]);
+           
+            if($validator->fails()) {
+                return response()->json(['error' => $validator->errors()->first()], 422);
+            } 
+            User::create([
+                'email' => $data['email'],
+                'name' => $data['name'],
+                'username' => $data['username'],
+                'password' => bcrypt($data['password']),
+                'phone_number' => $data['phone_number'],
+                'added_by_user_id' => $data["counsellor_id"],
+                'role_id' => 3
+            ]);
+        }
+        if($user->role_id === 2) {
+            $validator = Validator::make($data, [
+                'username' => 'required|unique:users',
+                'email' => 'required|email|unique:users',
+                'name' => 'required|string',
+                'password' => 'required|min:6|max:8',
+                'phone_number' => 'required|string|max:20',
+            ]);
+           
+            if($validator->fails()) {
+                return response()->json(['error' => $validator->errors()->first()], 422);
+            } 
+            User::create([
+                'email' => $data['email'],
+                'name' => $data['name'],
+                'username' => $data['username'],
+                'password' => bcrypt($data['password']),
+                'phone_number' => $data['phone_number'],
+                'added_by_user_id' => $user->id,
+                'role_id' => 3
+            ]);
+        }
        
-        if($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->first()], 422);
-        } 
-
-        User::create([
-            'email' => $data['email'],
-            'name' => $data['name'],
-            'username' => $data['username'],
-            'password' => bcrypt($data['password']),
-            'phone_number' => $data['phone_number'],
-            'added_by_user_id' => $user->id,
-            'role_id' => 3
-        ]);
     
         return response()->json(['message' => 'Student created successfully'], 201);
     }

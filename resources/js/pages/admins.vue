@@ -9,7 +9,7 @@ const list = ref([]);
 const filteredData = ref([]);
 
 const handleActionClick = () => {
-    router.push("/add/admin");
+    window.location.href = ("/add/admin");
 };
 
 const fetchData = async () => {

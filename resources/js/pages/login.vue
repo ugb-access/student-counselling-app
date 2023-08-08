@@ -56,7 +56,7 @@ const handleSubmit = (e) => {
             toast.success(res.data.message, {
                 autoClose: 6000,
             });
-            router.push("/dashboard");
+            window.location.href = "/dashboard";
         })
         .catch((err) => {
             if (err?.response?.data?.error) {

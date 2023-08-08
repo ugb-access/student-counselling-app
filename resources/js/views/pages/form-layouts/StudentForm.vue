@@ -1,7 +1,10 @@
 <script setup>
-
 import router from "@/router";
+import { getAllCounsellor } from "@/services/user-service";
 import { addCounsellor, addStudent } from "@/services/user-service";
+import { watch } from "vue";
+
+import { onMounted } from "vue";
 import { toast } from "vue3-toastify";
 
 const name = ref("");
@@ -9,11 +12,16 @@ const username = ref("");
 const password = ref("");
 const email = ref("");
 const phone_number = ref("");
-
+const counsellor = ref(null);
+const counsellors = ref([]);
+const search_keyword = ref("");
+const counsellor_ids = ref([]);
+const loading = ref(false);
 
 const isPasswordVisible = ref(false);
 
 const handleSubmit = () => {
+    console.log(counsellor, "counsellor");
     const emailV = email.value;
     const passwordV = password.value;
     const nameV = name.value;
@@ -25,8 +33,14 @@ const handleSubmit = () => {
         !passwordV.trim() ||
         !nameV.trim() ||
         !usernameV.trim() ||
-        !phone_numberV.trim()
+        !phone_numberV.trim() ||
+        !counsellor.value
     ) {
+        if (!counsellor.value) {
+            toast.error("Counsellor is required", {
+                autoClose: 6000,
+            });
+        }
         return "Field is required";
     }
 
@@ -36,13 +50,15 @@ const handleSubmit = () => {
         password: passwordV,
         email: emailV,
         phone_number: phone_numberV,
+        counsellor_id: counsellor_ids.value.find(
+            (item) => item?.username === counsellor?.value
+        ).id,
     })
         .then((res) => {
-            router.push("/students");
+            window.location.href = "/students";
             toast.success(res.data.message, {
                 autoClose: 6000,
             });
-            
         })
         .catch((err) => {
             console.log(
@@ -56,7 +72,6 @@ const handleSubmit = () => {
             }
         });
 };
-
 
 const required = (value) => {
     if (!value?.trim()) {
@@ -93,6 +108,22 @@ const phoneValidation = (value) => {
         return "Only Numbers are allowed in phone";
     }
 };
+
+const getCounsellors = async () => {
+    loading.value = true;
+    const response = await getAllCounsellor({
+        search: search_keyword.value,
+        limit: 5,
+    });
+    counsellors.value = response.data.data.map((item) => item.username);
+    counsellor_ids.value = response.data.data;
+
+    loading.value = false;
+};
+
+onMounted(getCounsellors);
+
+watch(search_keyword, getCounsellors);
 </script>
 
 <template>
@@ -117,8 +148,6 @@ const phoneValidation = (value) => {
                     :rules="[required, usernameValidation]"
                 />
             </VCol>
-        </VRow>
-        <VRow>
             <VCol>
                 <VTextField
                     v-model="email"
@@ -128,7 +157,8 @@ const phoneValidation = (value) => {
                     :rules="[required, emailValidation]"
                 />
             </VCol>
-
+        </VRow>
+        <VRow>
             <VCol>
                 <VTextField
                     v-model="phone_number"
@@ -154,6 +184,17 @@ const phoneValidation = (value) => {
                     :rules="[required, passwordValidation]"
                 />
             </VCol>
+            <VCol>
+                <v-autocomplete
+                    v-model="counsellor"
+                    v-model:search="search_keyword"
+                    :loading="loading"
+                    :items="counsellors"
+                    hide-no-data
+                    hide-details
+                    label="Select Counsellor"
+                ></v-autocomplete
+            ></VCol>
         </VRow>
         <!-- 👉 Email -->
         <VRow>

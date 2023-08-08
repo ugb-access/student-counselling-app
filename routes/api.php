@@ -33,10 +33,13 @@ Route::middleware('auth:sanctum', 'role:admin')->post('/add-admin', [AuthControl
 
 
 Route::middleware('auth:sanctum', 'role:admin')->get('/counsellor/list', [UserController::class, 'get_counsellor_list'])->name("get_counsellor_list");
+
+
 Route::middleware('auth:sanctum', 'role:admin')->post('/add-counsellor', [AuthController::class, 'add_counsellor'])->name("add_counsellor");
 
 
 Route::middleware('auth:sanctum', 'role:admin|counsellor')->get('/student/list', [UserController::class, 'get_student_list'])->name("get_student_list");
+
 Route::middleware('auth:sanctum', 'role:admin|counsellor')->post('/add-student', [AuthController::class, 'add_student'])->name("add_student");
 
 

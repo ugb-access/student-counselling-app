@@ -244,7 +244,7 @@ const handleSubmit = (e) => {
         storeStudentDetail(data)
             .then((res) => {
                 const id = route.params.id;
-                router.push(`/student/view/${id}`);
+                window.location.href = (`/student/view/${id}`);
                 toast.success("Student Details Added Successfully!");
             })
             .catch((err) => {

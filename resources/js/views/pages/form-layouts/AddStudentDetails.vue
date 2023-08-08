@@ -108,7 +108,7 @@ const changeAvatar = (event) => {
 };
 
 const handleSubmit = (e) => {
-    console.log(updateObj.value, edit.value,"keys");
+    console.log(updateObj.value, edit.value, "keys");
 
     if (edit.value) {
         if (Object.keys(updateObj.value).length) {
@@ -132,67 +132,67 @@ const handleSubmit = (e) => {
             toast.error("No Changes has been made!");
         }
     } else {
-        // if (!photo_path.value.file) {
-        //     toast.error("Student Photo is required!");
-        //     return false;
-        // } else if (!full_name.value.trim()) {
-        //     toast.error("Full Name is required!");
-        //     return false;
-        // } else if (!email.value.trim()) {
-        //     toast.error("Email is required!");
-        //     return false;
-        // } else if (!nationality.value.trim()) {
-        //     toast.error("Nationality is required!");
-        //     return false;
-        // } else if (!marital_status.value) {
-        //     toast.error("Marital Status is required!");
-        //     return false;
-        // } else if (!gender.value) {
-        //     toast.error("Gender is required!");
-        //     return false;
-        // } else if (!date_of_birth.value) {
-        //     toast.error("Date of Birth is required!");
-        //     return false;
-        // } else if (!place_of_birth.value) {
-        //     toast.error("Place of Birth is required!");
-        //     return false;
-        // } else if (!passport_no.value.trim()) {
-        //     toast.error("Passport is required!");
-        //     return false;
-        // } else if (!expiry_date.value) {
-        //     toast.error("Expiry Date is required!");
-        //     return false;
-        // } else if (!address.value.trim()) {
-        //     toast.error("Address is required!");
-        //     return false;
-        // } else if (!phone.value.trim()) {
-        //     toast.error("Phone No. is required!");
-        //     return false;
-        // } else if (!mobile.value.trim()) {
-        //     toast.error("Mobile No. is required!");
-        //     return false;
-        // } else if (!mobile_2.value.trim()) {
-        //     toast.error("Mobile 2 is required!");
-        //     return false;
-        // } else if (!referee_name.value.trim()) {
-        //     toast.error("Referee Name is required!");
-        //     return false;
-        // } else if (
-        //     education_history.value.length == 0 ||
-        //     !Object.values(education_history.value[0]).every((value) => value)
-        // ) {
-        //     toast.error("Education History is required!");
-        //     return false;
-        // } else if (!semester_year.value) {
-        //     toast.error("Semester Year is required!");
-        //     return false;
-        // } else if (
-        //     country_detail.value.length === 0 ||
-        //     !Object.values(country_detail.value[0]).every((value) => value)
-        // ) {
-        //     toast.error("Country Detail is required!");
-        //     return false;
-        // }
+        if (!photo_path.value.file) {
+            toast.error("Student Photo is required!");
+            return false;
+        } else if (!full_name.value.trim()) {
+            toast.error("Full Name is required!");
+            return false;
+        } else if (!email.value.trim()) {
+            toast.error("Email is required!");
+            return false;
+        } else if (!nationality.value.trim()) {
+            toast.error("Nationality is required!");
+            return false;
+        } else if (!marital_status.value) {
+            toast.error("Marital Status is required!");
+            return false;
+        } else if (!gender.value) {
+            toast.error("Gender is required!");
+            return false;
+        } else if (!date_of_birth.value) {
+            toast.error("Date of Birth is required!");
+            return false;
+        } else if (!place_of_birth.value) {
+            toast.error("Place of Birth is required!");
+            return false;
+        } else if (!passport_no.value.trim()) {
+            toast.error("Passport is required!");
+            return false;
+        } else if (!expiry_date.value) {
+            toast.error("Expiry Date is required!");
+            return false;
+        } else if (!address.value.trim()) {
+            toast.error("Address is required!");
+            return false;
+        } else if (!phone.value.trim()) {
+            toast.error("Phone No. is required!");
+            return false;
+        } else if (!mobile.value.trim()) {
+            toast.error("Mobile No. is required!");
+            return false;
+        } else if (!mobile_2.value.trim()) {
+            toast.error("Mobile 2 is required!");
+            return false;
+        } else if (!referee_name.value.trim()) {
+            toast.error("Referee Name is required!");
+            return false;
+        } else if (
+            education_history.value.length == 0 ||
+            !Object.values(education_history.value[0]).every((value) => value)
+        ) {
+            toast.error("Education History is required!");
+            return false;
+        } else if (!semester_year.value) {
+            toast.error("Semester Year is required!");
+            return false;
+        } else if (
+            country_detail.value.length === 0 ||
+            !Object.values(country_detail.value[0]).every((value) => value)
+        ) {
+            toast.error("Country Detail is required!");
+            return false;
+        }
         loading.value = true;
         const data = {
             user_id: route.params.id,
@@ -242,7 +242,7 @@ const handleSubmit = (e) => {
         storeStudentDetail(data)
             .then((res) => {
                 const id = route.params.id;
-                router.push(`/student/view/${id}`);
+                window.location.href = `/student/view/${id}`;
                 toast.success("Student Details Added Successfully!");
             })
             .catch((err) => {
@@ -442,27 +442,30 @@ const educationHistoryClosed = () => {
 };
 </script>
 
-<template >
+<template>
     <VCard :loading="loading">
         <template
             v-slot:title
             v-if="
-                (readonly === 'true' && (
-                    (!cv_path ||
-                        !passport ||
-                        !academic_document ||
-                        !teacher_reference ||
-                        !cnic ||
-                        !experience_letter ||
-                        !other_certificates ||
-                        !conditional_offer ||
-                        !unconditional_offer ||
-                        !payment_proof ||
-                        !cas_ecoe ||
-                        !visa ||
-                        !travel_plan ||
-                        !gt_document) ||
-                (!moi && !english_proficiency && !ielts && !other_english_test)))
+                readonly === 'true' &&
+                (!cv_path ||
+                    !passport ||
+                    !academic_document ||
+                    !teacher_reference ||
+                    !cnic ||
+                    !experience_letter ||
+                    !other_certificates ||
+                    !conditional_offer ||
+                    !unconditional_offer ||
+                    !payment_proof ||
+                    !cas_ecoe ||
+                    !visa ||
+                    !travel_plan ||
+                    !gt_document ||
+                    (!moi &&
+                        !english_proficiency &&
+                        !ielts &&
+                        !other_english_test))
             "
         >
             <v-alert density="compact" type="warning">
@@ -586,6 +589,7 @@ const educationHistoryClosed = () => {
                     text
                     @click="() => (edit = true)"
                     class="action-button"
+                    target="_blank"
                     v-if="readonly === true"
                     >Edit</VBtn
                 >
@@ -1383,7 +1387,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             CV -
                             {{
-                                cv_path?.includes?.("cdn")
+                                cv_path?.includes?.("s3.amazonaws")
                                     ? cv_path
                                     : cv_path[0].name
                             }}
@@ -1402,7 +1406,8 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="cv_path"
                                     class="action-button"
-                                    v-if="cv_path?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="cv_path?.includes?.('s3.amazonaws')"
                                     >View</VBtn
                                 >
                             </div>
@@ -1450,7 +1455,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             Passport -
                             {{
-                                passport?.includes?.("cdn")
+                                passport?.includes?.("s3.amazonaws")
                                     ? passport
                                     : passport[0].name
                             }}
@@ -1469,7 +1474,8 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="passport"
                                     class="action-button"
-                                    v-if="passport?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="passport?.includes?.('s3.amazonaws')"
                                     >View</VBtn
                                 >
                             </div>
@@ -1530,7 +1536,11 @@ const educationHistoryClosed = () => {
                     <VCard class="py-2 px-2">
                         <div class="d-flex align-center justify-space-between">
                             MOI -
-                            {{ moi?.includes?.("cdn") ? moi : moi[0].name }}
+                            {{
+                                moi?.includes?.("s3.amazonaws")
+                                    ? moi
+                                    : moi[0].name
+                            }}
                             <div>
                                 <VBtn
                                     color="primary"
@@ -1546,7 +1556,8 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="moi"
                                     class="action-button"
-                                    v-if="moi?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="moi?.includes?.('s3.amazonaws')"
                                     >View</VBtn
                                 >
                             </div>
@@ -1577,7 +1588,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             English Proficiency -
                             {{
-                                english_proficiency?.includes?.("cdn")
+                                english_proficiency?.includes?.("s3.amazonaws")
                                     ? english_proficiency
                                     : english_proficiency[0].name
                             }}
@@ -1599,8 +1610,11 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="english_proficiency"
                                     class="action-button"
+                                    target="_blank"
                                     v-if="
-                                        english_proficiency?.includes?.('cdn')
+                                        english_proficiency?.includes?.(
+                                            's3.amazonaws'
+                                        )
                                     "
                                     >View</VBtn
                                 >
@@ -1632,7 +1646,9 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             IELTS -
                             {{
-                                ielts?.includes?.("cdn") ? ielts : ielts[0].name
+                                ielts?.includes?.("s3.amazonaws")
+                                    ? ielts
+                                    : ielts[0].name
                             }}
                             <div>
                                 <VBtn
@@ -1649,7 +1665,8 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="ielts"
                                     class="action-button"
-                                    v-if="ielts?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="ielts?.includes?.('s3.amazonaws')"
                                     >View</VBtn
                                 >
                             </div>
@@ -1680,7 +1697,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             Other English Test -
                             {{
-                                other_english_test?.includes?.("cdn")
+                                other_english_test?.includes?.("s3.amazonaws")
                                     ? other_english_test
                                     : other_english_test[0].name
                             }}
@@ -1701,7 +1718,12 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="other_english_test"
                                     class="action-button"
-                                    v-if="other_english_test?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="
+                                        other_english_test?.includes?.(
+                                            's3.amazonaws'
+                                        )
+                                    "
                                     >View</VBtn
                                 >
                             </div>
@@ -1821,7 +1843,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             Academic Document -
                             {{
-                                academic_document?.includes?.("cdn")
+                                academic_document?.includes?.("s3.amazonaws")
                                     ? academic_document
                                     : academic_document[0].name
                             }}
@@ -1842,7 +1864,12 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="academic_document"
                                     class="action-button"
-                                    v-if="academic_document?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="
+                                        academic_document?.includes?.(
+                                            's3.amazonaws'
+                                        )
+                                    "
                                     >View</VBtn
                                 >
                             </div>
@@ -1901,7 +1928,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             Teacher Reference -
                             {{
-                                teacher_reference?.includes?.("cdn")
+                                teacher_reference?.includes?.("s3.amazonaws")
                                     ? teacher_reference
                                     : teacher_reference[0].name
                             }}
@@ -1922,7 +1949,12 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="teacher_reference"
                                     class="action-button"
-                                    v-if="teacher_reference?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="
+                                        teacher_reference?.includes?.(
+                                            's3.amazonaws'
+                                        )
+                                    "
                                     >View</VBtn
                                 >
                             </div>
@@ -1998,7 +2030,11 @@ const educationHistoryClosed = () => {
                     <VCard class="py-2 px-2">
                         <div class="d-flex align-center justify-space-between">
                             CNIC -
-                            {{ cnic?.includes?.("cdn") ? cnic : cnic[0].name }}
+                            {{
+                                cnic?.includes?.("s3.amazonaws")
+                                    ? cnic
+                                    : cnic[0].name
+                            }}
                             <div>
                                 <VBtn
                                     color="primary"
@@ -2014,7 +2050,8 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="cnic"
                                     class="action-button"
-                                    v-if="cnic?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="cnic?.includes?.('s3.amazonaws')"
                                     >View</VBtn
                                 >
                             </div>
@@ -2084,7 +2121,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             Experience Letter -
                             {{
-                                experience_letter?.includes?.("cdn")
+                                experience_letter?.includes?.("s3.amazonaws")
                                     ? experience_letter
                                     : experience_letter[0].name
                             }}
@@ -2105,7 +2142,12 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="experience_letter"
                                     class="action-button"
-                                    v-if="experience_letter?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="
+                                        experience_letter?.includes?.(
+                                            's3.amazonaws'
+                                        )
+                                    "
                                     >View</VBtn
                                 >
                             </div>
@@ -2153,7 +2195,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             Other Certificates -
                             {{
-                                other_certificates?.includes?.("cdn")
+                                other_certificates?.includes?.("s3.amazonaws")
                                     ? other_certificates
                                     : other_certificates[0].name
                             }}
@@ -2174,7 +2216,12 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="other_certificates"
                                     class="action-button"
-                                    v-if="other_certificates?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="
+                                        other_certificates?.includes?.(
+                                            's3.amazonaws'
+                                        )
+                                    "
                                     >View</VBtn
                                 >
                             </div>
@@ -2223,7 +2270,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             Conditional Offer -
                             {{
-                                conditional_offer?.includes?.("cdn")
+                                conditional_offer?.includes?.("s3.amazonaws")
                                     ? conditional_offer
                                     : conditional_offer[0].name
                             }}
@@ -2244,7 +2291,12 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="conditional_offer"
                                     class="action-button"
-                                    v-if="conditional_offer?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="
+                                        conditional_offer?.includes?.(
+                                            's3.amazonaws'
+                                        )
+                                    "
                                     >View</VBtn
                                 >
                             </div>
@@ -2293,7 +2345,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             Unconditional Offer -
                             {{
-                                unconditional_offer?.includes?.("cdn")
+                                unconditional_offer?.includes?.("s3.amazonaws")
                                     ? unconditional_offer
                                     : unconditional_offer[0].name
                             }}
@@ -2315,8 +2367,11 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="unconditional_offer"
                                     class="action-button"
+                                    target="_blank"
                                     v-if="
-                                        unconditional_offer?.includes?.('cdn')
+                                        unconditional_offer?.includes?.(
+                                            's3.amazonaws'
+                                        )
                                     "
                                     >View</VBtn
                                 >
@@ -2366,7 +2421,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             Payment Proof -
                             {{
-                                payment_proof?.includes?.("cdn")
+                                payment_proof?.includes?.("s3.amazonaws")
                                     ? payment_proof
                                     : payment_proof[0].name
                             }}
@@ -2385,7 +2440,12 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="payment_proof"
                                     class="action-button"
-                                    v-if="payment_proof?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="
+                                        payment_proof?.includes?.(
+                                            's3.amazonaws'
+                                        )
+                                    "
                                     >View</VBtn
                                 >
                             </div>
@@ -2434,7 +2494,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             CAS/ECOE -
                             {{
-                                cas_ecoe?.includes?.("cdn")
+                                cas_ecoe?.includes?.("s3.amazonaws")
                                     ? cas_ecoe
                                     : cas_ecoe[0].name
                             }}
@@ -2453,7 +2513,8 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="cas_ecoe"
                                     class="action-button"
-                                    v-if="cas_ecoe?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="cas_ecoe?.includes?.('s3.amazonaws')"
                                     >View</VBtn
                                 >
                             </div>
@@ -2500,7 +2561,11 @@ const educationHistoryClosed = () => {
                     <VCard class="py-2 px-2">
                         <div class="d-flex align-center justify-space-between">
                             Visa -
-                            {{ visa?.includes?.("cdn") ? visa : visa[0].name }}
+                            {{
+                                visa?.includes?.("s3.amazonaws")
+                                    ? visa
+                                    : visa[0].name
+                            }}
                             <div>
                                 <VBtn
                                     color="primary"
@@ -2516,7 +2581,8 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="visa"
                                     class="action-button"
-                                    v-if="visa?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="visa?.includes?.('s3.amazonaws')"
                                     >View</VBtn
                                 >
                             </div>
@@ -2565,7 +2631,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             Travel Plan -
                             {{
-                                travel_plan?.includes?.("cdn")
+                                travel_plan?.includes?.("s3.amazonaws")
                                     ? travel_plan
                                     : travel_plan[0].name
                             }}
@@ -2584,7 +2650,10 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="travel_plan"
                                     class="action-button"
-                                    v-if="travel_plan?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="
+                                        travel_plan?.includes?.('s3.amazonaws')
+                                    "
                                     >View</VBtn
                                 >
                             </div>
@@ -2643,7 +2712,7 @@ const educationHistoryClosed = () => {
                         <div class="d-flex align-center justify-space-between">
                             GT Document -
                             {{
-                                gt_document?.includes?.("cdn")
+                                gt_document?.includes?.("s3.amazonaws")
                                     ? gt_document
                                     : gt_document[0].name
                             }}
@@ -2662,7 +2731,10 @@ const educationHistoryClosed = () => {
                                     text
                                     :href="gt_document"
                                     class="action-button"
-                                    v-if="gt_document?.includes?.('cdn')"
+                                    target="_blank"
+                                    v-if="
+                                        gt_document?.includes?.('s3.amazonaws')
+                                    "
                                     >View</VBtn
                                 >
                             </div>

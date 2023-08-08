@@ -17,7 +17,7 @@ export const getAllAdmins = ({ limit = null }) => {
     });
 };
 
-export const getAllCounsellor = ({ limit = null }) => {
+export const getAllCounsellor = ({ limit = null, search = null }) => {
     const auth_data = getLocalAuth();
 
     return api({
@@ -25,6 +25,7 @@ export const getAllCounsellor = ({ limit = null }) => {
         url: "/counsellor/list",
         params: {
             limit: limit || undefined,
+            search: search || undefined,
         },
         headers: {
             Authorization: `Bearer ${JSON.parse(auth_data).token}`,
@@ -98,6 +99,7 @@ export const addStudent = ({
     name,
     password,
     phone_number,
+    counsellor_id
 }) => {
     const auth_data = getLocalAuth();
 
@@ -110,6 +112,7 @@ export const addStudent = ({
             name,
             password,
             phone_number,
+            counsellor_id
         },
         headers: {
             Authorization: `Bearer ${JSON.parse(auth_data).token}`,

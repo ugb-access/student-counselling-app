@@ -35,7 +35,7 @@ const handleSubmit = () => {
             toast.success(res.data.message, {
                 autoClose: 6000,
             });
-            router.push("/admins");
+            window.location.href = "/admins";
         })
         .catch((err) => {
             console.log(

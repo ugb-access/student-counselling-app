@@ -10,7 +10,7 @@ const filteredData = ref([]);
 
 
 const handleActionClick = () => {
-    router.push("/add/counsellor");
+    window.location.href = ("/add/counsellor");
 };
 
 const fetchData = async () => {

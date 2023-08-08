@@ -35,11 +35,10 @@ const handleSubmit = () => {
         phone_number: phone_numberV,
     })
         .then((res) => {
-            router.push("/counsellors");
+            window.location.href = "/counsellors";
             toast.success(res.data.message, {
                 autoClose: 6000,
             });
-            
         })
         .catch((err) => {
             console.log(

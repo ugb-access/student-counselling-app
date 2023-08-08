@@ -29,13 +29,32 @@ class UserController extends Controller
 
     public function get_counsellor_list(Request $request) {
         $limit = $request->query('limit');
-       
+        $search_keyword = $request->query('search');
+
+        
         if(empty($limit)) {
             $all_users = User::where('role_id', 2)->orderBy("created_at", "desc")->get();
         } else {
-            $all_users = User::where('role_id', 2)->orderBy("created_at", "desc")->limit($limit)->get();
+            if($search_keyword && !empty($search_keyword)) {
+                
+                $all_users = User::where('role_id', 2)
+                ->where(function ($query) use ($search_keyword) {
+                    $query->where('name', 'like', '%' . $search_keyword . '%');
+                        
+                })
+                ->take($limit)
+                ->get();
+            } else {
+                $all_users = User::where('role_id', 2)->orderBy("created_at", "desc")->limit($limit)->get();
+            }
+            
         }
-        return response()->json(['data' => $all_users], 200);
+        if($all_users && count($all_users) > 0) {
+            return response()->json(['data' => $all_users], 200);
+        } else {
+            return response()->json(['data' => []], 200);
+        }
+       
     }
 
     public function get_student_list(Request $request) {

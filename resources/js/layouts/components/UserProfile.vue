@@ -13,7 +13,7 @@ const user = ref({
 const handleLogout = () => {
     removeLocalAuth();
 
-    router.push("/login");
+    window.location.href = ("/login");
 };
 
 onMounted(() => {
