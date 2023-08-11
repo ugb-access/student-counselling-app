@@ -21,7 +21,7 @@ const loading = ref(false);
 const isPasswordVisible = ref(false);
 
 const handleSubmit = () => {
-    console.log(counsellor, "counsellor");
+   
     const emailV = email.value;
     const passwordV = password.value;
     const nameV = name.value;
@@ -61,10 +61,7 @@ const handleSubmit = () => {
             });
         })
         .catch((err) => {
-            console.log(
-                err?.response?.data?.error,
-                "err?.response?.data?.error"
-            );
+           
             if (err?.response?.data?.error) {
                 toast.error(err.response.data.error, {
                     autoClose: 6000,

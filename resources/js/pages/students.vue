@@ -7,6 +7,8 @@ import router from "@/router";
 const searchQuery = ref("");
 const list = ref([]);
 const filteredData = ref([]);
+const page = ref(1);
+const length = ref(1);
 
 const handleActionClick = () => {
     window.location.href = "/add/student";
@@ -14,8 +16,9 @@ const handleActionClick = () => {
 
 const fetchData = async () => {
     try {
-        const response = await getAllStudents({ limit: null });
-        list.value = response.data.data;
+        const response = await getAllStudents({ limit: null, page: page.value });
+        list.value = response.data.data.data;
+        length.value = response.data.data.last_page;
         filterData();
     } catch (error) {
         console.error(error);
@@ -47,6 +50,8 @@ const filterData = () => {
 
 onMounted(fetchData);
 watch(searchQuery, filterData);
+
+watch(page, fetchData)
 </script>
 
 <template>
@@ -73,6 +78,7 @@ watch(searchQuery, filterData);
                     </div>
                 </template>
                 <PrimaryTable type="student" :data="filteredData" />
+                <VPagination v-model="page" :length="length"   />
             </VCard>
         </VCol>
     </VRow>

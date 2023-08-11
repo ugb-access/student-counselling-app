@@ -13,96 +13,97 @@ class StudentController extends Controller
     public function get_student_detail(Request $request, $id) {
         $student_id = $id;
         $user = $request->user();
-
+        $s3_url = env('AWS_URL');
+        
         if($user && !empty($user)) {
             if($user->role_id === 1) {
                 $student_data = User::with('student')->find($student_id);
-                $s3_url = env('AWS_URL') . "/";
+                
                 
                 if(!$student_data->student) {
                     return response()->json(['data' => $student_data], 200);
                 }
                 //required
                 if($student_data->student->photo_path) {
-                    $student_data->student->photo_path = $s3_url . $student_data->student->photo_path;
+                    $student_data->student->photo_path = $s3_url . '/' . $student_data->student->photo_path;
                 }
 
                 //optional
                
                 if($student_data->student->cv_path) {
-                    $student_data->student->cv_path = $s3_url . $student_data->student->cv_path;
+                    $student_data->student->cv_path = $s3_url . '/' . $student_data->student->cv_path;
 
                 }
                 if($student_data->student->passport) {
-                    $student_data->student->passport = $s3_url . $student_data->student->passport;
+                    $student_data->student->passport = $s3_url . '/' . $student_data->student->passport;
                 }
                 
                 if($student_data->student->academic_document) {
-                $student_data->student->academic_document = $s3_url . $student_data->student->academic_document;
+                $student_data->student->academic_document = $s3_url . '/' . $student_data->student->academic_document;
 
                 }
 
 
                 if($student_data->student->teacher_reference) {
-                    $student_data->student->teacher_reference = $s3_url . $student_data->student->teacher_reference;
+                    $student_data->student->teacher_reference = $s3_url . '/' . $student_data->student->teacher_reference;
 
                 }
 
                 if($student_data->student->cnic) {
-                    $student_data->student->cnic = $s3_url . $student_data->student->cnic;
+                    $student_data->student->cnic = $s3_url . '/' . $student_data->student->cnic;
 
                 }
 
                 if($student_data->student->experience_letter) {
-                    $student_data->student->experience_letter = $s3_url . $student_data->student->experience_letter;
+                    $student_data->student->experience_letter = $s3_url . '/' . $student_data->student->experience_letter;
 
                 }
 
                 if($student_data->student->other_certificates) {
-                    $student_data->student->other_certificates = $s3_url . $student_data->student->other_certificates;
+                    $student_data->student->other_certificates = $s3_url . '/' . $student_data->student->other_certificates;
 
                 }
 
                 if($student_data->student->conditional_offer) {
-                    $student_data->student->conditional_offer = $s3_url . $student_data->student->conditional_offer;
+                    $student_data->student->conditional_offer = $s3_url . '/' . $student_data->student->conditional_offer;
 
                 }
 
                 if($student_data->student->unconditional_offer) {
-                    $student_data->student->unconditional_offer = $s3_url . $student_data->student->unconditional_offer;
+                    $student_data->student->unconditional_offer = $s3_url . '/' . $student_data->student->unconditional_offer;
 
                 }
 
                 if($student_data->student->payment_proof) {
-                    $student_data->student->payment_proof = $s3_url . $student_data->student->payment_proof;
+                    $student_data->student->payment_proof = $s3_url . '/' . $student_data->student->payment_proof;
 
                 }
 
 
                 if($student_data->student->cas_ecoe) {
-                    $student_data->student->cas_ecoe = $s3_url . $student_data->student->cas_ecoe;
+                    $student_data->student->cas_ecoe = $s3_url . '/' . $student_data->student->cas_ecoe;
 
                 }
 
                 if($student_data->student->visa) {
-                    $student_data->student->visa = $s3_url . $student_data->student->visa;
+                    $student_data->student->visa = $s3_url . '/' . $student_data->student->visa;
 
                 }
 
 
                 if($student_data->student->travel_plan) {
-                    $student_data->student->travel_plan = $s3_url . $student_data->student->travel_plan;
+                    $student_data->student->travel_plan = $s3_url . '/' . $student_data->student->travel_plan;
 
                 }
                 if($student_data->student->gt_document) {
-                    $student_data->student->gt_document = $s3_url . $student_data->student->gt_document;
+                    $student_data->student->gt_document = $s3_url . '/' . $student_data->student->gt_document;
 
                 }
 
                 $english_test_urls = [];
                 if($student_data->student->english_test) {
                     foreach ($student_data->student->english_test as $key => $value) {
-                        $english_test_urls[$key] =  $s3_url . $value;
+                        $english_test_urls[$key] =  $s3_url . '/' . $value;
                     }
     
                     $student_data->student->english_test = $english_test_urls;
@@ -126,77 +127,78 @@ class StudentController extends Controller
                     
                 } 
                 //required
-                $student_data->student->photo_path = $s3_url . $student_data->student->photo_path;
-
+                $student_data->student->photo_path = $s3_url . '/' . $student_data->student->photo_path;
+                
+                
                 //optional
                
                 if($student_data->student->cv_path) {
-                    $student_data->student->cv_path = $s3_url . $student_data->student->cv_path;
+                    $student_data->student->cv_path = $s3_url . '/' . $student_data->student->cv_path;
 
                 }
                 if($student_data->student->passport) {
-                    $student_data->student->passport = $s3_url . $student_data->student->passport;
+                    $student_data->student->passport = $s3_url . '/' . $student_data->student->passport;
                 }
                 
                 if($student_data->student->academic_document) {
-                $student_data->student->academic_document = $s3_url . $student_data->student->academic_document;
+                $student_data->student->academic_document = $s3_url . '/' . $student_data->student->academic_document;
 
                 }
 
 
                 if($student_data->student->teacher_reference) {
-                    $student_data->student->teacher_reference = $s3_url . $student_data->student->teacher_reference;
+                    $student_data->student->teacher_reference = $s3_url . '/' . $student_data->student->teacher_reference;
 
                 }
 
                 if($student_data->student->cnic) {
-                    $student_data->student->cnic = $s3_url . $student_data->student->cnic;
+                    $student_data->student->cnic = $s3_url . '/' . $student_data->student->cnic;
 
                 }
 
                 if($student_data->student->experience_letter) {
-                    $student_data->student->experience_letter = $s3_url . $student_data->student->experience_letter;
+                    $student_data->student->experience_letter = $s3_url . '/' . $student_data->student->experience_letter;
 
                 }
 
                 if($student_data->student->other_certificates) {
-                    $student_data->student->other_certificates = $s3_url . $student_data->student->other_certificates;
+                    $student_data->student->other_certificates = $s3_url . '/' . $student_data->student->other_certificates;
 
                 }
 
                 if($student_data->student->conditional_offer) {
-                    $student_data->student->conditional_offer = $s3_url . $student_data->student->conditional_offer;
+                    $student_data->student->conditional_offer = $s3_url . '/' . $student_data->student->conditional_offer;
 
                 }
 
                 if($student_data->student->unconditional_offer) {
-                    $student_data->student->unconditional_offer = $s3_url . $student_data->student->unconditional_offer;
+                    $student_data->student->unconditional_offer = $s3_url . '/' . $student_data->student->unconditional_offer;
 
                 }
 
                 if($student_data->student->payment_proof) {
-                    $student_data->student->payment_proof = $s3_url . $student_data->student->payment_proof;
+                    $student_data->student->payment_proof = $s3_url . '/' . $student_data->student->payment_proof;
 
                 }
 
 
                 if($student_data->student->cas_ecoe) {
-                    $student_data->student->cas_ecoe = $s3_url . $student_data->student->payment_proof;
+                    $student_data->student->cas_ecoe = $s3_url . '/' . $student_data->student->payment_proof;
 
                 }
 
                 if($student_data->student->visa) {
-                    $student_data->student->visa = $s3_url . $student_data->student->payment_proof;
+                    $student_data->student->visa = $s3_url . '/' . $student_data->student->payment_proof;
 
                 }
 
 
                 if($student_data->student->travel_plan) {
-                    $student_data->student->travel_plan = $s3_url . $student_data->student->payment_proof;
+                    $student_data->student->travel_plan = $s3_url . '/' . $student_data->student->payment_proof;
 
                 }
                 if($student_data->student->gt_document) {
-                    $student_data->student->gt_document = $s3_url . $student_data->student->payment_proof;
+                    $student_data->student->gt_document = $s3_url . '/' . $student_data->student->payment_proof;
 
                 }
 
@@ -205,9 +207,12 @@ class StudentController extends Controller
 
                
                 $english_test_urls = [];
-                foreach ($student_data->student->english_test as $key => $value) {
-                    $english_test_urls[$key] =  $s3_url . $value;
+                if($student_data->student->english_test) {
+                    foreach ($student_data->student->english_test as $key => $value) {
+                        $english_test_urls[$key] =  $s3_url . '/' . $value;
+                    }
                 }
+               
 
                 $student_data->student->english_test = $english_test_urls;
 
@@ -228,77 +233,77 @@ class StudentController extends Controller
                     
                 } 
                 //required
-                $student_data->student->photo_path = $s3_url . $student_data->student->photo_path;
+                $student_data->student->photo_path = $s3_url . '/' . $student_data->student->photo_path;
 
                 //optional
                
                 if($student_data->student->cv_path) {
-                    $student_data->student->cv_path = $s3_url . $student_data->student->cv_path;
+                    $student_data->student->cv_path = $s3_url . '/' . $student_data->student->cv_path;
 
                 }
                 if($student_data->student->passport) {
-                    $student_data->student->passport = $s3_url . $student_data->student->passport;
+                    $student_data->student->passport = $s3_url . '/' . $student_data->student->passport;
                 }
                 
                 if($student_data->student->academic_document) {
-                $student_data->student->academic_document = $s3_url . $student_data->student->academic_document;
+                $student_data->student->academic_document = $s3_url . '/' . $student_data->student->academic_document;
 
                 }
 
 
                 if($student_data->student->teacher_reference) {
-                    $student_data->student->teacher_reference = $s3_url . $student_data->student->teacher_reference;
+                    $student_data->student->teacher_reference = $s3_url . '/' . $student_data->student->teacher_reference;
 
                 }
 
                 if($student_data->student->cnic) {
-                    $student_data->student->cnic = $s3_url . $student_data->student->cnic;
+                    $student_data->student->cnic = $s3_url . '/' . $student_data->student->cnic;
 
                 }
 
                 if($student_data->student->experience_letter) {
-                    $student_data->student->experience_letter = $s3_url . $student_data->student->experience_letter;
+                    $student_data->student->experience_letter = $s3_url . '/' . $student_data->student->experience_letter;
 
                 }
 
                 if($student_data->student->other_certificates) {
-                    $student_data->student->other_certificates = $s3_url . $student_data->student->other_certificates;
+                    $student_data->student->other_certificates = $s3_url . '/' . $student_data->student->other_certificates;
 
                 }
 
                 if($student_data->student->conditional_offer) {
-                    $student_data->student->conditional_offer = $s3_url . $student_data->student->conditional_offer;
+                    $student_data->student->conditional_offer = $s3_url . '/' . $student_data->student->conditional_offer;
 
                 }
 
                 if($student_data->student->unconditional_offer) {
-                    $student_data->student->unconditional_offer = $s3_url . $student_data->student->unconditional_offer;
+                    $student_data->student->unconditional_offer = $s3_url . '/' . $student_data->student->unconditional_offer;
 
                 }
 
                 if($student_data->student->payment_proof) {
-                    $student_data->student->payment_proof = $s3_url . $student_data->student->payment_proof;
+                    $student_data->student->payment_proof = $s3_url . '/' . $student_data->student->payment_proof;
 
                 }
 
 
                 if($student_data->student->cas_ecoe) {
-                    $student_data->student->cas_ecoe = $s3_url . $student_data->student->payment_proof;
+                    $student_data->student->cas_ecoe = $s3_url . '/' . $student_data->student->payment_proof;
 
                 }
 
                 if($student_data->student->visa) {
-                    $student_data->student->visa = $s3_url . $student_data->student->payment_proof;
+                    $student_data->student->visa = $s3_url . '/' . $student_data->student->payment_proof;
 
                 }
 
 
                 if($student_data->student->travel_plan) {
-                    $student_data->student->travel_plan = $s3_url . $student_data->student->payment_proof;
+                    $student_data->student->travel_plan = $s3_url . '/' . $student_data->student->payment_proof;
 
                 }
                 if($student_data->student->gt_document) {
-                    $student_data->student->gt_document = $s3_url . $student_data->student->payment_proof;
+                    $student_data->student->gt_document = $s3_url . '/' . $student_data->student->payment_proof;
 
                 }
 
@@ -307,9 +312,12 @@ class StudentController extends Controller
 
                
                 $english_test_urls = [];
-                foreach ($student_data->student->english_test as $key => $value) {
-                    $english_test_urls[$key] =  $s3_url . $value;
+                if($student_data->student->english_test) {
+                    foreach ($student_data->student->english_test as $key => $value) {
+                        $english_test_urls[$key] =  $s3_url . '/' . $value;
+                    }
                 }
+               
 
                 $student_data->student->english_test = $english_test_urls;
 
@@ -375,7 +383,6 @@ class StudentController extends Controller
 
         ]);
 
-        // dd($validator);
         if($validator->fails()) {
             return response()->json(['error' => $validator->errors()->first()], 422);
         } 
@@ -580,7 +587,7 @@ class StudentController extends Controller
         
         $validator = Validator::make($data, [
 
-            'photo_path' => 'mimes:jpeg,png,jpg|max:2048',
+            'photo_path' => 'image|max:2048',
             'full_name' => 'string',
             'email' => 'email|max:255|unique:student',
             'nationality' => 'string|max:255',
@@ -725,9 +732,9 @@ class StudentController extends Controller
             $student->country_detail = json_decode($request->input('country_detail'), true);
         }
 
+
+        
         //optional fields
-
-
 
         if($request->file('cv_path')) {
             $cvfileName = uniqid('cv' . '_') . '.' . $request->file('cv_path')->getClientOriginalExtension();

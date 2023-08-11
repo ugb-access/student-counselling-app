@@ -60,12 +60,12 @@ onMounted(fetchData);
                         (userCount.current_month - userCount.previous_month) /
                             userCount.previous_month !==
                         Infinity
-                            ? (userCount.current_month -
+                            ? Math.ceil((userCount.current_month -
                                   userCount.previous_month) /
-                              userCount.previous_month
+                              userCount.previous_month) + "%"
                             : "100%"
                     }}
-                    Growth 😎</span
+                    Growth </span
                 >
                 <span class="font-weight-regular"> this month</span>
             </h6>

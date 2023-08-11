@@ -110,7 +110,7 @@ const changeAvatar = (event) => {
 };
 
 const handleSubmit = (e) => {
-    console.log(updateObj.value, "keys");
+   
 
     if (edit) {
         if (Object.keys(updateObj.value).length) {
@@ -271,7 +271,7 @@ const addMoreEducation = () => {
 };
 
 const handleChange = (e) => {
-    console.log(updateObj.value, e.target.type, "updateObj");
+   
     if (edit) {
         const { name, value } = e.target;
         if (value) {

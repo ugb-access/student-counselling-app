@@ -27,7 +27,7 @@ const responseData = ref({
 });
 
 const fetchProfileData = () => {
-    console.log("hello");
+    
     loading.value = false;
     accountDataLocal.value.name = data.value.name;
     accountDataLocal.value.username = data.value.username;
@@ -43,7 +43,7 @@ const updateStudentProfile = () => {
     const id = route.params.id;
 
     const data = {};
-    console.log(responseData.value?.name?.trim(), accountDataLocal.value?.name?.trim(), "accountDataLocal");
+   
     if (
         responseData.value?.name?.trim() !==
         accountDataLocal.value?.name?.trim()
@@ -61,7 +61,7 @@ const updateStudentProfile = () => {
         loading.value = true;
         updateUserProfile(id, data)
             .then((res) => {
-                console.log(res, "res");
+                
                 window.location.href = `/student/view/${id}`;
             })
             .catch((err) => {

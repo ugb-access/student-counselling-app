@@ -4,7 +4,7 @@ import { getLocalAuth } from "@/utils/local";
 export const storeStudentDetail = (data) => {
     const auth_data = getLocalAuth();
     const formdata = new FormData();
-    console.log(data.cv_path, data.passport, "passport");
+   
     formdata.append("user_id", data.user_id);
     formdata.append("photo_path", data.photo_path);
     formdata.append("full_name", data.full_name);
@@ -138,7 +138,7 @@ export const updateStudentData = ({ studentId, data }) => {
     const formdata = new FormData();
 
     if (data.photo_path) {
-        formdata.append("photo_path", data.photo_path);
+        formdata.append("photo_path", data.photo_path[0]);
     }
 
     if (data.full_name) {

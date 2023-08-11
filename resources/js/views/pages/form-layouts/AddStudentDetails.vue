@@ -108,7 +108,7 @@ const changeAvatar = (event) => {
 };
 
 const handleSubmit = (e) => {
-    console.log(updateObj.value, edit.value, "keys");
+    
 
     if (edit.value) {
         if (Object.keys(updateObj.value).length) {
@@ -269,7 +269,7 @@ const addMoreEducation = () => {
 };
 
 const handleChange = (e) => {
-    console.log(updateObj.value, e.target.type, "updateObj");
+    
     if (edit) {
         const { name, value } = e.target;
         if (value) {
@@ -331,7 +331,7 @@ const handleChange = (e) => {
 };
 
 const fetchStudentDetail = () => {
-    console.log(data.value, "data.value");
+    
     if (data.value) {
         photo_path.value.preview = data.value.student.photo_path;
         full_name.value = data.value.student.full_name;
@@ -590,7 +590,7 @@ const educationHistoryClosed = () => {
                     @click="() => (edit = true)"
                     class="action-button"
                     target="_blank"
-                    v-if="readonly === true"
+                    v-if="readonly === 'true'"
                     >Edit</VBtn
                 >
             </div>

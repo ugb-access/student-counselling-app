@@ -19,10 +19,10 @@ const handleLogout = () => {
 onMounted(() => {
     const localUser = JSON.parse(getLocalAuth());
     if (localUser) {
-        console.log(localUser.data, "user");
+        
         user.value.name = localUser.data.name;
         user.value.role_id = localUser.data.role_id;
-        console.log(user.value.name, "user1");
+      
     }
 });
 </script>

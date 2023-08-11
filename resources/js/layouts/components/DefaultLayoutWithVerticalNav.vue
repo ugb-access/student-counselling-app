@@ -46,13 +46,7 @@ const localUser = JSON.parse(getLocalAuth());
                     to: '/dashboard',
                 }"
             />
-            <VerticalNavLink
-                :item="{
-                    title: 'Account Settings',
-                    icon: 'mdi-account-cog-outline',
-                    to: '/account-settings',
-                }"
-            />
+            
 
             <!-- 👉 Pages -->
             <VerticalNavSectionTitle

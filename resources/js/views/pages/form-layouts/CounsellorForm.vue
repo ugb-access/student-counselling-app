@@ -41,10 +41,7 @@ const handleSubmit = () => {
             });
         })
         .catch((err) => {
-            console.log(
-                err?.response?.data?.error,
-                "err?.response?.data?.error"
-            );
+           
             if (err?.response?.data?.error) {
                 toast.error(err.response.data.error, {
                     autoClose: 6000,

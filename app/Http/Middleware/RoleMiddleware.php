@@ -16,7 +16,6 @@ class RoleMiddleware
     public function handle(Request $request, Closure $next, $roles): Response
     {
         $user = $request->user();
-        // dd($roles);
         if (is_string($roles)) {
             $roles = explode('|', $roles);
         }

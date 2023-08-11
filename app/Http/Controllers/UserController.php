@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -30,10 +31,11 @@ class UserController extends Controller
     public function get_counsellor_list(Request $request) {
         $limit = $request->query('limit');
         $search_keyword = $request->query('search');
+        $page = $request->query('page', 1);
 
         
         if(empty($limit)) {
-            $all_users = User::where('role_id', 2)->orderBy("created_at", "desc")->get();
+            $all_users = User::where('role_id', 2)->latest()->paginate(10, ['*'], 'page', $page);
         } else {
             if($search_keyword && !empty($search_keyword)) {
                 
@@ -59,17 +61,20 @@ class UserController extends Controller
 
     public function get_student_list(Request $request) {
         $limit = $request->query('limit');
+        $page = $request->query('page', 1);
         $user = Auth::user();
+
       
         if($user->role_id === 1) {
             if(empty($limit)) {
-                $all_users = User::where('role_id', 3)->orderBy("created_at", "desc")->get();
+                
+                $all_users = User::with('student')->where('role_id', 3)->latest()->paginate(10, ['*'], 'page', $page);
             } else {
                 $all_users = User::where('role_id', 3)->orderBy("created_at", "desc")->limit($limit)->get();
             }
         } else {
             if(empty($limit)) {
-                $all_users = User::where('role_id', 3)->where('added_by_user_id', $user->id)->orderBy("created_at", "desc")->get();
+                $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->latest()->paginate(10, ['*'], 'page', $page);
             } else {
                 $all_users = User::where('role_id', 3)->where('added_by_user_id', $user->id)->orderBy("created_at", "desc")->limit($limit)->get();
             }

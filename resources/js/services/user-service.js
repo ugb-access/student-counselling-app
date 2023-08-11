@@ -33,7 +33,7 @@ export const getAllCounsellor = ({ limit = null, search = null }) => {
     });
 };
 
-export const getAllStudents = ({ limit = null }) => {
+export const getAllStudents = ({ limit = null, page = null }) => {
     const auth_data = getLocalAuth();
 
     return api({
@@ -41,6 +41,7 @@ export const getAllStudents = ({ limit = null }) => {
         url: "/student/list",
         params: {
             limit: limit || undefined,
+            page: page || undefined
         },
         headers: {
             Authorization: `Bearer ${JSON.parse(auth_data).token}`,

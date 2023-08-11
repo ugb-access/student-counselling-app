@@ -1,6 +1,5 @@
 <script setup>
 import { useTheme } from "vuetify";
-import logo from "@images/logo.svg?raw";
 import authV1MaskDark from "@images/pages/auth-v1-mask-dark.png";
 import authV1MaskLight from "@images/pages/auth-v1-mask-light.png";
 import authV1Tree2 from "@images/pages/auth-v1-tree-2.png";
@@ -8,7 +7,7 @@ import authV1Tree from "@images/pages/auth-v1-tree.png";
 import { loginUser } from "@/services/auth-service";
 import { toast } from "vue3-toastify";
 import { setLocalAuth } from "@/utils/local";
-import router from "@/router";
+import logo from "@images/logo.png";
 
 const form = ref({
     email: "",
@@ -51,7 +50,7 @@ const handleSubmit = (e) => {
     }
     loginUser({ identifier: email.trim(), password: password.trim() })
         .then((res) => {
-            console.log(res.data.message, "res.data.message");
+         
             setLocalAuth({ token: res.data.token, data: res.data.data });
             toast.success(res.data.message, {
                 autoClose: 6000,
@@ -74,20 +73,20 @@ const handleSubmit = (e) => {
             <VCardItem class="justify-center">
                 <template #prepend>
                     <div class="d-flex">
-                        <div v-html="logo" />
+                        <img :src="logo" style="height: 50px" />
                     </div>
                 </template>
 
                 <VCardTitle
                     class="font-weight-semibold text-2xl text-uppercase"
                 >
-                    Materio
+                    Royal Vision
                 </VCardTitle>
             </VCardItem>
 
             <VCardText class="pt-2">
                 <h5 class="text-h5 font-weight-semibold mb-1">
-                    Welcome to Materio! 👋🏻
+                    Welcome to Royal Vision! 👋🏻
                 </h5>
                 <p class="mb-0">
                     Please sign-in to your account and start the adventure

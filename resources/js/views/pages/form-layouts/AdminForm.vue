@@ -31,17 +31,13 @@ const handleSubmit = () => {
         email: emailV,
     })
         .then((res) => {
-            console.log(res.data, "res.data");
             toast.success(res.data.message, {
                 autoClose: 6000,
             });
             window.location.href = "/admins";
         })
         .catch((err) => {
-            console.log(
-                err?.response?.data?.error,
-                "err?.response?.data?.error"
-            );
+           
             if (err?.response?.data?.error) {
                 toast.error(err.response.data.error, {
                     autoClose: 6000,

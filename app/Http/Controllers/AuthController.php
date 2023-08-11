@@ -149,7 +149,6 @@ class AuthController extends Controller
         $user = Auth::user();
         
         $data = $request->all();
-        // dd($data["counsellor_id"], $user->id);
         foreach ($data as $key => $value) {
             $data[$key] = trim($value);
         }
