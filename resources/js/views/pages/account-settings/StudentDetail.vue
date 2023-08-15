@@ -61,6 +61,11 @@ const deleteUser = () => {
             loading.value = false;
         });
 };
+
+const handleWhatsapp = () => {
+    console.log("Clicked");
+    window.open(`https://wa.me/${data.value.phone_number}`, "_blank");
+};
 </script>
 
 <template>
@@ -115,7 +120,20 @@ const deleteUser = () => {
                                     label="Phone Number"
                                     readonly="true"
                                     variant="solo"
-                                />
+                                    @click:append-inner="handleWhatsapp"
+                                >
+                                    <template v-slot:append-inner>
+                                        <VButton @click="handleWhatsapp">
+                                            <VIcon
+                                                class="cursor-pointer"
+                                                color="#00a884"
+                                                icon="mdi-whatsapp"
+                                                size="large"
+                                            >
+                                            </VIcon>
+                                        </VButton>
+                                    </template>
+                                </VTextField>
                             </VCol>
                         </VRow>
                     </VForm>

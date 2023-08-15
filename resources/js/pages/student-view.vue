@@ -27,11 +27,13 @@ const fetchStudentDetail = () => {
             const studentData = res.data.data;
             data.value = studentData;
             if (studentData.student) {
-                tabs[1] = {
+                activeTab.value = "student-detail";
+                tabs.unshift({
                     title: "Student Detail",
                     icon: "mdi-account-outline",
                     tab: "student-detail",
-                };
+                });
+
             }
         })
         .catch((err) => {
