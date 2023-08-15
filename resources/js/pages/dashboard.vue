@@ -1,4 +1,7 @@
 <script setup>
+import triangleDark from "@images/misc/triangle-dark.png";
+import triangleLight from "@images/misc/triangle-light.png";
+import avatar from "@images/avatars/avatar-10.png"
 import AnalyticsAdmin from "@/views/dashboard/AnalyticsAdmin.vue";
 import AnalyticsAward from "@/views/dashboard/AnalyticsAward.vue";
 import AnalyticsStudentCounsellor from "@/views/dashboard/AnalyticsStudentCounsellor.vue";
@@ -8,6 +11,7 @@ import AnalyticsNotification from "@/views/dashboard/AnalyticsNotification.vue";
 import { getLocalAuth } from "@/utils/local";
 import { onMounted } from "vue";
 import StudentDashboard from "@/views/dashboard/StudentDashboard.vue";
+
 
 const localUser = JSON.parse(getLocalAuth());
 </script>
@@ -24,15 +28,16 @@ const localUser = JSON.parse(getLocalAuth());
         <VCol cols="12" md="4">
             <VCard>
                 <VCardItem>
-                    <VCardTitle>Overall Users</VCardTitle>
+                    <VCardTitle>Welcome Back !</VCardTitle>
                 </VCardItem>
 
                 <VCardText>
                     <h6 class="text-sm font-weight-medium mb-12">
-                        <span>Total Growth </span>
-                        <span class="font-weight-regular"> this month</span>
+                        {{ localUser?.data?.name }}
                     </h6>
                 </VCardText>
+                <VImg :src="laptop" class="triangle-bg flip-in-rtl" />
+                <VImg :src="avatar" class="triangle-bg flip-in-rtl" />
             </VCard>
         </VCol>
 
