@@ -10,7 +10,6 @@ import { onMounted } from "vue";
 import StudentDashboard from "@/views/dashboard/StudentDashboard.vue";
 
 const localUser = JSON.parse(getLocalAuth());
-
 </script>
 
 <template>
@@ -22,9 +21,19 @@ const localUser = JSON.parse(getLocalAuth());
         >
             <UserAnalytics />
         </VCol>
-       
-        <VCol cols="12" md="4" v-if="localUser.data.role_id === 1">
-            <AnalyticsAdmin />
+        <VCol cols="12" md="4">
+            <VCard>
+                <VCardItem>
+                    <VCardTitle>Overall Users</VCardTitle>
+                </VCardItem>
+
+                <VCardText>
+                    <h6 class="text-sm font-weight-medium mb-12">
+                        <span>Total Growth </span>
+                        <span class="font-weight-regular"> this month</span>
+                    </h6>
+                </VCardText>
+            </VCard>
         </VCol>
 
         <VCol
@@ -35,12 +44,8 @@ const localUser = JSON.parse(getLocalAuth());
             <AnalyticsStudentCounsellor />
         </VCol>
 
-        <VCol
-            cols="12"
-         
-            v-if="localUser.data.role_id === 3"
-        >
-            <StudentDashboard readonly="true" type="student"  />
+        <VCol cols="12" v-if="localUser.data.role_id === 3">
+            <StudentDashboard readonly="true" type="student" />
         </VCol>
     </VRow>
 </template>
