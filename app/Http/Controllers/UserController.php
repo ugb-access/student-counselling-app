@@ -90,10 +90,10 @@ class UserController extends Controller
         $user = Auth::user();
         if($user->role_id === 1) {
             $user_count = User::selectRaw('role_id, COUNT(*) as count')
-            ->whereIn('role_id', [1, 2, 3]) // Assuming role_id 1 is for admins, 2 for counselors, and 3 for students
+            ->whereIn('role_id', [1, 2, 3]) 
             ->groupBy('role_id')
             ->get();
-            // Get the count of users for the current month
+
             $currentMonthCount = User::whereYear('created_at', '=', Carbon::now()->year)
             ->whereMonth('created_at', '=', Carbon::now()->month)
             ->count();
