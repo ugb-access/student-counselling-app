@@ -1,7 +1,7 @@
 <script setup>
 import triangleDark from "@images/misc/triangle-dark.png";
 import triangleLight from "@images/misc/triangle-light.png";
-import avatar from "@images/avatars/avatar-10.png"
+import avatar from "@images/avatars/avatar-10.png";
 import AnalyticsAdmin from "@/views/dashboard/AnalyticsAdmin.vue";
 import AnalyticsAward from "@/views/dashboard/AnalyticsAward.vue";
 import AnalyticsStudentCounsellor from "@/views/dashboard/AnalyticsStudentCounsellor.vue";
@@ -11,7 +11,6 @@ import AnalyticsNotification from "@/views/dashboard/AnalyticsNotification.vue";
 import { getLocalAuth } from "@/utils/local";
 import { onMounted } from "vue";
 import StudentDashboard from "@/views/dashboard/StudentDashboard.vue";
-
 
 const localUser = JSON.parse(getLocalAuth());
 </script>
@@ -36,8 +35,13 @@ const localUser = JSON.parse(getLocalAuth());
                         {{ localUser?.data?.name }}
                     </h6>
                 </VCardText>
-                <VImg :src="laptop" class="triangle-bg flip-in-rtl" />
-                <VImg :src="avatar" class="triangle-bg flip-in-rtl" />
+                <div class="pt-2">
+                    <VImg
+                        :src="triangleLight"
+                        class="triangle-bg flip-in-rtl"
+                    />
+                    <VImg :src="avatar" class="triangle-bg flip-in-rtl h-75 " />
+                </div>
             </VCard>
         </VCol>
 
