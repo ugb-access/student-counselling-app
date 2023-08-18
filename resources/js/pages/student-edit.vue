@@ -11,13 +11,15 @@ const activeTab = ref(route.params.tab);
 const data = ref(null);
 
 // tabs
-const tabs = [
+
+
+const tabs = ref([
     {
         title: "Account",
         icon: "mdi-account-outline",
         tab: "account",
     },
-];
+]);
 
 
 
@@ -28,7 +30,7 @@ const fetchStudentDetail = () => {
             const studentData = res.data.data;
             data.value = studentData;
             if (!studentData.student) {
-                tabs[1] = {
+                tabs.value[1] = {
                     title: "Student Detail",
                     icon: "mdi-account-outline",
                     tab: "student-detail",

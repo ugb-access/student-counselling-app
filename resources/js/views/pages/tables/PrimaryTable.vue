@@ -20,7 +20,7 @@ watch(
             <tr>
                 <th class="text-uppercase">#</th>
                 <th class="text-uppercase">Name</th>
-                <th class="text-uppercase text-center">Username</th>
+
                 <th class="text-uppercase text-center">Email</th>
                 <th
                     v-if="tableType !== 'admin'"
@@ -33,6 +33,12 @@ watch(
                     class="text-uppercase text-center"
                 >
                     Status
+                </th>
+                <th
+                    v-if="tableType !== 'counsellor' && tableType !== 'admin'"
+                    class="text-uppercase text-center"
+                >
+                    Payment Status
                 </th>
                 <th class="text-uppercase text-center">Date</th>
 
@@ -53,9 +59,7 @@ watch(
                 <td>
                     {{ item.name }}
                 </td>
-                <td class="text-center">
-                    {{ item.username }}
-                </td>
+
                 <td class="text-center">
                     {{ item.email }}
                 </td>
@@ -66,30 +70,27 @@ watch(
                     v-if="tableType !== 'counsellor' && tableType !== 'admin'"
                     class="text-center"
                 >
-                    {{
-                        item.student?.full_name
-                            ? !item.student?.cv_path ||
-                              !item.student?.passport ||
-                              !item.student?.academic_document ||
-                              !item.student?.teacher_reference ||
-                              !item.student?.cnic ||
-                              !item.student?.experience_letter ||
-                              !item.student?.other_certificates ||
-                              !item.student?.conditional_offer ||
-                              !item.student?.unconditional_offer ||
-                              !item.student?.payment_proof ||
-                              !item.student?.cas_ecoe ||
-                              !item.student?.visa ||
-                              !item.student?.travel_plan ||
-                              !item.student?.gt_document ||
-                              (!item.student?.english_test?.moi &&
-                                  !item.student?.english_test?.english_proficiency &&
-                                  !item.student?.english_test?.ielts &&
-                                  !item.student?.english_test?.other_english_test)
-                                ? "Incomplete"
-                                : "Completed"
-                            : "Incomplete"
-                    }}
+                    <span class="text-error" v-if="!item.student?.status"
+                        >Incomplete</span
+                    >
+                    <span class="text-success" v-else
+                        >Complete</span
+                    >
+                </td>
+                <td
+                    v-if="tableType !== 'counsellor' && tableType !== 'admin'"
+                    class="text-center"
+                >
+                    <span
+                        class="text-error"
+                        v-if="!item.student?.payment_status"
+                        >Not Received</span
+                    >
+                    <span
+                        class="text-success"
+                        v-else
+                        >Received</span
+                    >
                 </td>
                 <td class="text-center">
                     {{ item.created_at.slice(0, item.created_at.indexOf("T")) }}

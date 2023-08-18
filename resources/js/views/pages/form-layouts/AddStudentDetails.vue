@@ -108,8 +108,6 @@ const changeAvatar = (event) => {
 };
 
 const handleSubmit = (e) => {
-    
-
     if (edit.value) {
         if (Object.keys(updateObj.value).length) {
             loading.value = true;
@@ -170,9 +168,6 @@ const handleSubmit = (e) => {
             return false;
         } else if (!mobile.value.trim()) {
             toast.error("Mobile No. is required!");
-            return false;
-        } else if (!mobile_2.value.trim()) {
-            toast.error("Mobile 2 is required!");
             return false;
         } else if (!referee_name.value.trim()) {
             toast.error("Referee Name is required!");
@@ -269,7 +264,6 @@ const addMoreEducation = () => {
 };
 
 const handleChange = (e) => {
-    
     if (edit) {
         const { name, value } = e.target;
         if (value) {
@@ -331,7 +325,6 @@ const handleChange = (e) => {
 };
 
 const fetchStudentDetail = () => {
-    
     if (data.value) {
         photo_path.value.preview = data.value.student.photo_path;
         full_name.value = data.value.student.full_name;
@@ -510,10 +503,6 @@ const educationHistoryClosed = () => {
                                     <li v-if="!travel_plan">
                                         Travel Plan File is Missing.
                                     </li>
-                                    <li v-if="!gt_document">
-                                        GT Document File is Missing.
-                                    </li>
-
                                     <li v-if="!gt_document">
                                         GT Document File is Missing.
                                     </li>
@@ -942,7 +931,6 @@ const educationHistoryClosed = () => {
                         type="text"
                         placeholder="Mobile 2"
                         class="flex-1"
-                        :rules="[required]"
                         :variant="
                             readonly === 'true' && edit === false
                                 ? 'solo'
@@ -953,10 +941,7 @@ const educationHistoryClosed = () => {
                         @input="handleChange"
                     >
                         <template v-slot:label>
-                            <div>
-                                Mobile 2
-                                <span class="text-error">*</span>
-                            </div>
+                            <div>Mobile 2</div>
                         </template>
                     </VTextField>
                 </VCol>

@@ -528,10 +528,6 @@ onMounted(fetchStudentDetail);
                                     <li v-if="!gt_document">
                                         GT Document File is Missing.
                                     </li>
-
-                                    <li v-if="!gt_document">
-                                        GT Document File is Missing.
-                                    </li>
                                     <li
                                         v-if="
                                             !moi &&

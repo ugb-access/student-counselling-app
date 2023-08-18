@@ -62,19 +62,35 @@ class UserController extends Controller
     public function get_student_list(Request $request) {
         $limit = $request->query('limit');
         $page = $request->query('page', 1);
+        $status = $request->query('status');
         $user = Auth::user();
 
       
         if($user->role_id === 1) {
             if(empty($limit)) {
+                if(empty($status)) {
+                    $all_users = User::with('student')->where('role_id', 3)->latest()->paginate(10, ['*'], 'page', $page);
+                } else {
+                    $status_bol = $status === "incomplete" ? 0 : 1;
+                    $all_users = User::with('student')->where('role_id', 3)->whereHas('student', function ($query) use ( $status_bol) {
+                        $query->where('payment_status', $status_bol);
+                    })->latest()->paginate(10, ['*'], 'page', $page);
+                }
                 
-                $all_users = User::with('student')->where('role_id', 3)->latest()->paginate(10, ['*'], 'page', $page);
             } else {
                 $all_users = User::where('role_id', 3)->orderBy("created_at", "desc")->limit($limit)->get();
             }
         } else {
             if(empty($limit)) {
-                $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->latest()->paginate(10, ['*'], 'page', $page);
+                if(empty($status)) {
+                    $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->latest()->paginate(10, ['*'], 'page', $page);
+                } else {
+                    $status_bol = $status === "incomplete" ? 0 : 1;
+                    $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->whereHas('student', function ($query) use ( $status_bol) {
+                        $query->where('payment_status', $status_bol);
+                    })->latest()->paginate(10, ['*'], 'page', $page);
+                }
+                
             } else {
                 $all_users = User::where('role_id', 3)->where('added_by_user_id', $user->id)->orderBy("created_at", "desc")->limit($limit)->get();
             }
@@ -94,6 +110,8 @@ class UserController extends Controller
             ->groupBy('role_id')
             ->get();
 
+            $student_with_payment_proof = Student::where('payment_status', 1)->count();
+            
             $currentMonthCount = User::whereYear('created_at', '=', Carbon::now()->year)
             ->whereMonth('created_at', '=', Carbon::now()->month)
             ->count();
@@ -102,12 +120,17 @@ class UserController extends Controller
             $previousMonthCount = User::whereYear('created_at', '=', Carbon::now()->subMonth()->year)
             ->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
             ->count();
-            return response()->json(['data' => ['overall_user' => $user_count, 'current_month' => $currentMonthCount, 'previous_month' => $previousMonthCount]], 200);
+            return response()->json(['data' => ['overall_user' => $user_count, 'current_month' => $currentMonthCount, 'previous_month' => $previousMonthCount, 'student_with_payment_proof' => $student_with_payment_proof]], 200);
         }
 
         if($user->role_id === 2) {
             $user_count = User::where('role_id', 3)
             ->where('added_by_user_id', $user->id)
+            ->count();
+
+            $student_with_payment_proof = User::where('added_by_user_id', $user->id)->whereHas('student', function ($query) {
+                $query->where('payment_status', 1);
+            })
             ->count();
             // Get the count of users for the current month
             $currentMonthCount = User::where('role_id', 3)
@@ -120,7 +143,7 @@ class UserController extends Controller
             ->where('added_by_user_id', $user->id)->whereYear('created_at', '=', Carbon::now()->subMonth()->year)
             ->whereMonth('created_at', '=', Carbon::now()->subMonth()->month)
             ->count();
-            return response()->json(['data' => ['overall_user' => [[ 'role_id' => 3, 'count' => $user_count]], 'current_month' => $currentMonthCount, 'previous_month' => $previousMonthCount]], 200);
+            return response()->json(['data' => ['overall_user' => [[ 'role_id' => 3, 'count' => $user_count]], 'current_month' => $currentMonthCount, 'previous_month' => $previousMonthCount, 'student_with_payment_proof' => $student_with_payment_proof]], 200);
         } 
     }
 

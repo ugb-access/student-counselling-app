@@ -2,13 +2,14 @@
 import PrimaryTable from "@/views/pages/tables/PrimaryTable.vue";
 import { getAllStudents } from "@/services/user-service";
 import { onMounted, ref, watch } from "vue";
-import router from "@/router";
+import { useRoute } from "vue-router";
 
 const searchQuery = ref("");
 const list = ref([]);
 const filteredData = ref([]);
 const page = ref(1);
 const length = ref(1);
+const route = useRoute();
 
 const handleActionClick = () => {
     window.location.href = "/add/student";
@@ -16,7 +17,12 @@ const handleActionClick = () => {
 
 const fetchData = async () => {
     try {
-        const response = await getAllStudents({ limit: null, page: page.value });
+        const response = await getAllStudents({
+            limit: null,
+            page: page.value,
+            status:
+                route.query.status === "all" ? undefined : route.query.status,
+        });
         list.value = response.data.data.data;
         length.value = response.data.data.last_page;
         filterData();
@@ -51,7 +57,7 @@ const filterData = () => {
 onMounted(fetchData);
 watch(searchQuery, filterData);
 
-watch(page, fetchData)
+watch(page, fetchData);
 </script>
 
 <template>
@@ -60,6 +66,48 @@ watch(page, fetchData)
             <VCard title="All Students">
                 <template v-slot:append>
                     <div class="d-flex justify-end align-center">
+                        <div>
+                            <VBtn
+                                href="/students?status=all"
+                                size="small"
+                                :color="
+                                    route.query.status === 'all' ||
+                                    !route.query?.status
+                                        ? 'primary'
+                                        : 'grey-900'
+                                "
+                                text
+                                class="action-button mx-2"
+                                variant="plain"
+                                >All</VBtn
+                            >
+                            <VBtn
+                                href="/students?status=incomplete"
+                                size="small"
+                                :color="
+                                    route.query.status === 'incomplete'
+                                        ? 'primary'
+                                        : 'grey-900'
+                                "
+                                text
+                                class="action-button"
+                                variant="plain"
+                                >Incomplete</VBtn
+                            >
+                            <VBtn
+                                href="/students?status=complete"
+                                size="small"
+                                :color="
+                                    route.query.status === 'complete'
+                                        ? 'primary'
+                                        : 'grey-900'
+                                "
+                                text
+                                class="action-button mx-2"
+                                variant="plain"
+                                >Complete</VBtn
+                            >
+                        </div>
                         <VTextField
                             v-model="searchQuery"
                             label="Search"
@@ -78,7 +126,7 @@ watch(page, fetchData)
                     </div>
                 </template>
                 <PrimaryTable type="student" :data="filteredData" />
-                <VPagination v-model="page" :length="length"   />
+                <VPagination v-model="page" :length="length" />
             </VCard>
         </VCol>
     </VRow>

@@ -355,7 +355,7 @@ class StudentController extends Controller
             'address' => 'required',
             'phone' => 'required|string|max:35',
             'mobile' => 'required|string|max:35', 
-            'mobile_2' => 'required|string|max:35',
+            'mobile_2' => 'nullable|string|max:35',
             'referee_name' => 'required|string',
             'referee_mobile' => 'nullable|string|max:35',
             'document_correction' => 'nullable|string|max:255',
@@ -435,18 +435,20 @@ class StudentController extends Controller
         $student->semester_year = $request->input('semester_year');
         $student->country_detail = json_decode($data["country_detail"], true);
         
-
+        $uploaded_file_count = 0;
 
         if($request->file('cv_path')) {
             $cvfileName = uniqid('cv' . '_') . '.' . $request->file('cv_path')->getClientOriginalExtension();
             $cv_path = $request->file('cv_path')->storeAs('cv_files', $cvfileName, 's3');
             $student->cv_path = $cv_path;
+            $uploaded_file_count++;
         } 
 
         if($request->file('passport')) {
             $passportfileName = uniqid('passport' . '_') . '.' . $request->file('passport')->getClientOriginalExtension();
             $passport = $request->file('passport')->storeAs('passport_files', $passportfileName, 's3');
             $student->passport = $passport;
+            $uploaded_file_count++;
         }
 
 
@@ -470,12 +472,14 @@ class StudentController extends Controller
     
            
             $student->english_test = $englishTestPaths;
+            $uploaded_file_count++;
         }
         
        if($request->file('academic_document')) {
             $academic_documentfileName = uniqid('academic_document' . '_') . '.' . $request->file('academic_document')->getClientOriginalExtension();
             $academic_document = $request->file('academic_document')->storeAs('academic_document_files', $academic_documentfileName, 's3');
             $student->academic_document = $academic_document;
+            $uploaded_file_count++;
        }
 
 
@@ -484,6 +488,7 @@ class StudentController extends Controller
             $cnicfileName = uniqid('cnic' . '_') . '.' . $request->file('cnic')->getClientOriginalExtension();
             $cnic = $request->file('cnic')->storeAs('cnic_files', $cnicfileName, 's3');
             $student->cnic = $cnic;
+            $uploaded_file_count++;
        }
 
 
@@ -493,6 +498,7 @@ class StudentController extends Controller
             $teacher_referencefileName = uniqid('teacher_reference' . '_') . '.' . $request->file('teacher_reference')->getClientOriginalExtension();
             $teacher_reference = $request->file('teacher_reference')->storeAs('teacher_reference_files', $teacher_referencefileName, 's3');
             $student->teacher_reference = $teacher_reference;
+            $uploaded_file_count++;
        }
 
           
@@ -501,6 +507,7 @@ class StudentController extends Controller
             $experience_letterfileName = uniqid('experience_letter' . '_') . '.' . $request->file('experience_letter')->getClientOriginalExtension();
             $experience_letter = $request->file('experience_letter')->storeAs('experience_letter_files', $experience_letterfileName, 's3');
             $student->experience_letter = $experience_letter;
+            $uploaded_file_count++;
        }
 
 
@@ -510,17 +517,14 @@ class StudentController extends Controller
             $other_certificatesfileName = uniqid('other_certificates' . '_') . '.' . $request->file('other_certificates')->getClientOriginalExtension();
             $other_certificates = $request->file('other_certificates')->storeAs('other_certificates_files', $other_certificatesfileName, 's3');
             $student->other_certificates = $other_certificates;
+            $uploaded_file_count++;
        }
 
-
-       
-
-
-          
        if($request->file('conditional_offer')) {
             $conditional_offerfileName = uniqid('conditional_offer' . '_') . '.' . $request->file('conditional_offer')->getClientOriginalExtension();
             $conditional_offer = $request->file('conditional_offer')->storeAs('conditional_offer_files', $conditional_offerfileName, 's3');
             $student->conditional_offer = $conditional_offer;
+            $uploaded_file_count++;
        }
 
 
@@ -529,6 +533,7 @@ class StudentController extends Controller
             $unconditional_offerfileName = uniqid('unconditional_offer' . '_') . '.' . $request->file('unconditional_offer')->getClientOriginalExtension();
             $unconditional_offer = $request->file('unconditional_offer')->storeAs('unconditional_offer_files', $unconditional_offerfileName, 's3');
             $student->unconditional_offer = $unconditional_offer;
+            $uploaded_file_count++;
        }
 
           
@@ -537,26 +542,27 @@ class StudentController extends Controller
             $payment_prooffileName = uniqid('payment_proof' . '_') . '.' . $request->file('payment_proof')->getClientOriginalExtension();
             $payment_proof = $request->file('payment_proof')->storeAs('payment_proof_files', $payment_prooffileName, 's3');
             $student->payment_proof = $payment_proof;
+            $student->payment_status = 1;
+            $uploaded_file_count++;
        }
 
-
-
-
-
+      
           
        if($request->file('cas_ecoe')) {
 
             $cas_ecoefileName = uniqid('cas_ecoe' . '_') . '.' .  $request->file('cas_ecoe')->getClientOriginalExtension();
             $cas_ecoe = $request->file('cas_ecoe')->storeAs('cas_ecoe_files', $cas_ecoefileName, 's3');
             $student->cas_ecoe = $cas_ecoe;
+            $uploaded_file_count++;
        }
 
           
        if($request->file('visa')) {
 
-        $visafileName = uniqid('visa' . '_') . '.' . $request->file('visa')->getClientOriginalExtension();
-        $visa = $request->file('visa')->storeAs('visa_files', $visafileName, 's3');
-        $student->visa = $visa;
+            $visafileName = uniqid('visa' . '_') . '.' . $request->file('visa')->getClientOriginalExtension();
+            $visa = $request->file('visa')->storeAs('visa_files', $visafileName, 's3');
+            $student->visa = $visa;
+            $uploaded_file_count++;                                             
           
 
        }
@@ -566,6 +572,7 @@ class StudentController extends Controller
             $travel_planfileName = uniqid('travel_plan' . '_') . '.' . $request->file('travel_plan')->getClientOriginalExtension();
             $travel_plan = $request->file('travel_plan')->storeAs('travel_plan_files', $travel_planfileName, 's3');
             $student->travel_plan = $travel_plan;
+            $uploaded_file_count++; 
        }
 
 
@@ -573,7 +580,14 @@ class StudentController extends Controller
             $gt_documentfileName = uniqid('gt_document' . '_') . '.' . $request->file('gt_document')->getClientOriginalExtension();
             $gt_document = $request->file('gt_document')->storeAs('gt_document_files', $gt_documentfileName, 's3');
             $student->gt_document = $gt_document;
+            $uploaded_file_count++; 
        }
+
+
+       if($uploaded_file_count === 15) {
+            $student->status = 1;
+       }
+
 
         $student->save();
         return response()->json(['message' => 'Student record created successfully', 'data' => $student], 200);
@@ -833,9 +847,13 @@ class StudentController extends Controller
           
        if($request->file('payment_proof')) {
 
-            $payment_prooffileName = uniqid('payment_proof' . '_') . '.' . $request->file('payment_proof')->getClientOriginalExtension();
-            $payment_proof = $request->file('payment_proof')->storeAs('payment_proof_files', $payment_prooffileName, 's3');
+            $payment_profileName = uniqid('payment_proof' . '_') . '.' . $request->file('payment_proof')->getClientOriginalExtension();
+            $payment_proof = $request->file('payment_proof')->storeAs('payment_proof_files', $payment_profileName, 's3');
             $student->payment_proof = $payment_proof;
+
+            if(!$student->payment_status) {
+                $student->payment_status = 1;
+            }
        }
 
 
@@ -853,9 +871,9 @@ class StudentController extends Controller
           
        if($request->file('visa')) {
 
-        $visafileName = uniqid('visa' . '_') . '.' . $request->file('visa')->getClientOriginalExtension();
-        $visa = $request->file('visa')->storeAs('visa_files', $visafileName, 's3');
-        $student->visa = $visa;
+            $visafileName = uniqid('visa' . '_') . '.' . $request->file('visa')->getClientOriginalExtension();
+            $visa = $request->file('visa')->storeAs('visa_files', $visafileName, 's3');
+            $student->visa = $visa;
           
 
        }
@@ -873,6 +891,11 @@ class StudentController extends Controller
             $gt_document = $request->file('gt_document')->storeAs('gt_document_files', $gt_documentfileName, 's3');
             $student->gt_document = $gt_document;
        }
+
+       if($student->gt_document && $student->travel_plan && $student->visa && $student->cas_ecoe && $student->payment_proof && $student->unconditional_offer && $student->conditional_offer && $student->other_certificates && $student->experience_letter && $student->teacher_reference && $student->cnic && $student->academic_document && $student->english_test && $student->passport && $student->cv_path) {
+            $student->status = 1;
+       }
+
 
         $student->save();
         return response()->json(['message' => 'Student record created successfully', 'data' => $student], 200);
