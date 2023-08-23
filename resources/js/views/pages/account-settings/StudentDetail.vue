@@ -4,6 +4,7 @@ import avatar1 from "@images/avatars/avatar-1.png";
 import { watch } from "vue";
 import { deleteUserProfile } from "@/services/user-service";
 import { useRoute } from "vue-router";
+import { toast } from "vue3-toastify";
 const route = useRoute();
 
 const accountData = {
