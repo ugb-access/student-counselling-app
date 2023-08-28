@@ -19,7 +19,7 @@ class AuthController extends Controller
         $validator = Validator::make($data, [
             'username' => 'required_without_all:email',
             'email' => 'required_without_all:username|email',
-            'password' => 'required|min:6|max:8',
+            'password' => 'required|min:6|max:10',
         ]);
         
         if($validator->fails()) {
@@ -96,7 +96,7 @@ class AuthController extends Controller
             'username' => 'required|unique:users',
             'email' => 'required|email|unique:users',
             'name' => 'required|string',
-            'password' => 'required|min:6|max:8',
+            'password' => 'required|min:6|max:10',
         ]);
        
         if($validator->fails()) {
@@ -123,7 +123,7 @@ class AuthController extends Controller
             'username' => 'required|unique:users',
             'email' => 'required|email|unique:users',
             'name' => 'required|string',
-            'password' => 'required|min:6|max:8',
+            'password' => 'required|min:6|max:10',
             'phone_number' => 'required|string|max:20',
         ]);
        
@@ -158,7 +158,7 @@ class AuthController extends Controller
                 'username' => 'required|unique:users',
                 'email' => 'required|email|unique:users',
                 'name' => 'required|string',
-                'password' => 'required|min:6|max:8',
+                'password' => 'required|min:6|max:10',
                 'phone_number' => 'required|string|max:20',
                 'counsellor_id' => 'required|integer'
             ]);
@@ -181,7 +181,7 @@ class AuthController extends Controller
                 'username' => 'required|unique:users',
                 'email' => 'required|email|unique:users',
                 'name' => 'required|string',
-                'password' => 'required|min:6|max:8',
+                'password' => 'required|min:6|max:10',
                 'phone_number' => 'required|string|max:20',
             ]);
            

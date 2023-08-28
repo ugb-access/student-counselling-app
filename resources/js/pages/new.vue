@@ -32,8 +32,8 @@ const passwordValidation = (value) => {
         return "Password cannot be less than 6 characters";
     }
 
-    if (value.trim() && value.trim().length > 8) {
-        return "Password cannot be greater than 8 characters";
+    if (value.trim() && value.trim().length > 10) {
+        return "Password cannot be greater than 10 characters";
     }
 };
 
@@ -44,8 +44,8 @@ const handleSubmit = (e) => {
         return "Password cannot be less than 6 characters";
     }
 
-    if (password.trim() && password.trim().length > 8) {
-        return "Password cannot be greater than 8 characters";
+    if (password.trim() && password.trim().length > 10) {
+        return "Password cannot be greater than 10 characters";
     }
     loginUser({ identifier: email.trim(), password: password.trim() })
         .then((res) => {

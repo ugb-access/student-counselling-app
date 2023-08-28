@@ -1,8 +1,9 @@
 <script setup>
 import router from "@/router";
 import { getAllCounsellor } from "@/services/user-service";
-import { addCounsellor, addStudent } from "@/services/user-service";
+import { addStudent } from "@/services/user-service";
 import { watch } from "vue";
+import { getLocalAuth } from "@/utils/local";
 
 import { onMounted } from "vue";
 import { toast } from "vue3-toastify";
@@ -19,9 +20,9 @@ const counsellor_ids = ref([]);
 const loading = ref(false);
 
 const isPasswordVisible = ref(false);
+const localUser = JSON.parse(getLocalAuth());
 
 const handleSubmit = () => {
-   
     const emailV = email.value;
     const passwordV = password.value;
     const nameV = name.value;
@@ -33,15 +34,15 @@ const handleSubmit = () => {
         !passwordV.trim() ||
         !nameV.trim() ||
         !usernameV.trim() ||
-        !phone_numberV.trim() ||
-        !counsellor.value
+        !phone_numberV.trim()
     ) {
-        if (!counsellor.value) {
-            toast.error("Counsellor is required", {
-                autoClose: 6000,
-            });
-        }
         return "Field is required";
+    }
+    if (localUser.data.role_id == 1 && !counsellor.value) {
+        toast.error("Counsellor is required", {
+            autoClose: 6000,
+        });
+        return;
     }
 
     addStudent({
@@ -50,9 +51,12 @@ const handleSubmit = () => {
         password: passwordV,
         email: emailV,
         phone_number: phone_numberV,
-        counsellor_id: counsellor_ids.value.find(
-            (item) => item?.username === counsellor?.value
-        ).id,
+        counsellor_id:
+            localUser.data.role_id == 1
+                ? counsellor_ids.value.find(
+                      (item) => item?.username === counsellor?.value
+                  )?.id
+                : undefined,
     })
         .then((res) => {
             window.location.href = "/students";
@@ -61,7 +65,6 @@ const handleSubmit = () => {
             });
         })
         .catch((err) => {
-           
             if (err?.response?.data?.error) {
                 toast.error(err.response.data.error, {
                     autoClose: 6000,
@@ -81,8 +84,8 @@ const passwordValidation = (value) => {
         return "Password cannot be less than 6 characters";
     }
 
-    if (value?.trim() && value?.trim().length > 8) {
-        return "Password cannot be greater than 8 characters";
+    if (value?.trim() && value?.trim().length > 10) {
+        return "Password cannot be greater than 10 characters";
     }
 };
 
@@ -181,7 +184,7 @@ watch(search_keyword, getCounsellors);
                     :rules="[required, passwordValidation]"
                 />
             </VCol>
-            <VCol>
+            <VCol v-if="localUser.data.role_id == 1">
                 <v-autocomplete
                     v-model="counsellor"
                     v-model:search="search_keyword"
@@ -190,6 +193,7 @@ watch(search_keyword, getCounsellors);
                     hide-no-data
                     hide-details
                     label="Select Counsellor"
+                    :rules=[required]
                 ></v-autocomplete
             ></VCol>
         </VRow>

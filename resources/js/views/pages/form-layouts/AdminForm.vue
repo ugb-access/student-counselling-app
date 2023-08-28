@@ -57,8 +57,8 @@ const passwordValidation = (value) => {
         return "Password cannot be less than 6 characters";
     }
 
-    if (value?.trim() && value?.trim().length > 8) {
-        return "Password cannot be greater than 8 characters";
+    if (value?.trim() && value?.trim().length > 10) {
+        return "Password cannot be greater than 10 characters";
     }
 };
 
