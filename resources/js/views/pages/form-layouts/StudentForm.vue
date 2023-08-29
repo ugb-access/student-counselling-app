@@ -18,6 +18,7 @@ const counsellors = ref([]);
 const search_keyword = ref("");
 const counsellor_ids = ref([]);
 const loading = ref(false);
+const submitLoading = ref(false);
 
 const isPasswordVisible = ref(false);
 const localUser = JSON.parse(getLocalAuth());
@@ -44,6 +45,7 @@ const handleSubmit = () => {
         });
         return;
     }
+    submitLoading.value = true;
 
     addStudent({
         username: usernameV,
@@ -59,10 +61,11 @@ const handleSubmit = () => {
                 : undefined,
     })
         .then((res) => {
-            window.location.href = "/students";
             toast.success(res.data.message, {
                 autoClose: 6000,
             });
+            window.location.href = "/students";
+            
         })
         .catch((err) => {
             if (err?.response?.data?.error) {
@@ -70,6 +73,7 @@ const handleSubmit = () => {
                     autoClose: 6000,
                 });
             }
+            submitLoading.value = false;
         });
 };
 
@@ -127,7 +131,7 @@ watch(search_keyword, getCounsellors);
 </script>
 
 <template>
-    <VForm @submit.prevent="handleSubmit">
+    <VForm :disabled="submitLoading"  @submit.prevent="handleSubmit">
         <VRow>
             <!-- 👉 Name -->
             <VCol>
@@ -200,9 +204,9 @@ watch(search_keyword, getCounsellors);
         <!-- 👉 Email -->
         <VRow>
             <VCol cols="12" class="d-flex gap-4">
-                <VBtn type="submit"> Submit </VBtn>
+                <VBtn type="submit" :disabled="submitLoading" > Submit </VBtn>
 
-                <VBtn type="reset" color="secondary" variant="tonal">
+                <VBtn type="reset" :disabled="submitLoading" color="secondary" variant="tonal">
                     Reset
                 </VBtn>
             </VCol>

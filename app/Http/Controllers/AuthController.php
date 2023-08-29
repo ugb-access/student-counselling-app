@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SendMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -152,7 +154,7 @@ class AuthController extends Controller
         foreach ($data as $key => $value) {
             $data[$key] = trim($value);
         }
-        
+        $counsellor_id = null;
         if($user->role_id === 1) {
             $validator = Validator::make($data, [
                 'username' => 'required|unique:users',
@@ -175,6 +177,7 @@ class AuthController extends Controller
                 'added_by_user_id' => $data["counsellor_id"],
                 'role_id' => 3
             ]);
+            $counsellor_id = $data["counsellor_id"];
         }
         if($user->role_id === 2) {
             $validator = Validator::make($data, [
@@ -197,14 +200,19 @@ class AuthController extends Controller
                 'added_by_user_id' => $user->id,
                 'role_id' => 3
             ]);
+            $counsellor_id = $user->id;
         }
-       
+
+        $counsellor_name = User::find($counsellor_id)->value('name');
+        
+        try {
+            Mail::to($data['email'])->send(new SendMail($data['name'], $counsellor_name));
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+        
     
         return response()->json(['message' => 'Student created successfully'], 201);
     }
-
-
-
-   
    
 }
