@@ -71,7 +71,7 @@
         <p>Your interest and support are greatly valued. It was a pleasure to have your visit and interest.</p>
 
         <!-- Counsellor Information -->
-        <p>Mr./Ms. <strong>{{ $counsellor_name }}</strong> has been assigned to you as a Counsellor.</p>
+        <p>Mr./Ms. <strong>{{ $counsellor_name }}</strong> has been assigned to you as a Counselor.</p>
 
         <!-- Signature -->
         <p class="signature">Best Regards,<br>Team Royal Vision Education</p>
