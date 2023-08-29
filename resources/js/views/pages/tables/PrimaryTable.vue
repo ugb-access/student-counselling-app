@@ -73,9 +73,7 @@ watch(
                     <span class="text-error" v-if="!item.student?.status"
                         >Incomplete</span
                     >
-                    <span class="text-success" v-else
-                        >Complete</span
-                    >
+                    <span class="text-success" v-else>Complete</span>
                 </td>
                 <td
                     v-if="tableType !== 'counsellor' && tableType !== 'admin'"
@@ -86,11 +84,7 @@ watch(
                         v-if="!item.student?.payment_status"
                         >Not Received</span
                     >
-                    <span
-                        class="text-success"
-                        v-else
-                        >Received</span
-                    >
+                    <span class="text-success" v-else>Received</span>
                 </td>
                 <td class="text-center">
                     {{ item.created_at.slice(0, item.created_at.indexOf("T")) }}
