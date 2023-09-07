@@ -70,5 +70,6 @@ Route::middleware('auth:sanctum', 'role:admin|counsellor')->post('/student-detai
 
 Route::middleware('auth:sanctum', 'role:admin|counsellor')->patch('/student-detail/{student:user_id}', [StudentController::class, 'update_student_detail'])->name("update_student_detail");
 
+Route::get('/download-files/{student}', [StudentController::class, 'download_student_files'])->name("download_student_files");
 
 

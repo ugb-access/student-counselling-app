@@ -13,6 +13,7 @@ import { dashFormat } from "@/utils/date";
 import { onMounted } from "vue";
 
 import router from "@/router";
+import { downloadAllFiles } from "@/services/student-service";
 
 const props = defineProps({
     readonly: String,
@@ -108,6 +109,7 @@ const changeAvatar = (event) => {
 };
 
 const handleSubmit = (e) => {
+    console.log(updateObj.value, "updateObj");
     if (edit.value) {
         if (Object.keys(updateObj.value).length) {
             loading.value = true;
@@ -168,9 +170,6 @@ const handleSubmit = (e) => {
             return false;
         } else if (!mobile.value.trim()) {
             toast.error("Mobile No. is required!");
-            return false;
-        } else if (!referee_name.value.trim()) {
-            toast.error("Referee Name is required!");
             return false;
         } else if (
             education_history.value.length == 0 ||
@@ -266,61 +265,60 @@ const addMoreEducation = () => {
 const handleChange = (e) => {
     if (edit) {
         const { name, value } = e.target;
-        if (value) {
-            if (name === "education_history") {
-                updateObj.value[name] = education_history.value;
-            } else if (name === "country_detail") {
-                updateObj.value[name] = country_detail.value;
+
+        if (name === "education_history") {
+            updateObj.value[name] = education_history.value;
+        } else if (name === "country_detail") {
+            updateObj.value[name] = country_detail.value;
+        } else {
+            if (e.target.type === "file") {
+                updateObj.value[name] = e.target.files;
             } else {
-                if (e.target.type === "file") {
-                    updateObj.value[name] = e.target.files;
+                if (e.target.type === "radio") {
+                    updateObj.value[name] = Number(e.target.value);
                 } else {
-                    if (e.target.type === "radio") {
-                        updateObj.value[name] = Number(e.target.value);
-                    } else {
-                        updateObj.value[name] = e.target.value;
-                    }
+                    updateObj.value[name] = e.target.value;
                 }
             }
-
-            // if (name === "cv_path") {
-            //     cv_path.value = e.target.files;
-            // } else if (name === "passport") {
-            //     passport.value = e.target.files;
-            // } else if (name === "academic_document") {
-            //     academic_document.value = e.target.files;
-            // } else if (name === "teacher_reference") {
-            //     teacher_reference.value = e.target.files;
-            // } else if (name === "cnic") {
-            //     cnic.value = e.target.files;
-            // } else if (name === "experience_letter") {
-            //     experience_letter.value = e.target.files;
-            // } else if (name === "other_certificates") {
-            //     other_certificates.value = e.target.files;
-            // } else if (name === "conditional_offer") {
-            //     conditional_offer.value = e.target.files;
-            // } else if (name === "unconditional_offer") {
-            //     unconditional_offer.value = e.target.files;
-            // } else if (name === "payment_proof") {
-            //     payment_proof.value = e.target.files;
-            // } else if (name === "cas_ecoe") {
-            //     cas_ecoe.value = e.target.files;
-            // } else if (name === "visa") {
-            //     visa.value = e.target.files;
-            // } else if (name === "travel_plan") {
-            //     travel_plan.value = e.target.files;
-            // } else if (name === "gt_document") {
-            //     gt_document.value = e.target.files;
-            // } else if (name === "moi") {
-            //     moi.value = e.target.files;
-            // } else if (name === "english_proficiency") {
-            //     english_proficiency.value = e.target.files;
-            // } else if (name === "ielts") {
-            //     ielts.value = e.target.files;
-            // } else if (name === "other_english_test") {
-            //     other_english_test.value = e.target.files;
-            // }
         }
+
+        // if (name === "cv_path") {
+        //     cv_path.value = e.target.files;
+        // } else if (name === "passport") {
+        //     passport.value = e.target.files;
+        // } else if (name === "academic_document") {
+        //     academic_document.value = e.target.files;
+        // } else if (name === "teacher_reference") {
+        //     teacher_reference.value = e.target.files;
+        // } else if (name === "cnic") {
+        //     cnic.value = e.target.files;
+        // } else if (name === "experience_letter") {
+        //     experience_letter.value = e.target.files;
+        // } else if (name === "other_certificates") {
+        //     other_certificates.value = e.target.files;
+        // } else if (name === "conditional_offer") {
+        //     conditional_offer.value = e.target.files;
+        // } else if (name === "unconditional_offer") {
+        //     unconditional_offer.value = e.target.files;
+        // } else if (name === "payment_proof") {
+        //     payment_proof.value = e.target.files;
+        // } else if (name === "cas_ecoe") {
+        //     cas_ecoe.value = e.target.files;
+        // } else if (name === "visa") {
+        //     visa.value = e.target.files;
+        // } else if (name === "travel_plan") {
+        //     travel_plan.value = e.target.files;
+        // } else if (name === "gt_document") {
+        //     gt_document.value = e.target.files;
+        // } else if (name === "moi") {
+        //     moi.value = e.target.files;
+        // } else if (name === "english_proficiency") {
+        //     english_proficiency.value = e.target.files;
+        // } else if (name === "ielts") {
+        //     ielts.value = e.target.files;
+        // } else if (name === "other_english_test") {
+        //     other_english_test.value = e.target.files;
+        // }
     }
 };
 
@@ -432,6 +430,74 @@ const educationHistoryClosed = () => {
     if (edit) {
         updateObj.value["education_history"] = education_history.value;
     }
+};
+const handleDownload = () => {
+    // Define an array of objects containing links and names
+    const items = [
+        { link: cv_path.value, name: "cv_path" },
+        { link: passport.value, name: "passport" },
+        { link: academic_document.value, name: "academic_document" },
+        { link: teacher_reference.value, name: "teacher_reference" },
+        { link: cnic.value, name: "cnic" },
+        { link: experience_letter.value, name: "experience_letter" },
+        { link: other_certificates.value, name: "other_certificates" },
+        { link: conditional_offer.value, name: "conditional_offer" },
+        { link: unconditional_offer.value, name: "unconditional_offer" },
+        { link: payment_proof.value, name: "payment_proof" },
+        { link: cas_ecoe.value, name: "cas_ecoe" },
+        { link: visa.value, name: "visa" },
+        { link: travel_plan.value, name: "travel_plan" },
+        { link: gt_document.value, name: "gt_document" },
+        { link: moi.value, name: "moi" },
+        { link: english_proficiency.value, name: "english_proficiency" },
+        { link: ielts.value, name: "ielts" },
+        { link: other_english_test.value, name: "other_english_test" },
+    ];
+
+    // Function to process each item with a delay
+    const processItem = (index) => {
+        if (index < items.length) {
+            const item = items[index];
+            if (item.link) {
+                // Create and trigger the anchor button
+                createClickAndRemoveAnchorButton(item.link, item.name);
+            }
+
+            // Process the next item after a delay (e.g., 1 second)
+            setTimeout(() => {
+                processItem(index + 1);
+            }, 1000); // Adjust the delay as needed
+        }
+    };
+
+    // Start processing items from the beginning
+    processItem(0);
+};
+
+const createClickAndRemoveAnchorButton = (link, name) => {
+    // Create a new anchor element
+    const anchor = document.createElement("a");
+
+    // Set the href attribute to the file you want to download
+    anchor.href = link;
+
+    // Set the download attribute to specify the filename
+    anchor.download = name;
+
+    // Create the button text
+    const buttonText = document.createTextNode("Download File");
+
+    // Append the text to the anchor element
+    anchor.appendChild(buttonText);
+
+    // Append the anchor element to the body or any other element you want
+    document.body.appendChild(anchor);
+
+    // Trigger a click event on the anchor element to start the download
+    anchor.click();
+
+    // Remove the anchor element from the DOM after the click
+    anchor.parentNode.removeChild(anchor);
 };
 </script>
 
@@ -573,15 +639,24 @@ const educationHistoryClosed = () => {
                         </p>
                     </form>
                 </VCardText>
-                <VBtn
-                    color="primary"
-                    text
-                    @click="() => (edit = true)"
-                    class="action-button"
-                    target="_blank"
-                    v-if="readonly === 'true'"
-                    >Edit</VBtn
-                >
+                <div v-if="readonly === 'true'">
+                    <VBtn
+                        color="primary"
+                        text
+                        @click="() => (edit = true)"
+                        class="action-button d-block ml-auto mb-2"
+                        target="_blank"
+                        >Edit</VBtn
+                    >
+
+                    <VBtn
+                        color="primary"
+                        text
+                        @click="handleDownload"
+                        class="action-button d-block"
+                        >Download ALl FIles</VBtn
+                    >
+                </div>
             </div>
 
             <VRow>
@@ -954,7 +1029,6 @@ const educationHistoryClosed = () => {
                         type="text"
                         placeholder="Raferee Name"
                         class="flex-1"
-                        :rules="[required]"
                         :variant="
                             readonly === 'true' && edit === false
                                 ? 'solo'
@@ -965,10 +1039,7 @@ const educationHistoryClosed = () => {
                         @input="handleChange"
                     >
                         <template v-slot:label>
-                            <div>
-                                Referee Name
-                                <span class="text-error">*</span>
-                            </div>
+                            <div>Referee Name</div>
                         </template>
                     </VTextField>
                 </VCol>

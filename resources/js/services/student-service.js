@@ -4,7 +4,7 @@ import { getLocalAuth } from "@/utils/local";
 export const storeStudentDetail = (data) => {
     const auth_data = getLocalAuth();
     const formdata = new FormData();
-   
+
     formdata.append("user_id", data.user_id);
     formdata.append("photo_path", data.photo_path);
     formdata.append("full_name", data.full_name);
@@ -178,10 +178,6 @@ export const updateStudentData = ({ studentId, data }) => {
     }
 
     if (data.address) {
-        formdata.append("place_of_issue", data.place_of_issue);
-    }
-
-    if (data.photo_path) {
         formdata.append("address", data.address);
     }
 
@@ -193,17 +189,20 @@ export const updateStudentData = ({ studentId, data }) => {
         formdata.append("mobile", data.mobile);
     }
 
-    if (data.mobile_2) {
-        formdata.append("mobile_2", data.mobile_2);
+    if (typeof data.place_of_issue === "string") {
+        formdata.append("place_of_issue", data.place_of_issue);
     }
 
-    if (data.referee_name) {
+    if (typeof data.mobile_2 === "string") {
+        formdata.append("mobile_2", data.mobile_2);
+    }
+    if (typeof data.referee_name === "string") {
         formdata.append("referee_name", data.referee_name);
     }
-    if (data.referee_mobile) {
+    if (typeof data.referee_mobile === "string") {
         formdata.append("referee_mobile", data.referee_mobile);
     }
-    if (data.document_correction) {
+    if (typeof data.document_correction === "string") {
         formdata.append("document_correction", data.document_correction);
     }
 
@@ -308,3 +307,14 @@ export const updateStudentData = ({ studentId, data }) => {
     });
 };
 
+export const downloadAllFiles = (id) => {
+    const auth_data = getLocalAuth();
+
+    return api({
+        method: "GET",
+        url: `/download-files/${id}`,
+        headers: {
+            Authorization: "Bearer " + JSON.parse(auth_data).token,
+        },
+    });
+};

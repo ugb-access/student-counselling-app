@@ -65,15 +65,16 @@ class UserController extends Controller
         $status = $request->query('status');
         $user = Auth::user();
 
-      
+       
         if($user->role_id === 1) {
             if(empty($limit)) {
                 if(empty($status)) {
-                    $all_users = User::with('student')->where('role_id', 3)->latest()->paginate(10, ['*'], 'page', $page);
+                    $all_users = User::with(['student', 'addedByUser'])->where('role_id', 3)->latest()->paginate(10, ['*'], 'page', $page);
                 } else {
                     $status_bol = $status === "incomplete" ? 0 : 1;
-                    $all_users = User::with('student')->where('role_id', 3)->whereHas('student', function ($query) use ( $status_bol) {
-                        $query->where('payment_status', $status_bol);
+                    
+                    $all_users = User::with(['student', 'addedByUser'])->where('role_id', 3)->whereHas('student', function ($query) use ( $status_bol) {
+                        $query->where('status', $status_bol);
                     })->latest()->paginate(10, ['*'], 'page', $page);
                 }
                 
@@ -87,7 +88,7 @@ class UserController extends Controller
                 } else {
                     $status_bol = $status === "incomplete" ? 0 : 1;
                     $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->whereHas('student', function ($query) use ( $status_bol) {
-                        $query->where('payment_status', $status_bol);
+                        $query->where('status', $status_bol);
                     })->latest()->paginate(10, ['*'], 'page', $page);
                 }
                 

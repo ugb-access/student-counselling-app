@@ -30,6 +30,11 @@ class User extends Authenticatable
     public function student() {
         return $this->hasOne(Student::class);
     }
+
+    public function addedByUser()
+    {
+        return $this->belongsTo(User::class, 'added_by_user_id')->withDefault(); // Use withDefault to handle null values
+    }
    
 }
 

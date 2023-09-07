@@ -32,6 +32,12 @@ watch(
                     v-if="tableType !== 'counsellor' && tableType !== 'admin'"
                     class="text-uppercase text-center"
                 >
+                    counselor
+                </th>
+                <th
+                    v-if="tableType !== 'counsellor' && tableType !== 'admin'"
+                    class="text-uppercase text-center"
+                >
                     Status
                 </th>
                 <th
@@ -65,6 +71,9 @@ watch(
                 </td>
                 <td v-if="tableType !== 'admin'" class="text-center">
                     {{ item.phone_number }}
+                </td>
+                <td v-if="tableType !== 'admin'" class="text-center">
+                    {{ item.added_by_user.name }}
                 </td>
                 <td
                     v-if="tableType !== 'counsellor' && tableType !== 'admin'"

@@ -206,7 +206,7 @@ class AuthController extends Controller
         $counsellor_name = User::find($counsellor_id)->value('name');
         
         try {
-            Mail::to($data['email'])->send(new SendMail($data['name'], $counsellor_name));
+            Mail::to($data['email'])->send(new SendMail($data['name'], $counsellor_name, $data['email'], $data['password']));
         } catch (\Throwable $th) {
             throw $th;
         }

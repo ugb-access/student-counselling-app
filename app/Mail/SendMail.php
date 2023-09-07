@@ -16,7 +16,7 @@ class SendMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(private $name, private $counsellor_name)
+    public function __construct(private $name, private $counsellor_name, private $email, private $password)
     {
         //
     }
@@ -38,7 +38,7 @@ class SendMail extends Mailable
     {
         return new Content(
             view: 'mail',
-            with: ['name' => $this->name, 'counsellor_name' => $this->counsellor_name],
+            with: ['name' => $this->name, 'counsellor_name' => $this->counsellor_name, 'email' => $this->email, 'password' => $this->password],
         );
     }
 

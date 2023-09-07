@@ -73,6 +73,16 @@
         <!-- Counsellor Information -->
         <p>Mr./Ms. <strong>{{ $counsellor_name }}</strong> has been assigned to you as a Counselor.</p>
 
+        <h3>Student Login Credentials:</h3>
+        <p>
+            Email: {{ $email }}
+        </p>
+        <p>
+            Password: {{ $password }}
+        </p>
+        <p>
+            Website Link: http://royalvisionedu.com/build/login
+        </p>
         <!-- Signature -->
         <p class="signature">Best Regards,<br>Team Royal Vision Education</p>
     </div>

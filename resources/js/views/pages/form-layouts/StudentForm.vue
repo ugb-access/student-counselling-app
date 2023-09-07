@@ -29,7 +29,7 @@ const handleSubmit = () => {
     const nameV = name.value;
     const usernameV = username.value;
     const phone_numberV = phone_number.value;
-
+   
     if (
         !emailV.trim() ||
         !passwordV.trim() ||
@@ -46,7 +46,7 @@ const handleSubmit = () => {
         return;
     }
     submitLoading.value = true;
-
+ 
     addStudent({
         username: usernameV,
         name: nameV,
@@ -65,7 +65,6 @@ const handleSubmit = () => {
                 autoClose: 6000,
             });
             window.location.href = "/students";
-            
         })
         .catch((err) => {
             if (err?.response?.data?.error) {
@@ -113,10 +112,11 @@ const phoneValidation = (value) => {
     }
 };
 
-const getCounsellors = async () => {
+const getCounsellors = async (value) => {
+   
     loading.value = true;
     const response = await getAllCounsellor({
-        search: search_keyword.value,
+        search: value,
         limit: 5,
     });
     counsellors.value = response.data.data.map((item) => item.username);
@@ -127,11 +127,15 @@ const getCounsellors = async () => {
 
 onMounted(getCounsellors);
 
-watch(search_keyword, getCounsellors);
+watch(search_keyword, (val) => {
+    if (val && val !== counsellor.value) {
+        getCounsellors(val);
+    }
+});
 </script>
 
 <template>
-    <VForm :disabled="submitLoading"  @submit.prevent="handleSubmit">
+    <VForm :disabled="submitLoading" @submit.prevent="handleSubmit">
         <VRow>
             <!-- 👉 Name -->
             <VCol>
@@ -197,16 +201,21 @@ watch(search_keyword, getCounsellors);
                     hide-no-data
                     hide-details
                     label="Select Counsellor"
-                    :rules=[required]
+                    :rules="[required]"
                 ></v-autocomplete
             ></VCol>
         </VRow>
         <!-- 👉 Email -->
         <VRow>
             <VCol cols="12" class="d-flex gap-4">
-                <VBtn type="submit" :disabled="submitLoading" > Submit </VBtn>
+                <VBtn type="submit" :disabled="submitLoading"> Submit </VBtn>
 
-                <VBtn type="reset" :disabled="submitLoading" color="secondary" variant="tonal">
+                <VBtn
+                    type="reset"
+                    :disabled="submitLoading"
+                    color="secondary"
+                    variant="tonal"
+                >
                     Reset
                 </VBtn>
             </VCol>
