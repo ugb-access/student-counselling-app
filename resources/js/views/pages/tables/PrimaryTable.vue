@@ -72,8 +72,8 @@ watch(
                 <td v-if="tableType !== 'admin'" class="text-center">
                     {{ item.phone_number }}
                 </td>
-                <td v-if="tableType !== 'admin'" class="text-center">
-                    {{ item.added_by_user.name }}
+                <td v-if="tableType !== 'counsellor' && tableType !== 'admin'" class="text-center">
+                    {{ item.added_by_user?.name }}
                 </td>
                 <td
                     v-if="tableType !== 'counsellor' && tableType !== 'admin'"
