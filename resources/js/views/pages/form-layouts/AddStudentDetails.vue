@@ -1423,7 +1423,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="cv_path"
                         label="Add your CV"
                         placeholder="Select your file"
@@ -1475,7 +1475,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !cv_path && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="cv_path"
                         label="Add your CV"
                         placeholder="Select your file"
@@ -1492,7 +1492,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="passport"
                         name="passport"
                         label="Add your Passport"
@@ -1543,7 +1543,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !passport && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="passport"
                         name="passport"
                         label="Add your Passport"
@@ -1564,7 +1564,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="moi"
                         name="moi"
                         label="Add your MOI"
@@ -1624,7 +1624,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="english_proficiency"
                         name="english_proficiency"
                         label="Add your English Proficiency"
@@ -1682,7 +1682,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="ielts"
                         name="ielts"
                         label="Add your IELTS"
@@ -1733,7 +1733,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="other_english_test"
                         name="other_english_test"
                         label="Add your Other English Test"
@@ -1806,7 +1806,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !moi && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="moi"
                         name="moi"
                         label="Add your MOI"
@@ -1823,7 +1823,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !english_proficiency && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="english_proficiency"
                         name="english_proficiency"
                         label="Add your English Proficiency"
@@ -1840,7 +1840,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !ielts && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="ielts"
                         name="ielts"
                         label="Add your IELTS"
@@ -1857,7 +1857,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !other_english_test && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="other_english_test"
                         name="other_english_test"
                         label="Add your Other English Test"
@@ -1879,7 +1879,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="academic_document"
                         name="academic_document"
                         label="Add your Academic Document"
@@ -1942,7 +1942,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !academic_document && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="academic_document"
                         name="academic_document"
                         label="Add your Academic Document"
@@ -1964,7 +1964,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="teacher_reference"
                         name="teacher_reference"
                         label="Add your Teacher References"
@@ -2027,7 +2027,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !teacher_reference && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="teacher_reference"
                         name="teacher_reference"
                         label="Add your Teacher References"
@@ -2049,7 +2049,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="cnic"
                         name="cnic"
                         label="Add your CNIC"
@@ -2140,7 +2140,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !cnic && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="cnic"
                         name="cnic"
                         label="Add your CNIC"
@@ -2157,7 +2157,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="experience_letter"
                         name="experience_letter"
                         label="Add your Experience Letter"
@@ -2215,7 +2215,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !experience_letter && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="experience_letter"
                         name="experience_letter"
                         label="Add your Experience Letter"
@@ -2232,7 +2232,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="other_certificates"
                         name="other_certificates"
                         label="Add your Other Certificates"
@@ -2289,7 +2289,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !other_certificates && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="other_certificates"
                         name="other_certificates"
                         label="Add your Other Certificates"
@@ -2306,7 +2306,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="conditional_offer"
                         name="conditional_offer"
                         label="Add your Conditional Offer"
@@ -2364,7 +2364,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !conditional_offer && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="conditional_offer"
                         name="conditional_offer"
                         label="Add your Conditional Offer"
@@ -2381,7 +2381,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="unconditional_offer"
                         name="unconditional_offer"
                         label="Add your Unconditional Offer"
@@ -2440,7 +2440,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !unconditional_offer && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="unconditional_offer"
                         name="unconditional_offer"
                         label="Add your Unconditional Offer"
@@ -2457,7 +2457,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="payment_proof"
                         name="payment_proof"
                         label="Add your Payment Proof"
@@ -2513,7 +2513,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !payment_proof && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="payment_proof"
                         name="payment_proof"
                         label="Add your Payment Proof"
@@ -2530,7 +2530,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="cas_ecoe"
                         name="cas_ecoe"
                         label="Add your CAS / eCoE"
@@ -2582,7 +2582,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !cas_ecoe && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="cas_ecoe"
                         name="cas_ecoe"
                         label="Add your CAS / eCoE"
@@ -2598,7 +2598,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="visa"
                         name="visa"
                         label="Add your Visa file"
@@ -2650,7 +2650,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !visa && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="visa"
                         name="visa"
                         label="Add your Visa file"
@@ -2667,7 +2667,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="travel_plan"
                         name="travel_plan"
                         label="Add your Travel Plan"
@@ -2721,7 +2721,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !travel_plan && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="travel_plan"
                         name="travel_plan"
                         label="Add your Travel Plan"
@@ -2744,7 +2744,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly !== 'true'">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="gt_document"
                         name="gt_document"
                         label="Add your GT File"
@@ -2808,7 +2808,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             <VRow v-if="readonly === 'true' && !gt_document && edit">
                 <VCol>
                     <VFileInput
-                        accept=".pdf"
+                        accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="gt_document"
                         name="gt_document"
                         label="Add your GT File"
