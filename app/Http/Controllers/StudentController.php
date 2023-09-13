@@ -496,7 +496,7 @@ class StudentController extends Controller
 
         if($request->file('english_test') && count($request->file('english_test')) > 0) {
             $englishTestFiles = $request->file('english_test');
-
+          
             // Initialize an array to store file paths
             $englishTestPaths = [];
     
@@ -1058,10 +1058,10 @@ class StudentController extends Controller
 
         if($request->file('english_test') && count($request->file('english_test')) > 0) {
             $englishTestFiles = $request->file('english_test');
-
+             
             // Initialize an array to store file paths
-            $englishTestPaths = [];
-    
+            $englishTestPaths = $student->english_test;
+            // dd($englishTestFiles, $englishTestPaths);
             // Loop through each file in the array and store them
             foreach ($englishTestFiles as $key => $file) {
                 // Generate a unique name for each file to avoid filename collisions
