@@ -1,10 +1,14 @@
 <script setup>
 import { ref, defineProps, watch } from "vue";
+import { getLocalAuth } from "@/utils/local";
+import { deleteUserProfile } from "@/services/user-service";
+import { toast } from "vue3-toastify";
 
 const props = defineProps(["data", "tableType"]); // Declare the props that the child component expects
 
 const storedData = ref([]);
 
+const localUser = JSON.parse(getLocalAuth());
 // Watch for changes in the data prop and update the storedData variable
 watch(
     () => props.data,
@@ -12,6 +16,20 @@ watch(
         storedData.value = newData;
     }
 );
+
+const handleDelete = (id) => {
+
+    deleteUserProfile(id)
+        .then((res) => {
+            toast.error("Counsellor Deleted Successfully!", {
+                autoClose: 6000,
+            });
+            window.location.href = "/admins";
+        })
+        .catch((err) => {
+            console.log(err, "err");
+        });
+};
 </script>
 
 <template>
@@ -29,7 +47,11 @@ watch(
                     Phone Number
                 </th>
                 <th
-                    v-if="tableType !== 'counsellor' && tableType !== 'admin'"
+                    v-if="
+                        tableType !== 'counsellor' &&
+                        tableType !== 'admin' &&
+                        localUser?.data?.role_id === 1
+                    "
                     class="text-uppercase text-center"
                 >
                     counselor
@@ -48,12 +70,7 @@ watch(
                 </th>
                 <th class="text-uppercase text-center">Date</th>
 
-                <th
-                    v-if="tableType !== 'admin'"
-                    class="text-uppercase text-center"
-                >
-                    Action
-                </th>
+                <th class="text-uppercase text-center">Action</th>
             </tr>
         </thead>
 
@@ -72,7 +89,14 @@ watch(
                 <td v-if="tableType !== 'admin'" class="text-center">
                     {{ item.phone_number }}
                 </td>
-                <td v-if="tableType !== 'counsellor' && tableType !== 'admin'" class="text-center">
+                <td
+                    v-if="
+                        tableType !== 'counsellor' &&
+                        tableType !== 'admin' &&
+                        localUser?.data?.role_id === 1
+                    "
+                    class="text-center"
+                >
                     {{ item.added_by_user?.name }}
                 </td>
                 <td
@@ -99,7 +123,17 @@ watch(
                     {{ item.created_at.slice(0, item.created_at.indexOf("T")) }}
                 </td>
 
-                <td v-if="tableType !== 'admin'" class="text-center">
+                <td class="text-center">
+                    <VBtn
+                        color="primary"
+                        text
+                        @click="() => handleDelete(item.id)"
+                        class="action-button mr-1 py-1"
+                        size="small"
+                        icon="mdi-bin"
+                        v-if="tableType === 'admin' && (item.id !== 1 && item.id !== 5)"
+                    >
+                    </VBtn>
                     <Component
                         is="a"
                         :href="`${
@@ -107,6 +141,7 @@ watch(
                                 ? '/counsellors'
                                 : '/student'
                         }/view/${item.id}`"
+                        v-if="tableType !== 'admin' "
                     >
                         <VBtn
                             color="primary"
@@ -125,6 +160,7 @@ watch(
                                 ? '/counsellors'
                                 : '/student'
                         }/edit/${item.id}`"
+                        v-if="tableType !== 'admin'"
                     >
                         <VBtn
                             color="primary"

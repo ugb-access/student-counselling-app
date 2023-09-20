@@ -63,6 +63,7 @@ class UserController extends Controller
         $limit = $request->query('limit');
         $page = $request->query('page', 1);
         $status = $request->query('status');
+       
         $user = Auth::user();
 
        
@@ -71,11 +72,21 @@ class UserController extends Controller
                 if(empty($status)) {
                     $all_users = User::with(['student', 'addedByUser'])->where('role_id', 3)->latest()->paginate(10, ['*'], 'page', $page);
                 } else {
-                    $status_bol = $status === "incomplete" ? 0 : 1;
+                    if($status === "paid") {
+                        
+                        $all_users = User::with(['student', 'addedByUser'])->where('role_id', 3)->whereHas('student', function ($query) {
+                            $query->where('payment_status', 1);
+                        })->latest()->paginate(10, ['*'], 'page', $page);
+                    } else if($status === "complete") {
+                        $all_users = User::with(['student', 'addedByUser'])->where('role_id', 3)->whereHas('student', function ($query)  {
+                            $query->where('status', 1);
+                        })->latest()->paginate(10, ['*'], 'page', $page);
+                    } else {
+                        $all_users = User::with(['student', 'addedByUser'])->where('role_id', 3)->whereHas('student', function ($query)  {
+                            $query->where('status', 0);
+                        })->latest()->paginate(10, ['*'], 'page', $page);
+                    }
                     
-                    $all_users = User::with(['student', 'addedByUser'])->where('role_id', 3)->whereHas('student', function ($query) use ( $status_bol) {
-                        $query->where('status', $status_bol);
-                    })->latest()->paginate(10, ['*'], 'page', $page);
                 }
                 
             } else {
@@ -86,10 +97,20 @@ class UserController extends Controller
                 if(empty($status)) {
                     $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->latest()->paginate(10, ['*'], 'page', $page);
                 } else {
-                    $status_bol = $status === "incomplete" ? 0 : 1;
-                    $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->whereHas('student', function ($query) use ( $status_bol) {
-                        $query->where('status', $status_bol);
-                    })->latest()->paginate(10, ['*'], 'page', $page);
+                    if($status === "paid") {
+                        
+                        $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->whereHas('student', function ($query)  {
+                            $query->where('payment_status', 1);
+                        })->latest()->paginate(10, ['*'], 'page', $page);
+                    }else if($status === "complete") {
+                        $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->whereHas('student', function ($query)  {
+                            $query->where('status', 1);
+                        })->latest()->paginate(10, ['*'], 'page', $page);
+                    } else {
+                        $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->whereHas('student', function ($query)  {
+                            $query->where('status', 0);
+                        })->latest()->paginate(10, ['*'], 'page', $page);
+                    }
                 }
                 
             } else {
@@ -262,9 +283,28 @@ class UserController extends Controller
 
     public function delete_user_profile(Request $request, User $user) {
         $logged_in_user = auth()->user();
+       
         if($logged_in_user->role_id === 1) {
-            $user->delete();
-            return response()->json(['message' => 'User deleted'], 200);
+            if($user->role_id === 2 || $user->role_id === 3) {
+                $student =  Student::where('user_id', $user->id)->first();
+                $user->delete();
+                if($student) {
+                    $student->delete();
+                }
+                return response()->json(['message' => 'User deleted'], 200);
+            } else {
+                if(($logged_in_user->id === 1 || $logged_in_user->id === 5)) {
+                    if($user->id === 1 || $user->id === 5) {
+                        return response()->json(['error' => 'Unauthorized'], 403);
+                    } else {
+                        $user->delete();
+                        return response()->json(['message' => 'User deleted'], 200);
+                    }
+                }else {
+                    return response()->json(['error' => 'Unauthorized'], 403);
+                }
+            }
+            
             
         } else {
             return response()->json(['error' => 'Unauthorized'], 403);

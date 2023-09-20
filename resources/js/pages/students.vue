@@ -107,6 +107,20 @@ watch(page, fetchData);
                                 variant="plain"
                                 >Complete</VBtn
                             >
+
+                            <VBtn
+                                href="/students?status=paid"
+                                size="small"
+                                :color="
+                                    route.query.status === 'paid'
+                                        ? 'primary'
+                                        : 'grey-900'
+                                "
+                                text
+                                class="action-button mx-2"
+                                variant="plain"
+                                >Paid</VBtn
+                            >
                         </div>
                         <VTextField
                             v-model="searchQuery"

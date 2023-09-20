@@ -9,7 +9,7 @@ import UserAnalytics from "@/views/dashboard/UserAnalytics.vue";
 
 import AnalyticsNotification from "@/views/dashboard/AnalyticsNotification.vue";
 import { getLocalAuth } from "@/utils/local";
-import { onMounted } from "vue";
+
 import StudentDashboard from "@/views/dashboard/StudentDashboard.vue";
 
 const localUser = JSON.parse(getLocalAuth());
