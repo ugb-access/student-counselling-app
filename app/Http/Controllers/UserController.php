@@ -132,7 +132,10 @@ class UserController extends Controller
             ->groupBy('role_id')
             ->get();
 
-            $student_with_payment_proof = Student::where('payment_status', 1)->count();
+            $student_with_payment_proof = User::whereHas('student', function ($query) {
+                $query->where('payment_status', 1);
+            })
+            ->count();
             
             $currentMonthCount = User::whereYear('created_at', '=', Carbon::now()->year)
             ->whereMonth('created_at', '=', Carbon::now()->month)
