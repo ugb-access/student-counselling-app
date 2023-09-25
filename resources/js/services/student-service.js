@@ -1,5 +1,6 @@
 import api from "@/config/api";
 import { getLocalAuth } from "@/utils/local";
+import { convertUndefinedToString } from "@/utils/string";
 
 export const storeStudentDetail = (data) => {
     const auth_data = getLocalAuth();
@@ -134,6 +135,8 @@ export const getStudentDetail = (id) => {
 };
 
 export const updateStudentData = ({ studentId, data }) => {
+    
+
     const auth_data = getLocalAuth();
     const formdata = new FormData();
 
@@ -220,78 +223,111 @@ export const updateStudentData = ({ studentId, data }) => {
         formdata.append("country_detail", JSON.stringify(data.country_detail));
     }
 
-    if (data.cv_path) {
-        formdata.append("cv_path", data.cv_path[0]);
+    if (data.cv_path || data.cv_path === "") {
+        formdata.append("cv_path", convertUndefinedToString(data.cv_path[0]));
     }
 
-    if (data.passport) {
-        formdata.append("passport", data.passport[0]);
+    if (data.passport || data.passport === "") {
+        formdata.append("passport", convertUndefinedToString(data.passport[0]));
     }
 
-    if (data.moi) {
-        formdata.append("english_test[moi]", data.moi[0]);
+    if (data.moi || data.moi === "") {
+        formdata.append(
+            "english_test[moi]",
+            convertUndefinedToString(data.moi[0])
+        );
     }
-    if (data.english_proficiency) {
+    if (data.english_proficiency || data.english_proficiency === "") {
         formdata.append(
             "english_test[english_proficiency]",
-            data.english_proficiency[0]
+            convertUndefinedToString(data.english_proficiency[0])
         );
     }
-    if (data.ielts) {
-        formdata.append("english_test[ielts]", data.ielts[0]);
+    if (data.ielts || data.ielts === "") {
+        formdata.append(
+            "english_test[ielts]",
+            convertUndefinedToString(data.ielts[0])
+        );
     }
-    if (data.other_english_test) {
+    if (data.other_english_test || data.other_english_test === "") {
         formdata.append(
             "english_test[other_english_test]",
-            data.other_english_test[0]
+            convertUndefinedToString(data.other_english_test[0])
         );
     }
 
-    if (data.academic_document) {
-        formdata.append("academic_document", data.academic_document[0]);
+    if (data.academic_document || data.academic_document === "") {
+        formdata.append(
+            "academic_document",
+            convertUndefinedToString(data.academic_document[0])
+        );
     }
 
-    if (data.teacher_reference) {
-        formdata.append("teacher_reference", data.teacher_reference[0]);
+    if (data.teacher_reference || data.teacher_reference === "") {
+        formdata.append(
+            "teacher_reference",
+            convertUndefinedToString(data.teacher_reference[0])
+        );
     }
 
-    if (data.cnic) {
-        formdata.append("cnic", data.cnic[0]);
+    if (data.cnic || data.cnic === "") {
+        formdata.append("cnic", convertUndefinedToString(data.cnic[0]));
     }
 
-    if (data.experience_letter) {
-        formdata.append("experience_letter", data.experience_letter[0]);
+    if (data.experience_letter || data.experience_letter === "") {
+        formdata.append(
+            "experience_letter",
+            convertUndefinedToString(data.experience_letter[0])
+        );
     }
 
-    if (data.other_certificates) {
-        formdata.append("other_certificates", data.other_certificates[0]);
+    if (data.other_certificates || data.other_certificates === "") {
+        formdata.append(
+            "other_certificates",
+            convertUndefinedToString(data.other_certificates[0])
+        );
     }
 
-    if (data.conditional_offer) {
-        formdata.append("conditional_offer", data.conditional_offer[0]);
+    if (data.conditional_offer || data.conditional_offer === "") {
+        formdata.append(
+            "conditional_offer",
+            convertUndefinedToString(data.conditional_offer[0])
+        );
     }
 
-    if (data.unconditional_offer) {
-        formdata.append(" unconditional_offer", data.unconditional_offer[0]);
+    if (data.unconditional_offer || data.unconditional_offer === "") {
+        formdata.append(
+            " unconditional_offer",
+            convertUndefinedToString(data.unconditional_offer[0])
+        );
     }
 
-    if (data.payment_proof) {
-        formdata.append("payment_proof", data.payment_proof[0]);
+    if (data.payment_proof || data.payment_proof === "") {
+        formdata.append(
+            "payment_proof",
+            convertUndefinedToString(data.payment_proof[0])
+        );
     }
 
-    if (data.cas_ecoe) {
-        formdata.append("cas_ecoe", data.cas_ecoe[0]);
+    if (data.cas_ecoe || data.cas_ecoe === "") {
+        formdata.append("cas_ecoe", convertUndefinedToString(data.cas_ecoe[0]));
     }
-    if (data.visa) {
-        formdata.append("visa", data.visa[0]);
-    }
-
-    if (data.travel_plan) {
-        formdata.append("travel_plan", data.travel_plan[0]);
+    if (data.visa || data.visa === "") {
+        formdata.append("visa", convertUndefinedToString(data.visa[0]));
     }
 
-    if (data.gt_document) {
-        formdata.append("gt_document", data.gt_document[0]);
+    if (data.travel_plan || data.travel_plan === "") {
+        formdata.append(
+            "travel_plan",
+            convertUndefinedToString(data.travel_plan[0])
+        );
+    }
+
+    if (data.gt_document || data.gt_document === "") {
+        formdata.append(
+            "gt_document",
+            convertUndefinedToString(data.gt_document[0])
+        );
     }
 
     formdata.append("_method", "PATCH");

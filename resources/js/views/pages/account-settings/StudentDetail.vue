@@ -64,7 +64,7 @@ const deleteUser = () => {
 };
 
 const handleWhatsapp = () => {
-    console.log("Clicked");
+   
     window.open(`https://wa.me/${data.value.phone_number}`, "_blank");
 };
 </script>

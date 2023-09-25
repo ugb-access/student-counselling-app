@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Aws\S3\S3Client;
+use Hamcrest\Core\IsTypeOf;
+
 class StudentController extends Controller
 {
     public function get_student_detail(Request $request, $id) {
@@ -846,6 +848,7 @@ class StudentController extends Controller
 
     public function update_student_detail(Request $request, Student $student) {
         $data = $request->all();
+       
         // Initialize an AWS S3 client
         $s3Client = new S3Client([
             'version' => 'latest',
@@ -1011,31 +1014,39 @@ class StudentController extends Controller
             $student->document_correction = $request->input('document_correction');
         }
         
-        if($request->file('cv_path')) {
-            $cvfileName = uniqid('cv' . '_') . '.' . $request->file('cv_path')->getClientOriginalExtension();
-            $cv_path = $request->file('cv_path')->storeAs('cv_files', $cvfileName, 's3');
-            $student->cv_path = $cv_path;
-           
-            // Set the desired Content-Disposition header
-            $contentDisposition = 'attachment; filename="' . $cvfileName . '"';
-
+        if($request->has('cv_path')) {
+            if($request->file('cv_path')) {
+                $cvfileName = uniqid('cv' . '_') . '.' . $request->file('cv_path')->getClientOriginalExtension();
+                $cv_path = $request->file('cv_path')->storeAs('cv_files', $cvfileName, 's3');
+                $student->cv_path = $cv_path;
             
-            $objectKey = $cv_path;
+                // Set the desired Content-Disposition header
+                $contentDisposition = 'attachment; filename="' . $cvfileName . '"';
 
-            // Set the Content-Disposition header using the AWS SDK
-            $s3Client->putObject([
-                'Bucket' => $bucket,
-                'Key' => $objectKey,
-                'ContentType' => $request->file('cv_path')->getMimeType(),
-                'ContentDisposition' => $contentDisposition,
-                'SourceFile' => $request->file('cv_path')->getRealPath(),
-            ]);
+                
+                $objectKey = $cv_path;
+
+                // Set the Content-Disposition header using the AWS SDK
+                $s3Client->putObject([
+                    'Bucket' => $bucket,
+                    'Key' => $objectKey,
+                    'ContentType' => $request->file('cv_path')->getMimeType(),
+                    'ContentDisposition' => $contentDisposition,
+                    'SourceFile' => $request->file('cv_path')->getRealPath(),
+                ]);
+            } else {
+                $student->cv_path = "";
+            }
+            
 
            
         }
+
+       
             
 
-        if($request->file('passport')) {
+        if($request->has('passport')) {
+            if($request->file('passport')) {
             $passportfileName = uniqid('passport' . '_') . '.' . $request->file('passport')->getClientOriginalExtension();
             $passport = $request->file('passport')->storeAs('passport_files', $passportfileName, 's3');
             $student->passport = $passport;
@@ -1052,335 +1063,388 @@ class StudentController extends Controller
                 'ContentType' => $request->file('passport')->getMimeType(),
                 'ContentDisposition' => $contentDisposition,
                 'SourceFile' => $request->file('passport')->getRealPath(),
-            ]);
+            ]);} else {
+                $student->passport = "";
+            }
+        }
+
+        if($request->has('english_test')) {
+            
+            if($request->file('english_test') && count($request->file('english_test')) > 0) {
+                $englishTestFiles = $request->file('english_test');
+                
+                // Initialize an array to store file paths
+                $englishTestPaths = $student->english_test;
+                // dd($englishTestFiles, $englishTestPaths);
+                // Loop through each file in the array and store them
+                foreach ($englishTestFiles as $key => $file) {
+                    // Generate a unique name for each file to avoid filename collisions
+                    $fileName = uniqid($key . '_') . '.' . $file->getClientOriginalExtension();
+        
+                    // Store the file in the desired location (e.g., 'english_test_files' folder within the 's3' disk)
+                    $filePath = $file->storeAs('english_test_files', $fileName, 's3');
+
+                    // Set the desired Content-Disposition header
+                    $contentDisposition = 'attachment; filename="' . $fileName . '"';
+
+                
+                    $objectKey = $filePath;
+
+                    // Set the Content-Disposition header using the AWS SDK
+                    $s3Client->putObject([
+                        'Bucket' => $bucket,
+                        'Key' => $objectKey,
+                        'ContentType' => $file->getMimeType(),
+                        'ContentDisposition' => $contentDisposition,
+                        'SourceFile' => $file->getRealPath(),
+                    ]);
+        
+                    // Add the file path to the array
+                    $englishTestPaths[$key] = $filePath;
+                }
+        
+            
+                $student->english_test = $englishTestPaths;
+            } else {
+                $student->english_test = null;
+            }
+        }
+        if($request->has('academic_document')) {
+            if($request->file('academic_document')) {
+                    $academic_documentfileName = uniqid('academic_document' . '_') . '.' . $request->file('academic_document')->getClientOriginalExtension();
+                    $academic_document = $request->file('academic_document')->storeAs('academic_document_files', $academic_documentfileName, 's3');
+                    $student->academic_document = $academic_document;
+
+
+                    // Set the desired Content-Disposition header
+                    $contentDisposition = 'attachment; filename="' . $academic_documentfileName . '"';
+
+                
+                    $objectKey = $academic_document;
+        
+                    // Set the Content-Disposition header using the AWS SDK
+                    $s3Client->putObject([
+                        'Bucket' => $bucket,
+                        'Key' => $objectKey,
+                        'ContentType' => $request->file('academic_document')->getMimeType(),
+                        'ContentDisposition' => $contentDisposition,
+                        'SourceFile' => $request->file('academic_document')->getRealPath(),
+                    ]);
+            }else {
+                $student->academic_document = "";
+            }
         }
 
 
-        if($request->file('english_test') && count($request->file('english_test')) > 0) {
-            $englishTestFiles = $request->file('english_test');
-             
-            // Initialize an array to store file paths
-            $englishTestPaths = $student->english_test;
-            // dd($englishTestFiles, $englishTestPaths);
-            // Loop through each file in the array and store them
-            foreach ($englishTestFiles as $key => $file) {
-                // Generate a unique name for each file to avoid filename collisions
-                $fileName = uniqid($key . '_') . '.' . $file->getClientOriginalExtension();
-    
-                // Store the file in the desired location (e.g., 'english_test_files' folder within the 's3' disk)
-                $filePath = $file->storeAs('english_test_files', $fileName, 's3');
+        if($request->has('cnic')) {
+            if($request->file('cnic')) {
+                $cnicfileName = uniqid('cnic' . '_') . '.' . $request->file('cnic')->getClientOriginalExtension();
+                $cnic = $request->file('cnic')->storeAs('cnic_files', $cnicfileName, 's3');
+                $student->cnic = $cnic;
+
 
                 // Set the desired Content-Disposition header
-                $contentDisposition = 'attachment; filename="' . $fileName . '"';
+                $contentDisposition = 'attachment; filename="' . $cnicfileName . '"';
 
             
-                $objectKey = $filePath;
-
+                $objectKey = $cnic;
+    
                 // Set the Content-Disposition header using the AWS SDK
                 $s3Client->putObject([
                     'Bucket' => $bucket,
                     'Key' => $objectKey,
-                    'ContentType' => $file->getMimeType(),
+                    'ContentType' => $request->file('cnic')->getMimeType(),
                     'ContentDisposition' => $contentDisposition,
-                    'SourceFile' => $file->getRealPath(),
+                    'SourceFile' => $request->file('cnic')->getRealPath(),
                 ]);
-    
-                // Add the file path to the array
-                $englishTestPaths[$key] = $filePath;
+            } else {
+                $student->cnic = "";
             }
-    
-           
-            $student->english_test = $englishTestPaths;
         }
+
+
+
+        if($request->has('teacher_reference')) {
+            if($request->file('teacher_reference')) {
+
+                    $teacher_referencefileName = uniqid('teacher_reference' . '_') . '.' . $request->file('teacher_reference')->getClientOriginalExtension();
+                    $teacher_reference = $request->file('teacher_reference')->storeAs('teacher_reference_files', $teacher_referencefileName, 's3');
+                    $student->teacher_reference = $teacher_reference;
+
+                    // Set the desired Content-Disposition header
+                    $contentDisposition = 'attachment; filename="' . $teacher_referencefileName . '"';
+
+                
+                    $objectKey = $teacher_reference;
+
+                    // Set the Content-Disposition header using the AWS SDK
+                    $s3Client->putObject([
+                        'Bucket' => $bucket,
+                        'Key' => $objectKey,
+                        'ContentType' => $request->file('teacher_reference')->getMimeType(),
+                        'ContentDisposition' => $contentDisposition,
+                        'SourceFile' => $request->file('teacher_reference')->getRealPath(),
+                    ]);
+            } else {
+                $student->teacher_reference = "";
+            }
+        }
+
+        if($request->has('experience_letter')) { 
+            if($request->file('experience_letter')) {
+
+                    $experience_letterfileName = uniqid('experience_letter' . '_') . '.' . $request->file('experience_letter')->getClientOriginalExtension();
+                    $experience_letter = $request->file('experience_letter')->storeAs('experience_letter_files', $experience_letterfileName, 's3');
+                    $student->experience_letter = $experience_letter;
+
+                    // Set the desired Content-Disposition header
+                    $contentDisposition = 'attachment; filename="' . $experience_letterfileName . '"';
+
+                
+                    $objectKey = $experience_letter;
         
-       if($request->file('academic_document')) {
-            $academic_documentfileName = uniqid('academic_document' . '_') . '.' . $request->file('academic_document')->getClientOriginalExtension();
-            $academic_document = $request->file('academic_document')->storeAs('academic_document_files', $academic_documentfileName, 's3');
-            $student->academic_document = $academic_document;
-
-
-             // Set the desired Content-Disposition header
-             $contentDisposition = 'attachment; filename="' . $academic_documentfileName . '"';
-
-        
-             $objectKey = $academic_document;
- 
-             // Set the Content-Disposition header using the AWS SDK
-             $s3Client->putObject([
-                 'Bucket' => $bucket,
-                 'Key' => $objectKey,
-                 'ContentType' => $request->file('academic_document')->getMimeType(),
-                 'ContentDisposition' => $contentDisposition,
-                 'SourceFile' => $request->file('academic_document')->getRealPath(),
-             ]);
-       }
-
-
-          
-       if($request->file('cnic')) {
-            $cnicfileName = uniqid('cnic' . '_') . '.' . $request->file('cnic')->getClientOriginalExtension();
-            $cnic = $request->file('cnic')->storeAs('cnic_files', $cnicfileName, 's3');
-            $student->cnic = $cnic;
-
-
-             // Set the desired Content-Disposition header
-             $contentDisposition = 'attachment; filename="' . $cnicfileName . '"';
-
-        
-             $objectKey = $cnic;
- 
-             // Set the Content-Disposition header using the AWS SDK
-             $s3Client->putObject([
-                 'Bucket' => $bucket,
-                 'Key' => $objectKey,
-                 'ContentType' => $request->file('cnic')->getMimeType(),
-                 'ContentDisposition' => $contentDisposition,
-                 'SourceFile' => $request->file('cnic')->getRealPath(),
-             ]);
-       }
-
-
-          
-       if($request->file('teacher_reference')) {
-
-            $teacher_referencefileName = uniqid('teacher_reference' . '_') . '.' . $request->file('teacher_reference')->getClientOriginalExtension();
-            $teacher_reference = $request->file('teacher_reference')->storeAs('teacher_reference_files', $teacher_referencefileName, 's3');
-            $student->teacher_reference = $teacher_reference;
-
-            // Set the desired Content-Disposition header
-            $contentDisposition = 'attachment; filename="' . $teacher_referencefileName . '"';
-
-        
-            $objectKey = $teacher_reference;
-
-            // Set the Content-Disposition header using the AWS SDK
-            $s3Client->putObject([
-                'Bucket' => $bucket,
-                'Key' => $objectKey,
-                'ContentType' => $request->file('teacher_reference')->getMimeType(),
-                'ContentDisposition' => $contentDisposition,
-                'SourceFile' => $request->file('teacher_reference')->getRealPath(),
-            ]);
-       }
-
-          
-       if($request->file('experience_letter')) {
-
-            $experience_letterfileName = uniqid('experience_letter' . '_') . '.' . $request->file('experience_letter')->getClientOriginalExtension();
-            $experience_letter = $request->file('experience_letter')->storeAs('experience_letter_files', $experience_letterfileName, 's3');
-            $student->experience_letter = $experience_letter;
-
-             // Set the desired Content-Disposition header
-             $contentDisposition = 'attachment; filename="' . $experience_letterfileName . '"';
-
-        
-             $objectKey = $experience_letter;
- 
-             // Set the Content-Disposition header using the AWS SDK
-             $s3Client->putObject([
-                 'Bucket' => $bucket,
-                 'Key' => $objectKey,
-                 'ContentType' => $request->file('experience_letter')->getMimeType(),
-                 'ContentDisposition' => $contentDisposition,
-                 'SourceFile' => $request->file('experience_letter')->getRealPath(),
-             ]);
-       }
+                    // Set the Content-Disposition header using the AWS SDK
+                    $s3Client->putObject([
+                        'Bucket' => $bucket,
+                        'Key' => $objectKey,
+                        'ContentType' => $request->file('experience_letter')->getMimeType(),
+                        'ContentDisposition' => $contentDisposition,
+                        'SourceFile' => $request->file('experience_letter')->getRealPath(),
+                    ]);
+            } else {
+                $student->experience_letter = "";
+            }
+        }
 
 
 
-          
-       if($request->file('other_certificates')) {
-            $other_certificatesfileName = uniqid('other_certificates' . '_') . '.' . $request->file('other_certificates')->getClientOriginalExtension();
-            $other_certificates = $request->file('other_certificates')->storeAs('other_certificates_files', $other_certificatesfileName, 's3');
-            $student->other_certificates = $other_certificates;
+        if($request->has('other_certificates')) {
+            if($request->file('other_certificates')) {
+                    $other_certificatesfileName = uniqid('other_certificates' . '_') . '.' . $request->file('other_certificates')->getClientOriginalExtension();
+                    $other_certificates = $request->file('other_certificates')->storeAs('other_certificates_files', $other_certificatesfileName, 's3');
+                    $student->other_certificates = $other_certificates;
 
-            // Set the desired Content-Disposition header
-            $contentDisposition = 'attachment; filename="' . $other_certificatesfileName . '"';
+                    // Set the desired Content-Disposition header
+                    $contentDisposition = 'attachment; filename="' . $other_certificatesfileName . '"';
 
-        
-            $objectKey = $other_certificates;
+                
+                    $objectKey = $other_certificates;
 
-            // Set the Content-Disposition header using the AWS SDK
-            $s3Client->putObject([
-                'Bucket' => $bucket,
-                'Key' => $objectKey,
-                'ContentType' => $request->file('other_certificates')->getMimeType(),
-                'ContentDisposition' => $contentDisposition,
-                'SourceFile' => $request->file('other_certificates')->getRealPath(),
-            ]);
-       }
+                    // Set the Content-Disposition header using the AWS SDK
+                    $s3Client->putObject([
+                        'Bucket' => $bucket,
+                        'Key' => $objectKey,
+                        'ContentType' => $request->file('other_certificates')->getMimeType(),
+                        'ContentDisposition' => $contentDisposition,
+                        'SourceFile' => $request->file('other_certificates')->getRealPath(),
+                    ]);
+            } else {
+                $student->other_certificates = "";
+            }
+        }
 
 
        
 
 
-          
-       if($request->file('conditional_offer')) {
-            $conditional_offerfileName = uniqid('conditional_offer' . '_') . '.' . $request->file('conditional_offer')->getClientOriginalExtension();
-            $conditional_offer = $request->file('conditional_offer')->storeAs('conditional_offer_files', $conditional_offerfileName, 's3');
-            $student->conditional_offer = $conditional_offer;
+        if($request->has('conditional_offer')) {
+            if($request->file('conditional_offer')) {
+                    $conditional_offerfileName = uniqid('conditional_offer' . '_') . '.' . $request->file('conditional_offer')->getClientOriginalExtension();
+                    $conditional_offer = $request->file('conditional_offer')->storeAs('conditional_offer_files', $conditional_offerfileName, 's3');
+                    $student->conditional_offer = $conditional_offer;
 
-            // Set the desired Content-Disposition header
-            $contentDisposition = 'attachment; filename="' . $conditional_offerfileName . '"';
+                    // Set the desired Content-Disposition header
+                    $contentDisposition = 'attachment; filename="' . $conditional_offerfileName . '"';
 
-        
-            $objectKey = $conditional_offer;
+                
+                    $objectKey = $conditional_offer;
 
-            // Set the Content-Disposition header using the AWS SDK
-            $s3Client->putObject([
-                'Bucket' => $bucket,
-                'Key' => $objectKey,
-                'ContentType' => $request->file('conditional_offer')->getMimeType(),
-                'ContentDisposition' => $contentDisposition,
-                'SourceFile' => $request->file('conditional_offer')->getRealPath(),
-            ]);
-       }
-
-
-          
-       if($request->file('unconditional_offer')) {
-            $unconditional_offerfileName = uniqid('unconditional_offer' . '_') . '.' . $request->file('unconditional_offer')->getClientOriginalExtension();
-            $unconditional_offer = $request->file('unconditional_offer')->storeAs('unconditional_offer_files', $unconditional_offerfileName, 's3');
-            $student->unconditional_offer = $unconditional_offer;
-
-             // Set the desired Content-Disposition header
-             $contentDisposition = 'attachment; filename="' . $unconditional_offerfileName . '"';
-
-        
-             $objectKey = $unconditional_offer;
- 
-             // Set the Content-Disposition header using the AWS SDK
-             $s3Client->putObject([
-                 'Bucket' => $bucket,
-                 'Key' => $objectKey,
-                 'ContentType' => $request->file('unconditional_offer')->getMimeType(),
-                 'ContentDisposition' => $contentDisposition,
-                 'SourceFile' => $request->file('unconditional_offer')->getRealPath(),
-             ]);
-       }
-
-          
-       if($request->file('payment_proof')) {
-
-            $payment_profileName = uniqid('payment_proof' . '_') . '.' . $request->file('payment_proof')->getClientOriginalExtension();
-            $payment_proof = $request->file('payment_proof')->storeAs('payment_proof_files', $payment_profileName, 's3');
-            $student->payment_proof = $payment_proof;
-
-            // Set the desired Content-Disposition header
-            $contentDisposition = 'attachment; filename="' . $payment_profileName . '"';
-
-        
-            $objectKey = $payment_proof;
-
-            // Set the Content-Disposition header using the AWS SDK
-            $s3Client->putObject([
-                'Bucket' => $bucket,
-                'Key' => $objectKey,
-                'ContentType' => $request->file('payment_proof')->getMimeType(),
-                'ContentDisposition' => $contentDisposition,
-                'SourceFile' => $request->file('payment_proof')->getRealPath(),
-            ]);
-
-            if(!$student->payment_status) {
-                $student->payment_status = 1;
+                    // Set the Content-Disposition header using the AWS SDK
+                    $s3Client->putObject([
+                        'Bucket' => $bucket,
+                        'Key' => $objectKey,
+                        'ContentType' => $request->file('conditional_offer')->getMimeType(),
+                        'ContentDisposition' => $contentDisposition,
+                        'SourceFile' => $request->file('conditional_offer')->getRealPath(),
+                    ]);
+            } else {
+                $student->conditional_offer = "";
             }
-       }
+        }
 
 
+        if($request->has('unconditional_offer')) {
+            if($request->file('unconditional_offer')) {
+                    $unconditional_offerfileName = uniqid('unconditional_offer' . '_') . '.' . $request->file('unconditional_offer')->getClientOriginalExtension();
+                    $unconditional_offer = $request->file('unconditional_offer')->storeAs('unconditional_offer_files', $unconditional_offerfileName, 's3');
+                    $student->unconditional_offer = $unconditional_offer;
 
+                    // Set the desired Content-Disposition header
+                    $contentDisposition = 'attachment; filename="' . $unconditional_offerfileName . '"';
 
-
-          
-       if($request->file('cas_ecoe')) {
-
-            $cas_ecoefileName = uniqid('cas_ecoe' . '_') . '.' .  $request->file('cas_ecoe')->getClientOriginalExtension();
-            $cas_ecoe = $request->file('cas_ecoe')->storeAs('cas_ecoe_files', $cas_ecoefileName, 's3');
-            $student->cas_ecoe = $cas_ecoe;
-
-            // Set the desired Content-Disposition header
-            $contentDisposition = 'attachment; filename="' . $cas_ecoefileName . '"';
-
+                
+                    $objectKey = $unconditional_offer;
         
-            $objectKey = $cas_ecoe;
-
-            // Set the Content-Disposition header using the AWS SDK
-            $s3Client->putObject([
-                'Bucket' => $bucket,
-                'Key' => $objectKey,
-                'ContentType' => $request->file('cas_ecoe')->getMimeType(),
-                'ContentDisposition' => $contentDisposition,
-                'SourceFile' => $request->file('cas_ecoe')->getRealPath(),
-            ]);
-       }
-
-          
-       if($request->file('visa')) {
-
-            $visafileName = uniqid('visa' . '_') . '.' . $request->file('visa')->getClientOriginalExtension();
-            $visa = $request->file('visa')->storeAs('visa_files', $visafileName, 's3');
-            $student->visa = $visa;
-
-             // Set the desired Content-Disposition header
-             $contentDisposition = 'attachment; filename="' . $visafileName . '"';
-
-        
-             $objectKey = $visa;
- 
-             // Set the Content-Disposition header using the AWS SDK
-             $s3Client->putObject([
-                 'Bucket' => $bucket,
-                 'Key' => $objectKey,
-                 'ContentType' => $request->file('visa')->getMimeType(),
-                 'ContentDisposition' => $contentDisposition,
-                 'SourceFile' => $request->file('visa')->getRealPath(),
-             ]);
-          
-
-       }
-
-          
-       if($request->file('travel_plan')) {
-            $travel_planfileName = uniqid('travel_plan' . '_') . '.' . $request->file('travel_plan')->getClientOriginalExtension();
-            $travel_plan = $request->file('travel_plan')->storeAs('travel_plan_files', $travel_planfileName, 's3');
-            $student->travel_plan = $travel_plan;
-
-             // Set the desired Content-Disposition header
-             $contentDisposition = 'attachment; filename="' . $travel_planfileName . '"';
-
-        
-             $objectKey = $travel_plan;
- 
-             // Set the Content-Disposition header using the AWS SDK
-             $s3Client->putObject([
-                 'Bucket' => $bucket,
-                 'Key' => $objectKey,
-                 'ContentType' => $request->file('travel_plan')->getMimeType(),
-                 'ContentDisposition' => $contentDisposition,
-                 'SourceFile' => $request->file('travel_plan')->getRealPath(),
-             ]);
-       }
+                    // Set the Content-Disposition header using the AWS SDK
+                    $s3Client->putObject([
+                        'Bucket' => $bucket,
+                        'Key' => $objectKey,
+                        'ContentType' => $request->file('unconditional_offer')->getMimeType(),
+                        'ContentDisposition' => $contentDisposition,
+                        'SourceFile' => $request->file('unconditional_offer')->getRealPath(),
+                    ]);
+            }  else {
+                $student->unconditional_offer = "";
+            }
+        }
 
 
-       if($request->file('gt_document')) {
-            $gt_documentfileName = uniqid('gt_document' . '_') . '.' . $request->file('gt_document')->getClientOriginalExtension();
-            $gt_document = $request->file('gt_document')->storeAs('gt_document_files', $gt_documentfileName, 's3');
-            $student->gt_document = $gt_document;
+        if($request->has('payment_proof')) {
+            if($request->file('payment_proof')) {
 
-            // Set the desired Content-Disposition header
-            $contentDisposition = 'attachment; filename="' . $gt_documentfileName . '"';
+                $payment_profileName = uniqid('payment_proof' . '_') . '.' . $request->file('payment_proof')->getClientOriginalExtension();
+                $payment_proof = $request->file('payment_proof')->storeAs('payment_proof_files', $payment_profileName, 's3');
+                $student->payment_proof = $payment_proof;
+    
+                // Set the desired Content-Disposition header
+                $contentDisposition = 'attachment; filename="' . $payment_profileName . '"';
+    
+            
+                $objectKey = $payment_proof;
+    
+                // Set the Content-Disposition header using the AWS SDK
+                $s3Client->putObject([
+                    'Bucket' => $bucket,
+                    'Key' => $objectKey,
+                    'ContentType' => $request->file('payment_proof')->getMimeType(),
+                    'ContentDisposition' => $contentDisposition,
+                    'SourceFile' => $request->file('payment_proof')->getRealPath(),
+                ]);
+    
+                if(!$student->payment_status) {
+                    $student->payment_status = 1;
+                }
+            } else {
+                $student->payment_proof = "";
+                if($student->payment_status) {
+                    $student->payment_status = 0;
+                }
+                    
+            }
+        }
+      
 
-        
-            $objectKey = $gt_document;
 
-            // Set the Content-Disposition header using the AWS SDK
-            $s3Client->putObject([
-                'Bucket' => $bucket,
-                'Key' => $objectKey,
-                'ContentType' => $request->file('gt_document')->getMimeType(),
-                'ContentDisposition' => $contentDisposition,
-                'SourceFile' => $request->file('gt_document')->getRealPath(),
-            ]);
-       }
+
+
+
+        if($request->has('cas_ecoe')) { 
+            if($request->file('cas_ecoe')) {
+
+                $cas_ecoefileName = uniqid('cas_ecoe' . '_') . '.' .  $request->file('cas_ecoe')->getClientOriginalExtension();
+                $cas_ecoe = $request->file('cas_ecoe')->storeAs('cas_ecoe_files', $cas_ecoefileName, 's3');
+                $student->cas_ecoe = $cas_ecoe;
+    
+                // Set the desired Content-Disposition header
+                $contentDisposition = 'attachment; filename="' . $cas_ecoefileName . '"';
+    
+            
+                $objectKey = $cas_ecoe;
+    
+                // Set the Content-Disposition header using the AWS SDK
+                $s3Client->putObject([
+                    'Bucket' => $bucket,
+                    'Key' => $objectKey,
+                    'ContentType' => $request->file('cas_ecoe')->getMimeType(),
+                    'ContentDisposition' => $contentDisposition,
+                    'SourceFile' => $request->file('cas_ecoe')->getRealPath(),
+                ]);
+            } else {
+                $student->cas_ecoe = "";
+            }
+        } 
+       
+
+        if($request->has('visa')) {
+            if($request->file('visa')) {
+
+                $visafileName = uniqid('visa' . '_') . '.' . $request->file('visa')->getClientOriginalExtension();
+                $visa = $request->file('visa')->storeAs('visa_files', $visafileName, 's3');
+                $student->visa = $visa;
+    
+                 // Set the desired Content-Disposition header
+                 $contentDisposition = 'attachment; filename="' . $visafileName . '"';
+    
+            
+                 $objectKey = $visa;
+     
+                 // Set the Content-Disposition header using the AWS SDK
+                 $s3Client->putObject([
+                     'Bucket' => $bucket,
+                     'Key' => $objectKey,
+                     'ContentType' => $request->file('visa')->getMimeType(),
+                     'ContentDisposition' => $contentDisposition,
+                     'SourceFile' => $request->file('visa')->getRealPath(),
+                 ]);
+              
+    
+            } else {
+                $student->visa = "";
+            }
+        }
+      
+
+        if($request->has('travel_plan')) {
+            if($request->file('travel_plan')) {
+                $travel_planfileName = uniqid('travel_plan' . '_') . '.' . $request->file('travel_plan')->getClientOriginalExtension();
+                $travel_plan = $request->file('travel_plan')->storeAs('travel_plan_files', $travel_planfileName, 's3');
+                $student->travel_plan = $travel_plan;
+    
+                 // Set the desired Content-Disposition header
+                 $contentDisposition = 'attachment; filename="' . $travel_planfileName . '"';
+    
+            
+                 $objectKey = $travel_plan;
+     
+                 // Set the Content-Disposition header using the AWS SDK
+                 $s3Client->putObject([
+                     'Bucket' => $bucket,
+                     'Key' => $objectKey,
+                     'ContentType' => $request->file('travel_plan')->getMimeType(),
+                     'ContentDisposition' => $contentDisposition,
+                     'SourceFile' => $request->file('travel_plan')->getRealPath(),
+                 ]);
+            } else {
+                $student->travel_plan = "";
+            }
+        }
+      
+
+        if($request->has('gt_document')) {
+            if($request->file('gt_document')) {
+                $gt_documentfileName = uniqid('gt_document' . '_') . '.' . $request->file('gt_document')->getClientOriginalExtension();
+                $gt_document = $request->file('gt_document')->storeAs('gt_document_files', $gt_documentfileName, 's3');
+                $student->gt_document = $gt_document;
+    
+                // Set the desired Content-Disposition header
+                $contentDisposition = 'attachment; filename="' . $gt_documentfileName . '"';
+    
+            
+                $objectKey = $gt_document;
+    
+                // Set the Content-Disposition header using the AWS SDK
+                $s3Client->putObject([
+                    'Bucket' => $bucket,
+                    'Key' => $objectKey,
+                    'ContentType' => $request->file('gt_document')->getMimeType(),
+                    'ContentDisposition' => $contentDisposition,
+                    'SourceFile' => $request->file('gt_document')->getRealPath(),
+                ]);
+           }
+        } else {
+            $student->gt_document = "";
+        }
+       
 
        if($student->gt_document && $student->travel_plan && $student->visa && $student->cas_ecoe && $student->payment_proof && $student->unconditional_offer && $student->conditional_offer && $student->other_certificates && $student->experience_letter && $student->teacher_reference && $student->cnic && $student->academic_document && $student->english_test && $student->passport && $student->cv_path) {
             $student->status = 1;

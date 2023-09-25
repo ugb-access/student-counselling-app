@@ -110,8 +110,6 @@ const changeAvatar = (event) => {
 };
 
 const handleSubmit = (e) => {
-   
-
     if (edit) {
         if (Object.keys(updateObj.value).length) {
             loading.value = true;
@@ -244,7 +242,7 @@ const handleSubmit = (e) => {
         storeStudentDetail(data)
             .then((res) => {
                 const id = route.params.id;
-                window.location.href = (`/student/view/${id}`);
+                window.location.href = `/student/view/${id}`;
                 toast.success("Student Details Added Successfully!");
             })
             .catch((err) => {
@@ -271,7 +269,6 @@ const addMoreEducation = () => {
 };
 
 const handleChange = (e) => {
-   
     if (edit) {
         const { name, value } = e.target;
         if (value) {
@@ -460,27 +457,30 @@ const fetchStudentDetail = () => {
 onMounted(fetchStudentDetail);
 </script>
 
-<template >
+<template>
     <VCard v-if="photo_path.preview" :loading="loading">
         <template
             v-slot:title
             v-if="
-                (readonly === 'true' && (
-                    (!cv_path ||
-                        !passport ||
-                        !academic_document ||
-                        !teacher_reference ||
-                        !cnic ||
-                        !experience_letter ||
-                        !other_certificates ||
-                        !conditional_offer ||
-                        !unconditional_offer ||
-                        !payment_proof ||
-                        !cas_ecoe ||
-                        !visa ||
-                        !travel_plan ||
-                        !gt_document) ||
-                (!moi && !english_proficiency && !ielts && !other_english_test)))
+                readonly === 'true' &&
+                (!cv_path ||
+                    !passport ||
+                    !academic_document ||
+                    !teacher_reference ||
+                    !cnic ||
+                    !experience_letter ||
+                    !other_certificates ||
+                    !conditional_offer ||
+                    !unconditional_offer ||
+                    !payment_proof ||
+                    !cas_ecoe ||
+                    !visa ||
+                    !travel_plan ||
+                    !gt_document ||
+                    (!moi &&
+                        !english_proficiency &&
+                        !ielts &&
+                        !other_english_test))
             "
         >
             <v-alert density="compact" type="warning">
@@ -595,7 +595,6 @@ onMounted(fetchStudentDetail);
                         </p>
                     </form>
                 </VCardText>
-                
             </div>
 
             <VRow>
@@ -1356,7 +1355,7 @@ onMounted(fetchStudentDetail);
                         size="large"
                         variant="text"
                         @click="addMoreCountryDetail"
-                        v-if="readonly !== 'true'"
+                        v-if="edit === true"
                         >+Add More</VBtn
                     >
                 </VCol>
@@ -1386,7 +1385,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && cv_path">
                 <VCol>
                     <h3 class="mb-2">Cv</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             CV -
                             {{
@@ -1394,25 +1393,6 @@ onMounted(fetchStudentDetail);
                                     ? cv_path
                                     : cv_path[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="cv_path"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="() => handleRemove('cv_path')"
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="cv_path"
-                                    class="action-button"
-                                    v-if="cv_path?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -1453,7 +1433,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && passport">
                 <VCol>
                     <h3 class="mb-2">Passport</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             Passport -
                             {{
@@ -1461,25 +1441,6 @@ onMounted(fetchStudentDetail);
                                     ? passport
                                     : passport[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="passport"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="() => handleRemove('passport')"
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="passport"
-                                    class="action-button"
-                                    v-if="passport?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -1512,7 +1473,7 @@ onMounted(fetchStudentDetail);
                         accept=".pdf"
                         v-model="moi"
                         name="moi"
-                        label="Add your MOI"
+                        label="Add your SOP"
                         placeholder="Select your file"
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
@@ -1533,30 +1494,15 @@ onMounted(fetchStudentDetail);
             </VRow>
             <VRow v-if="readonly === 'true' && moi">
                 <VCol>
-                    <h3 class="mb-2">MOI</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <h3 class="mb-2">SOP</h3>
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
-                            MOI -
-                            {{ moi?.includes?.("s3.amazonaws") ? moi : moi[0].name }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="moi"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="() => handleRemove('moi')"
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="moi"
-                                    class="action-button"
-                                    v-if="moi?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
+                            SOP -
+                            {{
+                                moi?.includes?.("s3.amazonaws")
+                                    ? moi
+                                    : moi[0].name
+                            }}
                         </div>
                     </VCard>
                 </VCol>
@@ -1580,7 +1526,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && english_proficiency">
                 <VCol>
                     <h3 class="mb-2">English Proficiency</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             English Proficiency -
                             {{
@@ -1588,30 +1534,6 @@ onMounted(fetchStudentDetail);
                                     ? english_proficiency
                                     : english_proficiency[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="english_proficiency"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="
-                                        () =>
-                                            handleRemove('english_proficiency')
-                                    "
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="english_proficiency"
-                                    class="action-button"
-                                    v-if="
-                                        english_proficiency?.includes?.('s3.amazonaws')
-                                    "
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -1635,31 +1557,14 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && ielts">
                 <VCol>
                     <h3 class="mb-2">IELTS</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             IELTS -
                             {{
-                                ielts?.includes?.("s3.amazonaws") ? ielts : ielts[0].name
+                                ielts?.includes?.("s3.amazonaws")
+                                    ? ielts
+                                    : ielts[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="ielts"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="() => handleRemove('ielts')"
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="ielts"
-                                    class="action-button"
-                                    v-if="ielts?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -1683,7 +1588,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && other_english_test">
                 <VCol>
                     <h3 class="mb-2">Other English Test</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             Other English Test -
                             {{
@@ -1691,27 +1596,6 @@ onMounted(fetchStudentDetail);
                                     ? other_english_test
                                     : other_english_test[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="other_english_test"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="
-                                        () => handleRemove('other_english_test')
-                                    "
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="other_english_test"
-                                    class="action-button"
-                                    v-if="other_english_test?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -1738,7 +1622,7 @@ onMounted(fetchStudentDetail);
                         accept=".pdf"
                         v-model="moi"
                         name="moi"
-                        label="Add your MOI"
+                        label="Add your SOP"
                         placeholder="Select your file"
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
@@ -1824,7 +1708,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && academic_document">
                 <VCol>
                     <h3 class="mb-2">Academic Document</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             Academic Document -
                             {{
@@ -1832,27 +1716,6 @@ onMounted(fetchStudentDetail);
                                     ? academic_document
                                     : academic_document[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="academic_document"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="
-                                        () => handleRemove('academic_document')
-                                    "
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="academic_document"
-                                    class="action-button"
-                                    v-if="academic_document?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -1904,7 +1767,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && teacher_reference">
                 <VCol>
                     <h3 class="mb-2">Teacher Reference</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             Teacher Reference -
                             {{
@@ -1912,27 +1775,6 @@ onMounted(fetchStudentDetail);
                                     ? teacher_reference
                                     : teacher_reference[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="teacher_reference"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="
-                                        () => handleRemove('teacher_reference')
-                                    "
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="teacher_reference"
-                                    class="action-button"
-                                    v-if="teacher_reference?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -2002,29 +1844,14 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && cnic">
                 <VCol>
                     <h3 class="mb-2">CNIC</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             CNIC -
-                            {{ cnic?.includes?.("s3.amazonaws") ? cnic : cnic[0].name }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="cnic"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="() => handleRemove('cnic')"
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="cnic"
-                                    class="action-button"
-                                    v-if="cnic?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
+                            {{
+                                cnic?.includes?.("s3.amazonaws")
+                                    ? cnic
+                                    : cnic[0].name
+                            }}
                         </div>
                     </VCard>
                 </VCol>
@@ -2087,7 +1914,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && experience_letter">
                 <VCol>
                     <h3 class="mb-2">Experience Letter</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             Experience Letter -
                             {{
@@ -2095,27 +1922,6 @@ onMounted(fetchStudentDetail);
                                     ? experience_letter
                                     : experience_letter[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="experience_letter"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="
-                                        () => handleRemove('experience_letter')
-                                    "
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="experience_letter"
-                                    class="action-button"
-                                    v-if="experience_letter?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -2156,7 +1962,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && other_certificates">
                 <VCol>
                     <h3 class="mb-2">Other Certificates</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             Other Certificates -
                             {{
@@ -2164,27 +1970,6 @@ onMounted(fetchStudentDetail);
                                     ? other_certificates
                                     : other_certificates[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="other_certificates"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="
-                                        () => handleRemove('other_certificates')
-                                    "
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="other_certificates"
-                                    class="action-button"
-                                    v-if="other_certificates?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -2226,7 +2011,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && conditional_offer">
                 <VCol>
                     <h3 class="mb-2">Conditional Offer</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             Conditional Offer -
                             {{
@@ -2234,27 +2019,6 @@ onMounted(fetchStudentDetail);
                                     ? conditional_offer
                                     : conditional_offer[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="conditional_offer"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="
-                                        () => handleRemove('conditional_offer')
-                                    "
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="conditional_offer"
-                                    class="action-button"
-                                    v-if="conditional_offer?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -2296,7 +2060,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && unconditional_offer">
                 <VCol>
                     <h3 class="mb-2">Unconditional Offer</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             Unconditional Offer -
                             {{
@@ -2304,30 +2068,6 @@ onMounted(fetchStudentDetail);
                                     ? unconditional_offer
                                     : unconditional_offer[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="unconditional_offer"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="
-                                        () =>
-                                            handleRemove('unconditional_offer')
-                                    "
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="unconditional_offer"
-                                    class="action-button"
-                                    v-if="
-                                        unconditional_offer?.includes?.('s3.amazonaws')
-                                    "
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -2369,7 +2109,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && payment_proof">
                 <VCol>
                     <h3 class="mb-2">Payment Proof</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             Payment Proof -
                             {{
@@ -2377,25 +2117,6 @@ onMounted(fetchStudentDetail);
                                     ? payment_proof
                                     : payment_proof[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="payment_proof"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="() => handleRemove('payment_proof')"
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="payment_proof"
-                                    class="action-button"
-                                    v-if="payment_proof?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -2437,7 +2158,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && cas_ecoe">
                 <VCol>
                     <h3 class="mb-2">CAS/ECOE</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             CAS/ECOE -
                             {{
@@ -2445,25 +2166,6 @@ onMounted(fetchStudentDetail);
                                     ? cas_ecoe
                                     : cas_ecoe[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="cas_ecoe"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="() => handleRemove('cas_ecoe')"
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="cas_ecoe"
-                                    class="action-button"
-                                    v-if="cas_ecoe?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -2504,29 +2206,14 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && visa">
                 <VCol>
                     <h3 class="mb-2">Visa</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             Visa -
-                            {{ visa?.includes?.("s3.amazonaws") ? visa : visa[0].name }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="visa"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="() => handleRemove('visa')"
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="visa"
-                                    class="action-button"
-                                    v-if="visa?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
+                            {{
+                                visa?.includes?.("s3.amazonaws")
+                                    ? visa
+                                    : visa[0].name
+                            }}
                         </div>
                     </VCard>
                 </VCol>
@@ -2568,7 +2255,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && travel_plan">
                 <VCol>
                     <h3 class="mb-2">Travel Plan</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             Travel Plan -
                             {{
@@ -2576,25 +2263,6 @@ onMounted(fetchStudentDetail);
                                     ? travel_plan
                                     : travel_plan[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="travel_plan"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="() => handleRemove('travel_plan')"
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="travel_plan"
-                                    class="action-button"
-                                    v-if="travel_plan?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -2646,7 +2314,7 @@ onMounted(fetchStudentDetail);
             <VRow v-if="readonly === 'true' && gt_document">
                 <VCol>
                     <h3 class="mb-2">GT Document</h3>
-                    <VCard class="py-2 px-2" style="block-size: auto;">
+                    <VCard class="py-2 px-2" style="block-size: auto">
                         <div class="d-flex align-center justify-space-between">
                             GT Document -
                             {{
@@ -2654,25 +2322,6 @@ onMounted(fetchStudentDetail);
                                     ? gt_document
                                     : gt_document[0].name
                             }}
-                            <div>
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    name="gt_document"
-                                    class="action-button mr-2"
-                                    v-if="edit"
-                                    @click="() => handleRemove('gt_document')"
-                                    >Delete</VBtn
-                                >
-                                <VBtn
-                                    color="primary"
-                                    text
-                                    :href="gt_document"
-                                    class="action-button"
-                                    v-if="gt_document?.includes?.('s3.amazonaws')"
-                                    >View</VBtn
-                                >
-                            </div>
                         </div>
                     </VCard>
                 </VCol>
@@ -2720,11 +2369,8 @@ onMounted(fetchStudentDetail);
     </VCard>
 
     <VCard v-if="!photo_path.preview">
-        <div style="height: 75vh; " class="d-flex justify-center align-center">
-            <h2>
-                Student Detail not added.
-            </h2>
-            
+        <div style="height: 75vh" class="d-flex justify-center align-center">
+            <h2>Student Detail not added.</h2>
         </div>
     </VCard>
 </template>

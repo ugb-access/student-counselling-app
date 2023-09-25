@@ -13,23 +13,24 @@ const user = ref({
 const handleLogout = () => {
     removeLocalAuth();
 
-    window.location.href = ("/login");
+    window.location.href = "/login";
 };
 
 onMounted(() => {
     const localUser = JSON.parse(getLocalAuth());
     if (localUser) {
-        
         user.value.name = localUser.data.name;
         user.value.role_id = localUser.data.role_id;
-      
     }
 });
 </script>
 
 <template>
     <VAvatar class="cursor-pointer" color="primary" variant="tonal">
-        <VImg :src="avatar1" />
+        <!-- <VImg :src="avatar1" /> -->
+        <div class="text-uppercase">
+            {{ user?.name[0] }}
+        </div>
 
         <!-- SECTION Menu -->
         <VMenu
@@ -44,7 +45,10 @@ onMounted(() => {
                     <template #prepend>
                         <VListItemAction start>
                             <VAvatar color="primary" variant="tonal">
-                                <VImg :src="avatar1" />
+                                <!-- <VImg :src="avatar1" /> -->
+                                <div>
+                                    {{ user?.name[0] }}
+                                </div>
                             </VAvatar>
                         </VListItemAction>
                     </template>

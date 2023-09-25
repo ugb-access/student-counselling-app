@@ -35,13 +35,13 @@ const localUser = JSON.parse(getLocalAuth());
                         {{ localUser?.data?.name }}
                     </h6>
                 </VCardText>
-                <div class="pt-2">
+                <!-- <div class="pt-2">
                     <VImg
                         :src="triangleLight"
                         class="triangle-bg flip-in-rtl"
                     />
                     <VImg :src="avatar" class="triangle-bg flip-in-rtl h-75 " />
-                </div>
+                </div> -->
             </VCard>
         </VCol>
 

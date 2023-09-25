@@ -6,3 +6,9 @@ export const isEmail = (string) => {
     return false;
 };
 
+export const convertUndefinedToString = (value) => {
+    if (typeof value === "undefined" ) {
+        return "";
+    }
+    return value;
+};

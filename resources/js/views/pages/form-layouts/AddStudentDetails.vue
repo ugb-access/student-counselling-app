@@ -14,6 +14,7 @@ import { onMounted } from "vue";
 
 import router from "@/router";
 import { downloadAllFiles } from "@/services/student-service";
+import { getLocalAuth } from "@/utils/local";
 
 const props = defineProps({
     readonly: String,
@@ -90,6 +91,10 @@ const loading = ref(false);
 
 const edit = ref(false);
 
+
+
+const localUser = JSON.parse(getLocalAuth());
+
 const required = (value) => {
     if (!value?.trim()) return "Field is required";
 };
@@ -109,7 +114,7 @@ const changeAvatar = (event) => {
 };
 
 const handleSubmit = (e) => {
-    console.log(updateObj.value, "updateObj");
+    
     if (edit.value) {
         if (Object.keys(updateObj.value).length) {
             loading.value = true;
@@ -251,13 +256,13 @@ const handleSubmit = (e) => {
 };
 
 const addMoreCountryDetail = () => {
-    if (country_detail.value.length < 4) {
+    if (country_detail.value.length < 5) {
         country_detail.value.push({ ...country_detail_obj });
     }
 };
 
 const addMoreEducation = () => {
-    if (education_history.value.length < 4) {
+    if (education_history.value.length < 5) {
         education_history.value.push({ ...education_history_obj });
     }
 };
@@ -378,39 +383,57 @@ onMounted(fetchStudentDetail);
 const handleRemove = (name) => {
     if (name === "cv_path") {
         cv_path.value = "";
+        updateObj.value[name] = "";
     } else if (name === "passport") {
         passport.value = "";
+        updateObj.value[name] = "";
     } else if (name === "academic_document") {
         academic_document.value = "";
+        updateObj.value[name] = "";
     } else if (name === "teacher_reference") {
         teacher_reference.value = "";
+        updateObj.value[name] = "";
     } else if (name === "cnic") {
         cnic.value = "";
+        updateObj.value[name] = "";
     } else if (name === "experience_letter") {
+        updateObj.value[name] = "";
         experience_letter.value = "";
     } else if (name === "other_certificates") {
+        updateObj.value[name] = "";
         other_certificates.value = "";
     } else if (name === "conditional_offer") {
+        updateObj.value[name] = "";
         conditional_offer.value = "";
     } else if (name === "unconditional_offer") {
+        updateObj.value[name] = "";
         unconditional_offer.value = "";
     } else if (name === "payment_proof") {
+        updateObj.value[name] = "";
         payment_proof.value = "";
     } else if (name === "cas_ecoe") {
+        updateObj.value[name] = "";
         cas_ecoe.value = "";
     } else if (name === "visa") {
+        updateObj.value[name] = "";
         visa.value = "";
     } else if (name === "travel_plan") {
+        updateObj.value[name] = "";
         travel_plan.value = "";
     } else if (name === "gt_document") {
+        updateObj.value[name] = "";
         gt_document.value = "";
     } else if (name === "moi") {
+        updateObj.value[name] = "";
         moi.value = "";
     } else if (name === "english_proficiency") {
+        updateObj.value[name] = "";
         english_proficiency.value = "";
     } else if (name === "ielts") {
+        updateObj.value[name] = "";
         ielts.value = "";
     } else if (name === "other_english_test") {
+        updateObj.value[name] = "";
         other_english_test.value = "";
     }
 };
@@ -1409,7 +1432,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                         size="large"
                         variant="text"
                         @click="addMoreCountryDetail"
-                        v-if="readonly !== 'true'"
+                        v-if="readonly === 'true' && edit === true"
                         >+Add More</VBtn
                     >
                 </VCol>
@@ -1453,7 +1476,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="cv_path"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="() => handleRemove('cv_path')"
                                     >Delete</VBtn
                                 >
@@ -1521,7 +1544,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="passport"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="() => handleRemove('passport')"
                                     >Delete</VBtn
                                 >
@@ -1567,7 +1590,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                         accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="moi"
                         name="moi"
-                        label="Add your MOI"
+                        label="Add your SOP file"
                         placeholder="Select your file"
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
@@ -1588,10 +1611,10 @@ const createClickAndRemoveAnchorButton = (link, name) => {
             </VRow>
             <VRow v-if="readonly === 'true' && moi">
                 <VCol>
-                    <h3 class="mb-2">MOI</h3>
+                    <h3 class="mb-2">SOP</h3>
                     <VCard class="py-2 px-2">
                         <div class="d-flex align-center justify-space-between">
-                            MOI -
+                            SOP -
                             {{
                                 moi?.includes?.("s3.amazonaws")
                                     ? moi
@@ -1603,7 +1626,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="moi"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="() => handleRemove('moi')"
                                     >Delete</VBtn
                                 >
@@ -1654,7 +1677,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="english_proficiency"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="
                                         () =>
                                             handleRemove('english_proficiency')
@@ -1712,7 +1735,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="ielts"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="() => handleRemove('ielts')"
                                     >Delete</VBtn
                                 >
@@ -1763,7 +1786,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="other_english_test"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="
                                         () => handleRemove('other_english_test')
                                     "
@@ -1809,7 +1832,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                         accept=".jpeg, .jpg, .png, .pdf, .doc, .docx"
                         v-model="moi"
                         name="moi"
-                        label="Add your MOI"
+                        label="Add your SOP"
                         placeholder="Select your file"
                         prepend-icon="mdi-paperclip"
                         variant="outlined"
@@ -1909,7 +1932,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="academic_document"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="
                                         () => handleRemove('academic_document')
                                     "
@@ -1994,7 +2017,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="teacher_reference"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="
                                         () => handleRemove('teacher_reference')
                                     "
@@ -2097,7 +2120,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="cnic"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="() => handleRemove('cnic')"
                                     >Delete</VBtn
                                 >
@@ -2187,7 +2210,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="experience_letter"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="
                                         () => handleRemove('experience_letter')
                                     "
@@ -2261,7 +2284,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="other_certificates"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="
                                         () => handleRemove('other_certificates')
                                     "
@@ -2336,7 +2359,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="conditional_offer"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="
                                         () => handleRemove('conditional_offer')
                                     "
@@ -2487,7 +2510,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="payment_proof"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="() => handleRemove('payment_proof')"
                                     >Delete</VBtn
                                 >
@@ -2560,7 +2583,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="cas_ecoe"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="() => handleRemove('cas_ecoe')"
                                     >Delete</VBtn
                                 >
@@ -2628,7 +2651,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="visa"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="() => handleRemove('visa')"
                                     >Delete</VBtn
                                 >
@@ -2697,7 +2720,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="travel_plan"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="() => handleRemove('travel_plan')"
                                     >Delete</VBtn
                                 >
@@ -2778,7 +2801,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="gt_document"
                                     class="action-button mr-2"
-                                    v-if="edit"
+                                    v-if="edit && localUser?.data?.role_id === 1"
                                     @click="() => handleRemove('gt_document')"
                                     >Delete</VBtn
                                 >

@@ -8,3 +8,4 @@ export const dashFormat = (date) => {
 
     return formattedDate;
 };
+
