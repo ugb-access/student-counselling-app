@@ -91,8 +91,6 @@ const loading = ref(false);
 
 const edit = ref(false);
 
-
-
 const localUser = JSON.parse(getLocalAuth());
 
 const required = (value) => {
@@ -114,7 +112,6 @@ const changeAvatar = (event) => {
 };
 
 const handleSubmit = (e) => {
-    
     if (edit.value) {
         if (Object.keys(updateObj.value).length) {
             loading.value = true;
@@ -1262,7 +1259,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                         size="large"
                         variant="text"
                         @click="addMoreEducation"
-                        v-if="readonly !== 'true'"
+                        v-if="readonly !== 'true' || edit === true"
                         >+Add More</VBtn
                     >
                 </VCol>
@@ -1432,7 +1429,7 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                         size="large"
                         variant="text"
                         @click="addMoreCountryDetail"
-                        v-if="readonly === 'true' && edit === true"
+                        v-if="readonly !== 'true' || edit === true"
                         >+Add More</VBtn
                     >
                 </VCol>
@@ -1476,7 +1473,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="cv_path"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="() => handleRemove('cv_path')"
                                     >Delete</VBtn
                                 >
@@ -1544,7 +1543,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="passport"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="() => handleRemove('passport')"
                                     >Delete</VBtn
                                 >
@@ -1626,7 +1627,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="moi"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="() => handleRemove('moi')"
                                     >Delete</VBtn
                                 >
@@ -1677,7 +1680,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="english_proficiency"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="
                                         () =>
                                             handleRemove('english_proficiency')
@@ -1735,7 +1740,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="ielts"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="() => handleRemove('ielts')"
                                     >Delete</VBtn
                                 >
@@ -1786,7 +1793,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="other_english_test"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="
                                         () => handleRemove('other_english_test')
                                     "
@@ -1932,7 +1941,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="academic_document"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="
                                         () => handleRemove('academic_document')
                                     "
@@ -2017,7 +2028,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="teacher_reference"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="
                                         () => handleRemove('teacher_reference')
                                     "
@@ -2120,7 +2133,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="cnic"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="() => handleRemove('cnic')"
                                     >Delete</VBtn
                                 >
@@ -2210,7 +2225,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="experience_letter"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="
                                         () => handleRemove('experience_letter')
                                     "
@@ -2284,7 +2301,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="other_certificates"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="
                                         () => handleRemove('other_certificates')
                                     "
@@ -2359,7 +2378,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="conditional_offer"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="
                                         () => handleRemove('conditional_offer')
                                     "
@@ -2510,7 +2531,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="payment_proof"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="() => handleRemove('payment_proof')"
                                     >Delete</VBtn
                                 >
@@ -2583,7 +2606,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="cas_ecoe"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="() => handleRemove('cas_ecoe')"
                                     >Delete</VBtn
                                 >
@@ -2651,7 +2676,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="visa"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="() => handleRemove('visa')"
                                     >Delete</VBtn
                                 >
@@ -2720,7 +2747,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="travel_plan"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="() => handleRemove('travel_plan')"
                                     >Delete</VBtn
                                 >
@@ -2801,7 +2830,9 @@ const createClickAndRemoveAnchorButton = (link, name) => {
                                     text
                                     name="gt_document"
                                     class="action-button mr-2"
-                                    v-if="edit && localUser?.data?.role_id === 1"
+                                    v-if="
+                                        edit && localUser?.data?.role_id === 1
+                                    "
                                     @click="() => handleRemove('gt_document')"
                                     >Delete</VBtn
                                 >
