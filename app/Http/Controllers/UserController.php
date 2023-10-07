@@ -63,55 +63,90 @@ class UserController extends Controller
         $limit = $request->query('limit');
         $page = $request->query('page', 1);
         $status = $request->query('status');
-       
+        $searchText = $request->query('search');
         $user = Auth::user();
 
        
         if($user->role_id === 1) {
             if(empty($limit)) {
-                if(empty($status)) {
-                    $all_users = User::with(['student', 'addedByUser'])->where('role_id', 3)->latest()->paginate(10, ['*'], 'page', $page);
-                } else {
-                    if($status === "paid") {
-                        
-                        $all_users = User::with(['student', 'addedByUser'])->where('role_id', 3)->whereHas('student', function ($query) {
-                            $query->where('payment_status', 1);
-                        })->latest()->paginate(10, ['*'], 'page', $page);
-                    } else if($status === "complete") {
-                        $all_users = User::with(['student', 'addedByUser'])->where('role_id', 3)->whereHas('student', function ($query)  {
-                            $query->where('status', 1);
-                        })->latest()->paginate(10, ['*'], 'page', $page);
-                    } else {
-                        $all_users = User::with(['student', 'addedByUser'])->where('role_id', 3)->whereHas('student', function ($query)  {
-                            $query->where('status', 0);
-                        })->latest()->paginate(10, ['*'], 'page', $page);
-                    }
-                    
+                $baseQuery = User::with(['student', 'addedByUser'])
+                ->where('role_id', 3)
+                ->latest();
+                
+                if (!empty($searchText)) {
+                    $baseQuery->whereHas('student', function ($query) use ($searchText) {
+                        $query->where('name', 'like', '%' . $searchText . '%');
+                       
+                    });
                 }
+                
+                if (empty($status)) {
+                    $all_users = $baseQuery->paginate(10, ['*'], 'page', $page);
+                } else {
+                    if ($status === "paid") {
+                        $all_users = $baseQuery->whereHas('student', function ($query) {
+                            $query->where('payment_status', 1);
+                        })->paginate(10, ['*'], 'page', $page);
+                    } else if ($status === "complete") {
+                        $all_users = $baseQuery->whereHas('student', function ($query) {
+                            $query->where('status', 1);
+                        })->paginate(10, ['*'], 'page', $page);
+                    } else {
+                        $all_users = $baseQuery->whereHas('student', function ($query) {
+                            $query->where('status', 0);
+                        })->paginate(10, ['*'], 'page', $page);
+                    }
+                }
+            
                 
             } else {
                 $all_users = User::where('role_id', 3)->orderBy("created_at", "desc")->limit($limit)->get();
             }
         } else {
             if(empty($limit)) {
-                if(empty($status)) {
-                    $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->latest()->paginate(10, ['*'], 'page', $page);
+                if (empty($status)) {
+                    $baseQuery = User::with('student')
+                        ->where('role_id', 3)
+                        ->where('added_by_user_id', $user->id)
+                        ->latest();
                 } else {
-                    if($status === "paid") {
-                        
-                        $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->whereHas('student', function ($query)  {
-                            $query->where('payment_status', 1);
-                        })->latest()->paginate(10, ['*'], 'page', $page);
-                    }else if($status === "complete") {
-                        $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->whereHas('student', function ($query)  {
-                            $query->where('status', 1);
-                        })->latest()->paginate(10, ['*'], 'page', $page);
+                    if ($status === "paid") {
+                        $baseQuery = User::with('student')
+                            ->where('role_id', 3)
+                            ->where('added_by_user_id', $user->id)
+                            ->whereHas('student', function ($query) {
+                                $query->where('payment_status', 1);
+                            })
+                            ->latest();
+                    } else if ($status === "complete") {
+                        $baseQuery = User::with('student')
+                            ->where('role_id', 3)
+                            ->where('added_by_user_id', $user->id)
+                            ->whereHas('student', function ($query) {
+                                $query->where('status', 1);
+                            })
+                            ->latest();
                     } else {
-                        $all_users = User::with('student')->where('role_id', 3)->where('added_by_user_id', $user->id)->whereHas('student', function ($query)  {
-                            $query->where('status', 0);
-                        })->latest()->paginate(10, ['*'], 'page', $page);
+                        $baseQuery = User::with('student')
+                            ->where('role_id', 3)
+                            ->where('added_by_user_id', $user->id)
+                            ->whereHas('student', function ($query) {
+                                $query->where('status', 0);
+                            })
+                            ->latest();
                     }
                 }
+                
+                if (!empty($searchText)) {
+                    $baseQuery->where(function ($query) use ($searchText) {
+                        $query->whereHas('student', function ($subQuery) use ($searchText) {
+                            $subQuery->where('full_name', 'like', '%' . $searchText . '%');
+                        })
+                        ->orWhere('email', 'like', '%' . $searchText . '%');
+                    });
+                }
+                
+                $all_users = $baseQuery->paginate(10, ['*'], 'page', $page);
                 
             } else {
                 $all_users = User::where('role_id', 3)->where('added_by_user_id', $user->id)->orderBy("created_at", "desc")->limit($limit)->get();

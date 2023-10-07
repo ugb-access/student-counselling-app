@@ -25,33 +25,47 @@ const fetchData = async () => {
         });
         list.value = response.data.data.data;
         length.value = response.data.data.last_page;
-        filterData();
+        filteredData.value = response.data.data.data;
     } catch (error) {
         console.error(error);
     }
 };
 
-const filterData = () => {
-    filteredData.value = list.value.filter((counsellor) => {
-        return (
-            counsellor.name
-                .toLowerCase()
-                .includes(searchQuery.value.toLowerCase()) ||
-            counsellor.username
-                .toLowerCase()
-                .includes(searchQuery.value.toLowerCase()) ||
-            counsellor.email
-                .toLowerCase()
-                .includes(searchQuery.value.toLowerCase()) ||
-            counsellor.created_at
-                .slice(0, counsellor.created_at.indexOf("T"))
-                .toLowerCase()
-                .includes(searchQuery.value.toLowerCase()) ||
-            counsellor.phone_number
-                .toLowerCase()
-                .includes(searchQuery.value.toLowerCase())
-        );
-    });
+const filterData = async () => {
+    // filteredData.value = list.value.filter((counsellor) => {
+    //     return (
+    //         counsellor.name
+    //             .toLowerCase()
+    //             .includes(searchQuery.value.toLowerCase()) ||
+    //         counsellor.username
+    //             .toLowerCase()
+    //             .includes(searchQuery.value.toLowerCase()) ||
+    //         counsellor.email
+    //             .toLowerCase()
+    //             .includes(searchQuery.value.toLowerCase()) ||
+    //         counsellor.created_at
+    //             .slice(0, counsellor.created_at.indexOf("T"))
+    //             .toLowerCase()
+    //             .includes(searchQuery.value.toLowerCase()) ||
+    //         counsellor.phone_number
+    //             .toLowerCase()
+    //             .includes(searchQuery.value.toLowerCase())
+    //     );
+    // });
+
+    try {
+        const response = await getAllStudents({
+            limit: null,
+            search: searchQuery.value,
+            status:
+                route.query.status === "all" ? undefined : route.query.status,
+        });
+        list.value = response.data.data.data;
+        length.value = response.data.data.last_page;
+        filteredData.value = response.data.data.data;
+    } catch (error) {
+        console.error(error);
+    }
 };
 
 onMounted(fetchData);
