@@ -74,10 +74,7 @@ class UserController extends Controller
                 ->latest();
                 
                 if (!empty($searchText)) {
-                    $baseQuery->whereHas('student', function ($query) use ($searchText) {
-                        $query->where('name', 'like', '%' . $searchText . '%');
-                       
-                    });
+                    $baseQuery->where('name', 'like', '%' . $searchText . '%');  
                 }
                 
                 if (empty($status)) {
@@ -138,12 +135,7 @@ class UserController extends Controller
                 }
                 
                 if (!empty($searchText)) {
-                    $baseQuery->where(function ($query) use ($searchText) {
-                        $query->whereHas('student', function ($subQuery) use ($searchText) {
-                            $subQuery->where('full_name', 'like', '%' . $searchText . '%');
-                        })
-                        ->orWhere('email', 'like', '%' . $searchText . '%');
-                    });
+                    $baseQuery->where('name', 'like', '%' . $searchText . '%');
                 }
                 
                 $all_users = $baseQuery->paginate(10, ['*'], 'page', $page);
@@ -152,7 +144,7 @@ class UserController extends Controller
                 $all_users = User::where('role_id', 3)->where('added_by_user_id', $user->id)->orderBy("created_at", "desc")->limit($limit)->get();
             }
         }
-        
+      
         return response()->json(['data' => $all_users], 200);
     }
 
