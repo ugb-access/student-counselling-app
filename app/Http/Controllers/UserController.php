@@ -74,7 +74,12 @@ class UserController extends Controller
                 ->latest();
                 
                 if (!empty($searchText)) {
-                    $baseQuery->where('name', 'like', '%' . $searchText . '%');  
+                    $baseQuery->where(function ($query) use ($searchText) {
+                        $query->where('name', 'like', '%' . $searchText . '%')
+                              ->orWhere('email', 'like', '%' . $searchText . '%')
+                              ->orWhere('phone_number', 'like', '%' . $searchText . '%');
+                    });
+                    
                 }
                 
                 if (empty($status)) {
@@ -135,7 +140,11 @@ class UserController extends Controller
                 }
                 
                 if (!empty($searchText)) {
-                    $baseQuery->where('name', 'like', '%' . $searchText . '%');
+                    $baseQuery->where(function ($query) use ($searchText) {
+                        $query->where('name', 'like', '%' . $searchText . '%')
+                              ->orWhere('email', 'like', '%' . $searchText . '%')
+                              ->orWhere('phone_number', 'like', '%' . $searchText . '%');
+                    });
                 }
                 
                 $all_users = $baseQuery->paginate(10, ['*'], 'page', $page);
