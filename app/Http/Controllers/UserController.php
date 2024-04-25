@@ -66,12 +66,27 @@ class UserController extends Controller
         $searchText = $request->query('search');
         $user = Auth::user();
 
-       
+        $counsellor_id = $request->query('counsellor_id');
+
+        
         if($user->role_id === 1) {
             if(empty($limit)) {
-                $baseQuery = User::with(['student', 'addedByUser'])
-                ->where('role_id', 3)
-                ->latest();
+
+               
+                if(!empty($counsellor_id)) {
+                    $baseQuery = User::with('student')
+                    ->where('role_id', 3)
+                    ->where('added_by_user_id', (int)$counsellor_id)
+                    ->latest();
+                   
+                } else {
+                    $baseQuery = User::with(['student', 'addedByUser'])
+                    ->where('role_id', 3)
+                    ->latest();
+                }
+                
+
+                
                 
                 if (!empty($searchText)) {
                     $baseQuery->where(function ($query) use ($searchText) {
@@ -99,6 +114,8 @@ class UserController extends Controller
                         })->paginate(10, ['*'], 'page', $page);
                     }
                 }
+
+               
             
                 
             } else {

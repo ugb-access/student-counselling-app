@@ -32,26 +32,7 @@ const fetchData = async () => {
 };
 
 const filterData = async () => {
-    // filteredData.value = list.value.filter((counsellor) => {
-    //     return (
-    //         counsellor.name
-    //             .toLowerCase()
-    //             .includes(searchQuery.value.toLowerCase()) ||
-    //         counsellor.username
-    //             .toLowerCase()
-    //             .includes(searchQuery.value.toLowerCase()) ||
-    //         counsellor.email
-    //             .toLowerCase()
-    //             .includes(searchQuery.value.toLowerCase()) ||
-    //         counsellor.created_at
-    //             .slice(0, counsellor.created_at.indexOf("T"))
-    //             .toLowerCase()
-    //             .includes(searchQuery.value.toLowerCase()) ||
-    //         counsellor.phone_number
-    //             .toLowerCase()
-    //             .includes(searchQuery.value.toLowerCase())
-    //     );
-    // });
+   
 
     try {
         const response = await getAllStudents({
