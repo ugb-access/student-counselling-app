@@ -374,10 +374,14 @@ class StudentController extends Controller
             'referee_name' => 'nullable|string',
             'referee_mobile' => 'nullable|string|max:35',
             'document_correction' => 'nullable|string|max:255',
+            'mobile_2' => 'nullable|string|max:35',
             // 'education_history' => 'required|array', 
             'semester_year' => 'required|integer|in:1,2,3,4',
             // 'country_detail' => 'required|array',
-
+            "father_name" => 'nullable|string',
+            "father_number" => 'nullable|string|max:35',
+            "mother_name" => 'nullable|string',
+            "mother_number" => 'nullable|string|max:35',
 
             'cv_path' => 'nullable|mimes:pdf,doc,docx,jpeg,png,jpg|max:5000',
             'passport' => 'nullable|mimes:pdf,doc,docx,jpeg,png,jpg|max:5000', 
@@ -444,6 +448,11 @@ class StudentController extends Controller
         $student->referee_mobile = $request->input('referee_mobile');
 
         $student->document_correction = $request->input('document_correction');
+
+        $student->father_name = $request->input('father_name');
+        $student->father_number = $request->input('father_number');
+        $student->mother_name = $request->input('mother_name');
+        $student->mother_number = $request->input('mother_number');
 
         $student->education_history = json_decode($data["education_history"], true);
         
@@ -886,6 +895,11 @@ class StudentController extends Controller
             'semester_year' => 'integer|in:1,2,3,4',
             // 'country_detail' => 'array',
 
+            "father_name" => 'nullable|string',
+            "father_number" => 'nullable|string|max:35',
+            "mother_name" => 'nullable|string',
+            "mother_number" => 'nullable|string|max:35',
+
 
             'cv_path' => 'nullable|mimes:pdf,doc,docx,jpeg,png,jpg|max:5000',
             'passport' => 'nullable|mimes:pdf,doc,docx,jpeg,png,jpg|max:5000', 
@@ -1005,13 +1019,23 @@ class StudentController extends Controller
         if($request->has('referee_name') ) {
             $student->referee_name = $request->input('referee_name');
         }
-
         if($request->has('referee_mobile') ) {
             $student->referee_mobile = $request->input('referee_mobile');
         }
-
         if($request->has('document_correction') ) {
             $student->document_correction = $request->input('document_correction');
+        }
+        if($request->has('father_name') ) {
+            $student->father_name = $request->input('father_name');
+        }
+        if($request->has('father_number') ) {
+            $student->father_number = $request->input('father_number');
+        }
+        if($request->has('mother_name') ) {
+            $student->mother_name = $request->input('mother_name');
+        }
+        if($request->has('mother_number') ) {
+            $student->mother_number = $request->input('mother_number');
         }
         
         if($request->has('cv_path')) {

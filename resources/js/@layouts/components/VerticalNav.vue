@@ -64,8 +64,8 @@ const handleNavScroll = evt => {
           /> -->
           <img :src="logo" style="height: 50px;"  />
 
-          <h1 class="font-weight-medium leading-normal text-xl text-uppercase">
-            Royal Vision
+          <h1 class="font-weight-medium leading-normal text-xs text-uppercase">
+            Royal Vision Education
           </h1>
         </RouterLink>
       </slot>

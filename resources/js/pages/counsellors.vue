@@ -10,6 +10,8 @@ const filteredData = ref([]);
 const page = ref(1);
 const length = ref(1);
 
+const from = ref(1);
+
 const handleActionClick = () => {
     window.location.href = "/add/counsellor";
 };
@@ -19,6 +21,8 @@ const fetchData = async () => {
         const response = await getAllCounsellor({ limit: null, page });
         list.value = response.data.data.data;
         length.value = response.data.data.last_page;
+
+		from.value = response.data.data.from;
         filterData();
     } catch (error) {
         console.error(error);
@@ -74,7 +78,7 @@ watch(page, fetchData);
                         >
                     </div>
                 </template>
-                <PrimaryTable tableType="counsellor" :data="filteredData" />
+                <PrimaryTable table-type="counsellor" :data="filteredData" :from="from" />
                 <VPagination v-model="page" :length="length"   />
             </VCard>
         </VCol>
