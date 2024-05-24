@@ -19,7 +19,7 @@ const fetchData = async () => {
 		const response = await getAllAdmins({ limit: null });
 		list.value = response.data.data;
 
-		from.value = response.data.data.from;
+		from.value = response?.data?.data?.from || 1;
 		filterData();
 	} catch (error) {
 		console.error(error);

@@ -113,7 +113,7 @@ onMounted(fetchProfileData);
                             <VCol md="6" cols="12">
                                 <VTextField
                                     v-model="accountDataLocal.name"
-                                    label="First Name"
+                                    label="Full Name"
                                     :variant="
                                         edit === false ? 'solo' : 'outlined'
                                     "

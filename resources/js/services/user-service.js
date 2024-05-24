@@ -17,7 +17,7 @@ export const getAllAdmins = ({ limit = null }) => {
 	});
 };
 
-export const getAllCounsellor = ({ limit = null, search = null }) => {
+export const getAllCounsellor = ({ limit = null, search = null, page = 1 }) => {
 	const auth_data = getLocalAuth();
 
 	return api({
@@ -26,6 +26,7 @@ export const getAllCounsellor = ({ limit = null, search = null }) => {
 		params: {
 			limit: limit || undefined,
 			search: search || undefined,
+			page,
 		},
 		headers: {
 			Authorization: `Bearer ${JSON.parse(auth_data).token}`,

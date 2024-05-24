@@ -11,6 +11,7 @@ const page = ref(1);
 const length = ref(1);
 const route = useRoute();
 const from = ref(1);
+const total = ref(1)
 
 const handleActionClick = () => {
 	window.location.href = "/add/student";
@@ -29,6 +30,7 @@ const fetchData = async () => {
 		filteredData.value = response.data.data.data;
 
 		from.value = response.data.data.from;
+        total.value = response.data.data.total;
 	} catch (error) {
 		console.error(error);
 	}
@@ -46,12 +48,14 @@ const filterData = async () => {
 		length.value = response.data.data.last_page;
 		filteredData.value = response.data.data.data;
 		from.value = response.data.data.from;
+        total.value = response.data.data.total;
+
 	} catch (error) {
 		console.error(error);
 	}
 };
 
-console.log(from, "from");
+
 
 onMounted(fetchData);
 watch(searchQuery, filterData);
@@ -148,7 +152,7 @@ watch(page, fetchData);
 		</VCol>
 		<div class="total-student-count">
 			Total Students:
-			<span>12</span>
+			<span>{{ total }}</span>
 		</div>
 	</VRow>
 </template>

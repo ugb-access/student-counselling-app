@@ -16,6 +16,8 @@ const list = ref([]);
 const filteredData = ref([]);
 const page = ref(1);
 const length = ref(1);
+const from = ref(1);
+const total = ref(1);
 
 const accountData = {
 	name: "",
@@ -42,6 +44,8 @@ const fetchProfileData = () => {
 			accountDataLocal.value.username = res.data.data.username;
 			accountDataLocal.value.email = res.data.data.email;
 			accountDataLocal.value.phone_number = res.data.data.phone_number;
+			from.value = res.data.data.from;
+			total.value = res.data.data.total;
 		})
 		.catch((err) => {
 			console.log(err, "Err");
@@ -84,6 +88,8 @@ const fetchData = async () => {
 		list.value = response.data.data.data;
 		length.value = response.data.data.last_page;
 		filteredData.value = response.data.data.data;
+		from.value = response.data.data.from;
+		total.value = response.data.data.total;
 	} catch (error) {
 		console.error(error);
 	}
@@ -101,6 +107,7 @@ const filterData = async () => {
 		list.value = response.data.data.data;
 		length.value = response.data.data.last_page;
 		filteredData.value = response.data.data.data;
+		from.value = response.data.data.from;
 	} catch (error) {
 		console.error(error);
 	}
@@ -208,13 +215,18 @@ watch(page, fetchData);
 						></VTextField>
 					</div>
 				</template>
-				<PrimaryTable type="student" :data="filteredData" />
+				<PrimaryTable
+					type="student"
+					:data="filteredData"
+					:from="from"
+				/>
 				<VPagination v-model="page" :length="length" />
 			</VCard>
 		</VCol>
-        <div>
-            
-        </div>
+		<div class="total-student-count">
+			Total Students:
+			<span>{{ total }}</span>
+		</div>
 	</VRow>
 </template>
 
