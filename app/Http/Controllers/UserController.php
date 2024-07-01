@@ -296,8 +296,11 @@ class UserController extends Controller
 
         $data = $request->all();
         $validator = Validator::make($data, [
+            'username' => 'unique:users',
+            'email' => 'email|unique:users',
             'name' => 'string',
             'phone_number' => '|string|max:20',
+            
         ]);
         if($validator->fails()) {
             return response()->json(['error' => $validator->errors()->first()], 422);
@@ -313,7 +316,12 @@ class UserController extends Controller
                     $user->phone_number = trim($data["phone_number"]);
                 }
 
-                
+                if(isset($data["username"])){
+                    $user->username = trim($data["username"]);
+                }
+                if(isset($data["email"])){
+                    $user->email = trim($data["email"]);
+                }
     
                 $user->save();
     
